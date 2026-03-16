@@ -2,9 +2,9 @@
   "format_version": 2,
   "header": {
     "description": "§7nice to have feature!",
-    "name": "§fQ§eo§fF §c(1.0.0)",
+    "name": "§fQ§eo§fF §c(1.0.1)",
     "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
-    "version": [1,0,0],
+    "version": [1,0,1],
     "min_engine_version": [1,26,3]
   },
   "metadata": {
