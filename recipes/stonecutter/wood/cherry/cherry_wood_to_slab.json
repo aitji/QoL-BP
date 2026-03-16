@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_cherry_wood_to_cherry_slab"
+  },
+  "tags": ["stonecutter"],
+  "priority": 1,
+  "ingredients": [
+   { "item": "minecraft:cherry_wood" }
+  ],
+  "result": {
+   "item": "minecraft:cherry_slab",
+   "count": 8
+  },
+  "unlock": [{ "item": "minecraft:cherry_wood" }]
+ }
+}

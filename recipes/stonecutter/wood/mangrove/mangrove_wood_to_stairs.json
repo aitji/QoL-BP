@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_mangrove_wood_to_mangrove_stairs"
+  },
+  "tags": ["stonecutter"],
+  "priority": 0.1,
+  "ingredients": [
+   { "item": "minecraft:mangrove_wood" }
+  ],
+  "result": {
+   "item": "minecraft:mangrove_stairs",
+   "count": 4
+  },
+  "unlock": [{ "item": "minecraft:mangrove_wood" }]
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_crimson_planks_to_crimson_pressure_plate"
+  },
+  "tags": ["stonecutter"],
+  "priority": 7,
+  "ingredients": [
+   { "item": "minecraft:crimson_planks" }
+  ],
+  "result": {
+   "item": "minecraft:crimson_pressure_plate",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:crimson_planks" }]
+ }
+}

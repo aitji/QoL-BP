@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_oak_log_to_oak_fence"
+  },
+  "tags": ["stonecutter"],
+  "priority": 2,
+  "ingredients": [
+   { "item": "minecraft:oak_log" }
+  ],
+  "result": {
+   "item": "minecraft:oak_fence",
+   "count": 4
+  },
+  "unlock": [{ "item": "minecraft:oak_log" }]
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_jungle_planks_to_jungle_door"
+  },
+  "tags": ["stonecutter"],
+  "priority": 5,
+  "ingredients": [
+   { "item": "minecraft:jungle_planks" }
+  ],
+  "result": {
+   "item": "minecraft:jungle_door",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:jungle_planks" }]
+ }
+}

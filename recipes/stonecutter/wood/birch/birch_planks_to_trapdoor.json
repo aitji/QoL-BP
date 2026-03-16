@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_birch_planks_to_birch_trapdoor"
+  },
+  "tags": ["stonecutter"],
+  "priority": 4,
+  "ingredients": [
+   { "item": "minecraft:birch_planks" }
+  ],
+  "result": {
+   "item": "minecraft:birch_trapdoor",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:birch_planks" }]
+ }
+}

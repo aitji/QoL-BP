@@ -1,0 +1,74 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - manifest.json
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout current commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Read old and new manifest versions
+        id: versions
+        run: |
+          NEW_VER=$(node -e "const m=require('./manifest.json'); console.log(JSON.stringify(m.header.version));")
+
+          OLD_VER=$(git show HEAD~1:manifest.json | node -e "
+            let d='';
+            process.stdin.on('data', c => d+=c);
+            process.stdin.on('end', () => {
+              const m = JSON.parse(d);
+              console.log(JSON.stringify(m.header.version));
+            });
+          ")
+
+          echo "OLD_VERSION=$OLD_VER" >> $GITHUB_ENV
+          echo "NEW_VERSION=$NEW_VER" >> $GITHUB_ENV
+          echo "Old version: $OLD_VER"
+          echo "New version: $NEW_VER"
+
+      - name: Determine release type
+        id: check
+        env:
+          OLD_VERSION: ${{ env.OLD_VERSION }}
+          NEW_VERSION: ${{ env.NEW_VERSION }}
+        run: node .github/scripts/check-version.js
+
+      - name: Set DEBUG to false
+        if: steps.check.outputs.changed == 'true'
+        run: node .github/scripts/set-debug.js
+
+      - name: Zip pack files
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          PACK_NAME="${{ steps.check.outputs.pack_name }}"
+
+          zip -r "$PACK_NAME" . \
+            -x "*.git*" \
+            -x ".github/*" \
+            -x ".gitattributes" \
+            -x ".gitignore" \
+            -x "*.md" \
+            -x "node_modules/*"
+          echo "Created: $PACK_NAME"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.check.outputs.version_string }}"
+          name: "QoF v${{ steps.check.outputs.version_string }}"
+          prerelease: ${{ steps.check.outputs.release_type == 'prerelease' }}
+          files: ${{ steps.check.outputs.pack_name }}
+          generate_release_notes: true

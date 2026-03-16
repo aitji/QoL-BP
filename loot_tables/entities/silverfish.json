@@ -1,0 +1,23 @@
+{
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "empty",
+                    "weight": 4
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:string",
+                    "weight": 1
+                }
+            ],
+            "conditions": [
+                {
+                    "condition": "killed_by_player_or_pets"
+                }
+            ]
+        }
+    ]
+}

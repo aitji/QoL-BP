@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_dark_oak_planks_to_dark_oak_fence_gate"
+  },
+  "tags": ["stonecutter"],
+  "priority": 3,
+  "ingredients": [
+   { "item": "minecraft:dark_oak_planks" }
+  ],
+  "result": {
+   "item": "minecraft:dark_oak_fence_gate",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:dark_oak_planks" }]
+ }
+}

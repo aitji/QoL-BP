@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_mangrove_planks_to_mangrove_door"
+  },
+  "tags": ["stonecutter"],
+  "priority": 5,
+  "ingredients": [
+   { "item": "minecraft:mangrove_planks" }
+  ],
+  "result": {
+   "item": "minecraft:mangrove_door",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:mangrove_planks" }]
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_stripped_spruce_log_to_spruce_pressure_plate"
+  },
+  "tags": ["stonecutter"],
+  "priority": 7,
+  "ingredients": [
+   { "item": "minecraft:stripped_spruce_log" }
+  ],
+  "result": {
+   "item": "minecraft:spruce_pressure_plate",
+   "count": 4
+  },
+  "unlock": [{ "item": "minecraft:stripped_spruce_log" }]
+ }
+}

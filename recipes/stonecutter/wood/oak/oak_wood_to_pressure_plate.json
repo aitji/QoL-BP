@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_oak_wood_to_wooden_pressure_plate"
+  },
+  "tags": ["stonecutter"],
+  "priority": 7,
+  "ingredients": [
+   { "item": "minecraft:oak_wood" }
+  ],
+  "result": {
+   "item": "minecraft:wooden_pressure_plate",
+   "count": 4
+  },
+  "unlock": [{ "item": "minecraft:oak_wood" }]
+ }
+}

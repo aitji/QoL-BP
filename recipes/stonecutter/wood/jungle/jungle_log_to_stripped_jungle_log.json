@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_jungle_log_to_stripped_jungle_log"
+  },
+  "tags": ["stonecutter"],
+  "priority": -3,
+  "ingredients": [
+   { "item": "minecraft:jungle_log" }
+  ],
+  "result": {
+   "item": "minecraft:stripped_jungle_log",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:jungle_log" }]
+ }
+}

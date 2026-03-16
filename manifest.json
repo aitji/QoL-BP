@@ -1,0 +1,23 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "§7nice to have feature!",
+    "name": "§fQ§eo§fF §c(0.1.0)",
+    "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
+    "version": [0,1,0],
+    "min_engine_version": [1,26,3]
+  },
+  "metadata": {
+    "authors": ["aitji", "pickerth-12"],
+    "product_type": "addon",
+    "license": "MIT",
+    "url": "https://github.com/aitji/QoL-BP"
+  },
+  "dependencies": [
+    {"module_name": "@minecraft/server","version": "2.5.0"}
+  ],
+  "modules": [
+    {"type": "data","uuid": "1f6786c8-d69d-4c59-a27f-f061e62ccde6","version": [1,0,0]},
+    {"type": "script","uuid": "d71d1934-0d8d-46aa-b148-bb701eba33aa","version": [1,0,0],"entry": "scripts/index.js"}
+  ]
+}

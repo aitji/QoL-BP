@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_stripped_dark_oak_log_to_dark_oak_sign"
+  },
+  "tags": ["stonecutter"],
+  "priority": 6,
+  "ingredients": [
+   { "item": "minecraft:stripped_dark_oak_log" }
+  ],
+  "result": {
+   "item": "minecraft:dark_oak_sign",
+   "count": 4
+  },
+  "unlock": [{ "item": "minecraft:stripped_dark_oak_log" }]
+ }
+}

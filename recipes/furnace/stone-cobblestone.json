@@ -1,0 +1,10 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_furnace": {
+        "description": {"identifier": "blasting_stone"},
+        "tags": ["blast_furnace"],
+        "input": "minecraft:cobblestone",
+        "output": "minecraft:stone",
+        "unlock": [{"item": "minecraft:stone"}]
+    }
+}

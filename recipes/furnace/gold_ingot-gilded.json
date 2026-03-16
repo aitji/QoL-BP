@@ -1,0 +1,10 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_furnace": {
+        "description": {"identifier": "gold_ingot-gilded"},
+        "tags": ["furnace", "blast_furnace"],
+        "input": "minecraft:gilded_blackstone",
+        "output": "minecraft:gold_ingot",
+        "unlock": [{"item": "minecraft:bamboo_block"}]
+    }
+}

@@ -1,0 +1,18 @@
+{
+ "format_version": "1.20.10",
+ "minecraft:recipe_shapeless": {
+  "description": {
+   "identifier": "minecraft:stonecutter_spruce_planks_to_spruce_pressure_plate"
+  },
+  "tags": ["stonecutter"],
+  "priority": 7,
+  "ingredients": [
+   { "item": "minecraft:spruce_planks" }
+  ],
+  "result": {
+   "item": "minecraft:spruce_pressure_plate",
+   "count": 1
+  },
+  "unlock": [{ "item": "minecraft:spruce_planks" }]
+ }
+}
