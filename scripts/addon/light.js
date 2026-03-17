@@ -161,7 +161,9 @@ export const light_player = (pl) => {
         excludeTypes: ['minecraft:xp_orb', 'minecraft:xp_bottle', 'minecraft:command_block_minecart', 'minecraft:hopper_minecart', 'minecraft:splash_potion']
     }).forEach(en => {
         if (!en) return
-        if (en.typeId === 'minecraft:item') return processEntity(en)
+        if (en.typeId === 'minecraft:item'
+            // || en.typeId === 'minecraft:armor_stand' // armor stand not support equippable rn
+        ) return processEntity(en, false)
 
         let lightLevel = 0
         if (en.getComponent(EntityComponentTypes.OnFire)) lightLevel += LIGHT_FIRE_LEVEL * REDUCE_LIGHT
