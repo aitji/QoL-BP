@@ -27,6 +27,7 @@ system.run(() => {
         }
 
         if (WET_POWDER_CONCRTE.ENABLED) powder.powder_pending()
+        if (RUNTIME.COMPOSTER.ENABLED && RUNTIME.COMPOSTER.WORK_WITH_HOPPER) composter.composter_pending()
 
         for (const player of world.getAllPlayers()) {
             if (LIGHT.ENABLED) light.light_player(player)
@@ -51,6 +52,7 @@ world.afterEvents.entityRemove.subscribe(data => {
 world.afterEvents.playerPlaceBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerPlaceBlock(data)
     if (RUNTIME.CARRIED_CHEST.ENABLED) chest.chest_playerPlaceBlock(data)
+    if (RUNTIME.COMPOSTER.ENABLED && RUNTIME.COMPOSTER.WORK_WITH_HOPPER) composter.composter_playerPlaceBlock(data)
 })
 world.beforeEvents.playerBreakBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerBreakBlock(data)

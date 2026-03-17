@@ -1,94 +1,177 @@
-import { BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemStack, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
+import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemStack, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server"
 import { SETTINGS } from "../_config"
 import { checkRandom, clamp } from "../lib"
-const { DEBUG, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY } } = SETTINGS
-const clamp8 = (n) => clamp(n, 0, 8)
+import { RUNTIME } from "../_store"
+const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, VANILA_COMPOSTE, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION } } = SETTINGS
 
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
+const clamp8 = (n) => clamp(n, 0, 8)
+const composterSet = new Set()
+system.run(() => {
+    if (!RUNTIME.COMPOSTER.ENABLED || !RUNTIME.COMPOSTER.WORK_WITH_HOPPER) return
+    const raw = world.getDynamicProperty(DATA_COMPOSTER_LOCATION)
+    if (raw) {
+        composterSet.clear()
+        for (const v of JSON.parse(raw)) composterSet.add(v)
+    }
+
+    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+    for (const key of Object.keys(data)) {
+        const [dim, sx, sy, sz] = key.split(':')
+        const x = +sx
+        const y = +sy
+        const z = +sz
+        const loc = { x, y, z }
+        const dimension = world.getDimension(dim)
+        const block = dimension.getBlock(loc)
+        if (block.typeId === BLOCK_TYPEID && block.permutation.getState('composter_fill_level') === 7) {
+            const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
+            block.setPermutation(p)
+            playSound(dimension, SOUND_READY, loc)
+        }
+
+        // ---
+        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+        delete d[key]
+        world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(d))
+        // ---
+    }
+})
+// helper
+const playSound = (dim, sound, loc) => dim.playSound(sound.ID, loc, { volume: checkRandom(sound.VOLUME), pitch: checkRandom(sound.PITCH) })
+const setLevel = (block, level) => block.setPermutation(BlockPermutation.resolve(block.typeId).withState("composter_fill_level", clamp8(level)))
+const maybeFinish = (block, playerOrDim, loc) => {
+    // ---
+    const key = `${playerOrDim.id.slice(10)}:${block.x}:${block.y}:${block.z}`
+    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+    data[key] = 1
+    world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(data))
+    // ---
+
+    system.runTimeout(() => {
+        const curr = block.dimension.getBlock(loc)
+        if (curr.typeId === BLOCK_TYPEID && curr.permutation.getState('composter_fill_level') === 7) {
+            const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
+            block.setPermutation(p)
+            playSound(playerOrDim, SOUND_READY, loc)
+        }
+
+        // ---
+        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+        delete d[key]
+        world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(d))
+        // ---
+    }, DELAY_BEFORE_READY)
+}
+
 export const composter_playerInteractWithBlock = (data) => {
     const { player, block, itemStack } = data
+    if (player.isSneaking || !itemStack || block.typeId !== BLOCK_TYPEID) return
 
-    if (
-        !player.isSneaking &&
-        itemStack &&
-        block.typeId === BLOCK_TYPEID
-    ) {
-        const itemID = itemStack.typeId
-        const chance = ITEMS[itemID]
-        if (!chance) return
+    const itemID = itemStack.typeId
+    const chance = ITEMS[itemID]
+    if (!chance) return
 
-        const roll = Math.random()
+    const state = block.permutation.getState('composter_fill_level')
+    if (state >= 7) return
 
-        const result = roll <= chance
-        const state = block.permutation.getState('composter_fill_level')
-        const location = block.center()
+    system.run(() => {
+        const success = Math.random() <= chance
+        const loc = block.center()
+
+        if (success) {
+            playSound(player.dimension, SOUND_FILL_SUCCESS, player.location)
+            setLevel(block, state + 1)
+            player.dimension.spawnParticle(PARTICLE_FILL_SUCCESS, loc)
+            if (state === 6) maybeFinish(block, player.dimension, loc)
+        } else playSound(player.dimension, SOUND_FILL, player.location)
+
+        if (player.matches({ gameMode: GameMode.Creative })) return
+
+        const equ = player.getComponent(EntityComponentTypes.Equippable)
         const slot = player.selectedSlotIndex
-        if (state >= 7) return
+        if (player.selectedSlotIndex !== slot) player.selectedSlotIndex = slot
+        const currItem = equ.getEquipment(EquipmentSlot.Mainhand)
 
-        system.run(() => {
-            if (result) {
-                player.dimension.playSound(SOUND_FILL_SUCCESS.ID, player.location, { volume: checkRandom(SOUND_FILL_SUCCESS.VOLUME), pitch: checkRandom(SOUND_FILL_SUCCESS.PITCH) })
+        if (!currItem || currItem.typeId !== itemStack.typeId) {
+            const cmd = player.runCommand(`clear @s ${itemID} 0 1`)
+            const removed = cmd.successCount
+            if ((!removed || removed === 0) && success) setLevel(block, state - 1)
+            else if (itemID.endsWith('_stew') || itemID.endsWith('_soup')) player.runCommand(`give @s bowl 0 1`)
+            return
+        }
 
-                const composter = BlockPermutation
-                    .resolve(block.typeId)
-                    .withState("composter_fill_level", clamp8(state + 1))
-                block.setPermutation(composter)
-                player.dimension.spawnParticle('minecraft:crop_growth_emitter', location)
+        try {
+            if (itemStack.amount <= 1) {
+                if (itemID.endsWith('_stew') || itemID.endsWith('_soup')) equ.setEquipment(EquipmentSlot.Mainhand, new ItemStack('bowl', 1))
+                else equ.setEquipment(EquipmentSlot.Mainhand, undefined)
+            } else {
+                const reduced = currItem.clone()
+                reduced.amount -= 1
+                equ.setEquipment(EquipmentSlot.Mainhand, reduced)
+            }
+        } catch (e) { if (DEBUG) console.warn('[composter] unknown case:', e) }
+    })
+}
 
-                if (state === 6) system.runTimeout(() => {
-                    const currBlock = block.dimension.getBlock(location)
-                    if (
-                        currBlock.typeId === BLOCK_TYPEID &&
-                        currBlock.permutation.getState('composter_fill_level') === 7
-                    ) {
-                        const composter = BlockPermutation
-                            .resolve(BLOCK_TYPEID)
-                            .withState("composter_fill_level", 8)
-                        block.setPermutation(composter)
+export const composter_playerPlaceBlock = (data) => {
+    const { block, dimension } = data
+    if (!block || block.typeId !== BLOCK_TYPEID) return
+    const value = `${dimension.id.substring(SLICE_PREFIX)}:${block.x}:${block.y}:${block.z}`
+    composterSet.add(value)
+    world.setDynamicProperty(DATA_COMPOSTER_LOCATION, JSON.stringify([...composterSet]))
+}
 
-                        player.dimension.playSound(SOUND_READY.ID, player.location, { volume: checkRandom(SOUND_READY.VOLUME), pitch: checkRandom(SOUND_READY.PITCH) })
-                    }
-                }, DELAY_BEFORE_READY)
+let trackTick = system.currentTick + HOPPER_INTERVAL_TICK
+export const composter_pending = () => {
+    if (trackTick > system.currentTick) return
+    trackTick = system.currentTick + HOPPER_INTERVAL_TICK
+    let changed = false
 
-            } else player.dimension.playSound(SOUND_FILL.ID, player.location, { volume: checkRandom(SOUND_FILL.VOLUME), pitch: checkRandom(SOUND_FILL.PITCH) })
+    for (const v of composterSet) {
+        const [dim, xs, ys, zs] = v.split(':')
+        const x = +xs, y = +ys, z = +zs
+        const dimension = world.getDimension(dim)
+        const block = dimension.getBlock({ x, y, z })
+        if (!block || !block.isValid) continue
+        if (block.isAir || block.typeId !== BLOCK_TYPEID) { composterSet.delete(v); changed = true; continue }
 
-            if (player.matches({ gameMode: GameMode.Creative })) return
+        const state = block.permutation.getState('composter_fill_level')
+        if (state >= 7) continue
+
+        const hopper = block.above(1)
+        if (!hopper || !hopper.isValid || hopper.isAir || hopper.typeId !== HOPPER_TYPEID) continue
+
+        if (hopper.getRedstonePower() > 0) continue
+        const perm = hopper.permutation
+        if (perm.getState("powered_bit") || perm.getState("facing_direction") !== 0) continue
+
+        const container = hopper.getComponent(BlockComponentTypes.Inventory)?.container
+        if (!container) continue
+
+        for (let i = 0; i < container.size; i++) {
+            const item = container.getItem(i)
+            if (!item) continue
+            const itemID = item.typeId
+            if (VANILA_COMPOSTE.has(itemID)) return
+            const chance = ITEMS[itemID]
+            if (!chance) continue
+
+            const success = Math.random() <= chance
+            const loc = block.center()
 
             // reduce item
-            const equ = player.getComponent(EntityComponentTypes.Equippable)
-            if (player.selectedSlotIndex !== slot) player.selectedSlotIndex = slot
-            const currItem = equ.getEquipment(EquipmentSlot.Mainhand)
+            if (item.amount > 1) container.setItem(i, new ItemStack(item.typeId, item.amount - 1))
+            else container.setItem(i, undefined)
 
-            if (!currItem || currItem.typeId !== itemStack.typeId) {
-                // fallback
-                const cmd = player.runCommand(`clear @s ${itemID} 0 1`)
-                const isDone = cmd.successCount
+            if (success) {
+                playSound(dimension, SOUND_FILL_SUCCESS, loc)
+                setLevel(block, state + 1)
+                if (state === 6) maybeFinish(block, dimension, loc)
+            } else playSound(dimension, SOUND_FILL, loc)
 
-                // fail to remove player item
-                if ((!isDone || isDone === 0) && result) {
-                    const composter = BlockPermutation
-                        .resolve(block.typeId)
-                        .withState("composter_fill_level", clamp8(state - 1))
-                    block.setPermutation(composter)
-                } else {
-                    if (itemID.endsWith('_stew') || itemID.endsWith('_soup'))
-                        player.runCommand(`give @s bowl 0 1`)
-                }
-                return
-            }
-
-            // NOW: selectedSlotIndex === slot & currItem == itemStack
-            try {
-                if (itemStack.amount <= 1) {
-                    // clear item
-                    if (itemID.endsWith('_stew') || itemID.endsWith('_soup')) equ.setEquipment(EquipmentSlot.Mainhand, new ItemStack('bowl', 1))
-                    else equ.setEquipment(EquipmentSlot.Mainhand, undefined)
-                } else {
-                    const reduceItem = currItem.clone()
-                    reduceItem.amount -= 1
-                    equ.setEquipment(EquipmentSlot.Mainhand, reduceItem)
-                }
-            } catch (e) { if (DEBUG) console.warn('[composter] unknown case:', e) }
-        })
+            return
+        }
     }
+
+    if (changed) world.setDynamicProperty(DATA_COMPOSTER_LOCATION, JSON.stringify([...composterSet]))
 }

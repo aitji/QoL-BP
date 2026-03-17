@@ -1,7 +1,8 @@
-export const SETTINGS = {
+export const SETTINGS = Object.freeze({
     DEBUG: true,
     INTERVAL_DELAY: 0, // delay for each interval
-    LIGHT: {
+    SLICE_PREFIX: "minecraft:".length, // 10
+    LIGHT: Object.freeze({
         ENABLED: true,
         DECAY_LIGHT_TICK: 3, // before light when off time
         REDUCE_LIGHT: 0.7, // lightLevel * REDUCE_LIGHT
@@ -9,109 +10,248 @@ export const SETTINGS = {
         LIGHT_RENDER_RADIUS: 32, // max distance light render around player
         LIGHT_RENDER_PER_PLAYER: 12, // max light entity(item) render per player
         LIGHT_FIRE_LEVEL: 10, // this will be reduce by REDUCE_LIGHT
-        LIGHT_WIKI: {
+        LIGHT_WIKI: Object.freeze({
             // light 15
-            "beacon": { light: 15 }, "campfire": { light: 15 },
-            "conduit": { light: 15 }, "ochre_froglight": { light: 15 },
-            "pearlescent_froglight": { light: 15 }, "verdant_froglight": { light: 15 },
-            "glowstone": { light: 15 }, "lit_pumpkin": { light: 15 },
-            "lantern": { light: 15 }, "lava_bucket": { light: 15 },
-            "sea_lantern": { light: 15 }, "shroomlight": { light: 15 },
-            "copper_lantern": { light: 15 }, "waxed_copper_lantern": { light: 15 },
-            "exposed_copper_lantern": { light: 15 }, "waxed_exposed_copper_lantern": { light: 15 },
-            "weathered_copper_lantern": { light: 15 }, "waxed_weathered_copper_lantern": { light: 15 },
-            "oxidized_copper_lantern": { light: 15 }, "waxed_oxidized_copper_lantern": { light: 15 },
+            "beacon": Object.freeze({ light: 15 }), "campfire": Object.freeze({ light: 15 }),
+            "conduit": Object.freeze({ light: 15 }), "ochre_froglight": Object.freeze({ light: 15 }),
+            "pearlescent_froglight": Object.freeze({ light: 15 }), "verdant_froglight": Object.freeze({ light: 15 }),
+            "glowstone": Object.freeze({ light: 15 }), "lit_pumpkin": Object.freeze({ light: 15 }),
+            "lantern": Object.freeze({ light: 15 }), "lava_bucket": Object.freeze({ light: 15 }),
+            "sea_lantern": Object.freeze({ light: 15 }), "shroomlight": Object.freeze({ light: 15 }),
+            "copper_lantern": Object.freeze({ light: 15 }), "waxed_copper_lantern": Object.freeze({ light: 15 }),
+            "exposed_copper_lantern": Object.freeze({ light: 15 }), "waxed_exposed_copper_lantern": Object.freeze({ light: 15 }),
+            "weathered_copper_lantern": Object.freeze({ light: 15 }), "waxed_weathered_copper_lantern": Object.freeze({ light: 15 }),
+            "oxidized_copper_lantern": Object.freeze({ light: 15 }), "waxed_oxidized_copper_lantern": Object.freeze({ light: 15 }),
 
             // light 14
-            "end_rod": { light: 14 }, "glow_berries": { light: 14 },
-            "torch": { light: 14 }, "copper_torch": { light: 14 },
+            "end_rod": Object.freeze({ light: 14 }), "glow_berries": Object.freeze({ light: 14 }),
+            "torch": Object.freeze({ light: 14 }), "copper_torch": Object.freeze({ light: 14 }),
 
             // light 10
-            "crying_obsidian": { light: 10 }, "soul_campfire": { light: 10 },
-            "soul_lantern": { light: 10 }, "soul_torch": { light: 10 },
+            "crying_obsidian": Object.freeze({ light: 10 }), "soul_campfire": Object.freeze({ light: 10 }),
+            "soul_lantern": Object.freeze({ light: 10 }), "soul_torch": Object.freeze({ light: 10 }),
 
             // light 7
-            "enchanting_table": { light: 7 }, "ender_chest": { light: 7 },
-            "glow_lichen": { light: 7 }, "redstone_torch": { light: 7 },
+            "enchanting_table": Object.freeze({ light: 7 }), "ender_chest": Object.freeze({ light: 7 }),
+            "glow_lichen": Object.freeze({ light: 7 }), "redstone_torch": Object.freeze({ light: 7 }),
 
             // light 6
-            "sculk_catalyst": { light: 6 }, "sea_pickle": { light: 6, inLiquid: true },
-            "vault": { light: 6 },
+            "sculk_catalyst": Object.freeze({ light: 6 }), "sea_pickle": Object.freeze({ light: 6, inLiquid: true }),
+            "vault": Object.freeze({ light: 6 }),
 
             // light 5
-            "amethyst_cluster": { light: 5 },
+            "amethyst_cluster": Object.freeze({ light: 5 }),
 
             // light 4
-            "large_amethyst_bud": { light: 4 },
-            "trial_spawner": { light: 4 },
+            "large_amethyst_bud": Object.freeze({ light: 4 }),
+            "trial_spawner": Object.freeze({ light: 4 }),
 
             // light 3
-            "magma": { light: 3 },
+            "magma": Object.freeze({ light: 3 }),
 
             // light 2
-            "medium_amethyst_bud": { light: 2 }, "firefly_bush": { light: 2 },
+            "medium_amethyst_bud": Object.freeze({ light: 2 }), "firefly_bush": Object.freeze({ light: 2 }),
 
             // light 1
-            "brewing_stand": { light: 1 }, "brown_mushroom": { light: 1 },
-            "calibrated_sculk_sensor": { light: 1 }, "dragon_egg": { light: 1 },
-            "end_portal_frame": { light: 1 }, "sculk_sensor": { light: 1 },
-            "small_amethyst_bud": { light: 1 },
-        },
-        LIGHT_ENTITY: {
-            "minecraft:glow_squid": { light: 10 },
-            "minecraft:allay": { light: 10 },
-            "minecraft:vex": { light: 10 },
-            "minecraft:blaze": { light: 12 },
-            "minecraft:warden": { light: 6 },
-        }
-    },
-    REPAIR_ANVIL: {
+            "brewing_stand": Object.freeze({ light: 1 }), "brown_mushroom": Object.freeze({ light: 1 }),
+            "calibrated_sculk_sensor": Object.freeze({ light: 1 }), "dragon_egg": Object.freeze({ light: 1 }),
+            "end_portal_frame": Object.freeze({ light: 1 }), "sculk_sensor": Object.freeze({ light: 1 }),
+            "small_amethyst_bud": Object.freeze({ light: 1 }),
+        }),
+        LIGHT_ENTITY: Object.freeze({
+            "minecraft:glow_squid": Object.freeze({ light: 10 }),
+            "minecraft:allay": Object.freeze({ light: 10 }),
+            "minecraft:vex": Object.freeze({ light: 10 }),
+            "minecraft:blaze": Object.freeze({ light: 12 }),
+            "minecraft:warden": Object.freeze({ light: 6 }),
+        })
+    }),
+    REPAIR_ANVIL: Object.freeze({
         ENABLED: true,
         ITEM_TYPEID: 'minecraft:iron_ingot',
         REPAIR_HELD_DELAY: 7, // delay when player held press to repair anvil (ticks)
-        REPAIRABLE_ANVIL: ['minecraft:damaged_anvil', 'minecraft:chipped_anvil', 'minecraft:anvil'], // last index will be unFixable
-        REPAIR_SOUND: {
+        REPAIRABLE_ANVIL: Object.freeze({
+            'minecraft:damaged_anvil': 'minecraft:chipped_anvil',
+            'minecraft:chipped_anvil': 'minecraft:anvil',
+            'minecraft:anvil': null
+        }), // last index will be unFixable
+        REPAIR_SOUND: Object.freeze({
             ID: 'smithing_table.use',
             VOLUME: 1.0,
             PITCH: 1.0
-        }
-    },
+        })
+    }),
     WET_POWDER_CONCRTE: {
         ENABLED: true,
         ITEM_PREFIX: "minecraft:",
-        SLICE_PREFIX: "minecraft:".length, // 10
         PROCESS_DELAY: 4, // how long before item vanish (tick)
         KEEP_VELOCITY: true, // kept VELOCITY after touch water
         TYPEID_ENDSWITH: "_concrete_powder", // maybe don't touch this
         DONE_PARTICLE: "minecraft:water_evaporation_bucket_emitter",
-        DONE_SOUND: {
+        DONE_SOUND: Object.freeze({
             ID: "mob.happy_ghast.harness_unequip",
             PITCH: [1.6, 1.8],
             VOLUME: 0.8
-        },
+        }),
         MAX_PROCESS: 12,
         BATCH_SIZE: 12 // max entity that will get process
     },
     COMPOSTER: {
         ENABLED: true,
+        WORK_WITH_HOPPER: true, // this might slow down the game when have too many...
+        HOPPER_INTERVAL_TICK: 8, // tick
+        HOPPER_TYPEID: "minecraft:hopper",
         BLOCK_TYPEID: "minecraft:composter",
-        DELAY_BEFORE_READY: 20, // tick
-        SOUND_FILL_SUCCESS: {
+        DELAY_BEFORE_READY: 17, // tick
+        DATA_LOSS_DYP: "qol.composter.timeout",
+        DATA_COMPOSTER_LOCATION: "qol:composterSet", // for hopper
+        PARTICLE_FILL_SUCCESS: "minecraft:crop_growth_emitter",
+        SOUND_FILL_SUCCESS: Object.freeze({
             ID: "block.composter.fill_success",
             VOLUME: 1.0,
             PITCH: [0.2, 0.9] // random from 0.2 to 0.9
-        },
-        SOUND_READY: {
+        }),
+        SOUND_READY: Object.freeze({
             ID: "block.composter.ready",
             VOLUME: 1.0,
             PITCH: 1.0
-        },
-        SOUND_FILL: {
+        }),
+        SOUND_FILL: Object.freeze({
             ID: "block.composter.ready",
             VOLUME: 1.0,
             PITCH: 0.8
-        },
-        ITEMS: {
+        }),
+        VANILA_COMPOSTE: Object.freeze(new Set([
+            // 30%
+            "minecraft:beetroot_seeds",
+            "minecraft:bush",
+            "minecraft:cactus_flower",
+            "minecraft:dried_kelp",
+            "minecraft:firefly_bush",
+            "minecraft:grass_block",
+            "minecraft:glow_berries",
+            "minecraft:hanging_roots",
+            "minecraft:kelp",
+            "minecraft:acacia_leaves",
+            "minecraft:azalea_leaves",
+            "minecraft:birch_leaves",
+            "minecraft:cherry_leaves",
+            "minecraft:dark_oak_leaves",
+            "minecraft:jungle_leaves",
+            "minecraft:mangrove_leaves",
+            "minecraft:oak_leaves",
+            "minecraft:spruce_leaves",
+            "minecraft:leaf_litter",
+            "minecraft:mangrove_propagule",
+            "minecraft:mangrove_roots",
+            "minecraft:melon_seeds",
+            "minecraft:moss_carpet",
+            "minecraft:pale_hanging_moss",
+            "minecraft:pale_moss_carpet",
+            "minecraft:pink_petals",
+            "minecraft:pitcher_pod",
+            "minecraft:pumpkin_seeds",
+            "minecraft:acacia_sapling",
+            "minecraft:birch_sapling",
+            "minecraft:cherry_sapling",
+            "minecraft:dark_oak_sapling",
+            "minecraft:jungle_sapling",
+            "minecraft:oak_sapling",
+            "minecraft:pale_oak_sapling",
+            "minecraft:spruce_sapling",
+            "minecraft:seagrass",
+            "minecraft:short_grass",
+            "minecraft:short_dry_grass",
+            "minecraft:small_dripleaf_block",
+            "minecraft:sweet_berries",
+            "minecraft:tall_dry_grass",
+            "minecraft:torchflower_seeds",
+            "minecraft:wheat_seeds",
+            "minecraft:wildflowers",
+
+            // 50%
+            "minecraft:cactus",
+            "minecraft:dried_kelp_block",
+            "minecraft:azalea_leaves_flowered",
+            "minecraft:glow_lichen",
+            "minecraft:melon_slice",
+            "minecraft:nether_sprouts",
+            "minecraft:sugar_cane",
+            "minecraft:tall_grass",
+            "minecraft:twisting_vines",
+            "minecraft:vines",
+            "minecraft:wheaping_vines",
+
+            // 65%
+            "minecraft:apple",
+            "minecraft:azalea",
+            "minecraft:beetroot",
+            "minecraft:big_dripleaf",
+            "minecraft:carrot",
+            "minecraft:cocoa_beans",
+            "minecraft:fern",
+            "minecraft:allium",
+            "minecraft:azure_bluet",
+            "minecraft:blue_orchid",
+            "minecraft:cornflower",
+            "minecraft:dandelion",
+            "minecraft:closed_eyeblossom",
+            "minecraft:open_eyeblossom",
+            "minecraft:golden_dandelion",
+            "minecraft:lily_of_the_valley",
+            "minecraft:oxeye_daisy",
+            "minecraft:poppy",
+            "minecraft:orange_tulip",
+            "minecraft:pink_tulip",
+            "minecraft:red_tulip",
+            "minecraft:white_tulip",
+            "minecraft:wither_rose",
+            "minecraft:lilac",
+            "minecraft:peony",
+            "minecraft:rose_bush",
+            "minecraft:sunflower",
+            "minecraft:chorus_flower",
+            "minecraft:spore_blossom",
+            "minecraft:large_fern",
+            "minecraft:waterlily",
+            "minecraft:melon",
+            "minecraft:melon_block",
+            "minecraft:moss_block",
+            "minecraft:brown_mushroom",
+            "minecraft:red_mushroom",
+            "minecraft:mushroom_stem",
+            "minecraft:crimson_fungus",
+            "minecraft:warped_fungus",
+            "minecraft:nether_wart",
+            "minecraft:pale_moss_block",
+            "minecraft:potato",
+            "minecraft:pumpkin",
+            "minecraft:carved_pumpkin",
+            "minecraft:crimson_roots",
+            "minecraft:warped_roots",
+            "minecraft:sea_pickle",
+            "minecraft:shroomlight",
+            "minecraft:spore_blossom",
+            "minecraft:wheat",
+
+            // 85%
+            "minecraft:baked_potato",
+            "minecraft:bread",
+            "minecraft:cookie",
+            "minecraft:flowering_azalea",
+            "minecraft:hay_bale",
+            "minecraft:brown_mushroom_block",
+            "minecraft:red_mushroom_block",
+            "minecraft:nether_wart_block",
+            "minecraft:warped_wart_block",
+            "minecraft:pitcher_plant",
+            "minecraft:torchflower",
+
+            // 100%
+            "minecraft:cake",
+            "minecraft:pumpkin_pie",
+        ])),
+        ITEMS: Object.freeze({
             // chance is max 1 (0.3, 0.5, 0.65, 0.85, 1.0)
             // smelt item +0.2(tier)
 
@@ -184,19 +324,19 @@ export const SETTINGS = {
             'minecraft:cooked_rabbit': 0.65,
             'minecraft:cooked_cod': 0.65,
             'minecraft:cooked_salmon': 0.65,
-            'minecraft:cooked_salmon': 0.65,
+            // 'minecraft:cooked_salmon': 0.65,
 
             'minecraft:golden_carrot': 0.65,
             'minecraft:glistering_melon_slice': 0.65,
             'minecraft:popped_chorus_fruit': 0.85,
             'minecraft:suspicious_stew': 0.85,
             'minecraft:beetroot_soup': 0.85,
-            'minecraft:golden_carrot': 0.85,
+            // 'minecraft:golden_carrot': 0.85,
             'minecraft:golden_apple': 0.85,
             'minecraft:enchanted_golden_apple': 1,
             'minecraft:rabbit_stew': 1,
             'minecraft:nether_star': 1,
-        }
+        })
     },
     CARRIED_CHEST: {
         ENABLED: true,
@@ -206,10 +346,10 @@ export const SETTINGS = {
         DOUBLE_CHEST_SIZE: 54,
         SLOWNESS_DURATION: .5 * 20,
         SLOWNESS_AMPLIFIER: 2,
-        SOUND_PICK_UP: {
+        SOUND_PICK_UP: Object.freeze({
             ID: "armor.equip_leather",
             VOLUME: 1.0,
             PITCH: 0.8
-        }
+        })
     }
-}
+})

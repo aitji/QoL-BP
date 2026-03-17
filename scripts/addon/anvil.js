@@ -4,6 +4,29 @@ import { checkRandom } from "../lib"
 const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = SETTINGS
 
 const delay = {}
+const permCache = new Map() // key: typeId -> Map(direction -> BlockPermutation)
+
+// helper
+function getCache(typeId, direction) {
+    let inner = permCache.get(typeId)
+    if (!inner) {
+        inner = new Map()
+        permCache.set(typeId, inner)
+    }
+
+    let perm = inner.get(direction)
+    if (!perm) {
+        try { perm = BlockPermutation.resolve(typeId).withState('minecraft:cardinal_direction', direction) }
+        catch (e) {
+            if (DEBUG) console.warn('[ANVIL] failed to resolve permutation for', typeId, e)
+            perm = null
+            // at this point i ask myself, why not hardcode anvil and i answer back 'why not'
+        }
+        inner.set(direction, perm)
+    }
+    return perm
+}
+
 /**@param {PlayerInteractWithBlockBeforeEvent} data */
 export const anvil_playerInteractWithBlock = (data) => {
     const { player, itemStack, isFirstEvent, block } = data
@@ -14,13 +37,16 @@ export const anvil_playerInteractWithBlock = (data) => {
     ) {
         if (!isFirstEvent) {
             const playerDelay = delay[player.id] || 0
-            if (REPAIRABLE_ANVIL.includes(block.typeId)) data.cancel = true
+            if (REPAIRABLE_ANVIL[block.typeId]) data.cancel = true
             if (playerDelay > system.currentTick) return
         }
 
         delay[player.id] = system.currentTick + REPAIR_HELD_DELAY
-        const score = REPAIRABLE_ANVIL.findIndex(e => block.typeId === e)
-        if (score <= -1 || score === REPAIRABLE_ANVIL.length - 1) return
+
+        const currType = block.typeId
+        const nextType = REPAIRABLE_ANVIL[currType]
+
+        if (!nextType) return
 
         data.cancel = true
 
@@ -30,10 +56,9 @@ export const anvil_playerInteractWithBlock = (data) => {
         const slot = player.selectedSlotIndex
         system.run(() => {
             // new anvil
-            const anvil = BlockPermutation
-                .resolve(REPAIRABLE_ANVIL[score + 1])
-                .withState('minecraft:cardinal_direction', state)
-            block.setPermutation(anvil)
+            const anvilPerm = getCache(nextType, state)
+            if (!anvilPerm) return
+            block.setPermutation(anvilPerm)
 
             const playSound = () => {
                 const center = block.center()
@@ -59,10 +84,9 @@ export const anvil_playerInteractWithBlock = (data) => {
 
                 // fail to remove player item
                 if (!isDone || isDone === 0) {
-                    const oldAnvil = BlockPermutation
-                        .resolve(REPAIRABLE_ANVIL[score])
-                        .withState('minecraft:cardinal_direction', state)
-                    block.setPermutation(oldAnvil)
+                    // revert anvil
+                    const oldPerm = getCache(currType, state)
+                    if (oldPerm) block.setPermutation(oldPerm)
                 } else playSound()
                 return
             }

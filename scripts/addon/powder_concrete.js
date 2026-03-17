@@ -3,8 +3,9 @@ import { SETTINGS } from "../_config"
 import { checkRandom } from "../lib"
 const {
     DEBUG,
+    SLICE_PREFIX,
     WET_POWDER_CONCRTE: {
-        SLICE_PREFIX, TYPEID_ENDSWITH, ITEM_PREFIX,
+        TYPEID_ENDSWITH, ITEM_PREFIX,
         KEEP_VELOCITY, BATCH_SIZE, PROCESS_DELAY,
         DONE_PARTICLE, DONE_SOUND
     }
