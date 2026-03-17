@@ -1,4 +1,4 @@
-import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode } from "@minecraft/server"
+import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player } from "@minecraft/server"
 import { checkRandom } from "../lib"
 import { SETTINGS } from "../_config"
 const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP } } = SETTINGS
@@ -47,8 +47,8 @@ const findInv = (player) => {
 
 const buildCarryItem = (blockTypeId, player) => {
   const it = new ItemStack(blockTypeId, 1)
-  it.nameTag = `§r§fCarried Chest`
-  it.setLore([`§r§5${player.name}§r§5's Carried Chest`])
+  it.nameTag = `§r§fCarried Container`
+  it.setLore([`§r§5${player.name}§r§5's Carried Container`])
   it.lockMode = ItemLockMode.slot
   it.keepOnDeath = true
   return it
@@ -127,7 +127,7 @@ const inv2block = (heldInv, block, neighbourInv) => {
 
 export const chest_playerInteractWithBlock = (data) => {
   const { player, block } = data
-  if (!block?.getComponent("minecraft:inventory") || player.getComponent("minecraft:equippable").getEquipment(EquipmentSlot.Mainhand) || !player.isSneaking || player.hasTag(CARRY_TAG)) return
+  if (!block || !block?.getComponent("minecraft:inventory") || player.getComponent("minecraft:equippable").getEquipment(EquipmentSlot.Mainhand) || !player.isSneaking || player.hasTag(CARRY_TAG)) return
   data.cancel = true
 
   system.runTimeout(() => {
@@ -141,7 +141,7 @@ export const chest_playerInteractWithBlock = (data) => {
 
       const carryItem = buildCarryItem(blockTypeId, player)
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand, carryItem)
-      player.setDynamicProperty('qol:chest.selectedSlotIndex', player.selectedSlotIndex ?? 0)
+      player.setDynamicProperty('qol:chest.storage', JSON.stringify({ selectedSlotIndex: (player.selectedSlotIndex ?? 0), blockTypeId }))
       player.addTag(CARRY_TAG)
       player.dimension.playSound(SOUND_PICK_UP.ID, player.location, { volume: checkRandom(SOUND_PICK_UP.VOLUME), pitch: checkRandom(SOUND_PICK_UP.PITCH) })
       block.setType("minecraft:air")
@@ -149,21 +149,21 @@ export const chest_playerInteractWithBlock = (data) => {
       if (!findInv(player)) {
         player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
         player.removeTag(CARRY_TAG)
-        player.setDynamicProperty('qol:chest.selectedSlotIndex', undefined)
+        player.setDynamicProperty('qol:chest.storage', undefined)
       }
     } catch (e) {
       try { player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand) } catch (_) { }
       player.removeTag(CARRY_TAG)
-      player.setDynamicProperty('qol:chest.selectedSlotIndex', undefined)
-      if (DEBUG) world.sendMessage(`§cChest pickup error: ${e}`)
+      player.setDynamicProperty('qol:chest.storage', undefined)
+      if (DEBUG) world.sendMessage(`§cContainer pickup error: ${e}`)
     }
   }, 1)
 }
 
 export const chest_playerPlaceBlock = (data) => {
   const { player, block } = data
-  if (!block || block.typeId !== CHEST_ID || !player.hasTag(CARRY_TAG)) return
-  if ((player.getDynamicProperty('qol:chest.selectedSlotIndex') ?? 0) !== player.selectedSlotIndex) return
+  if (!block || !block?.getComponent("minecraft:inventory") || !player.hasTag(CARRY_TAG)) return
+  if ((JSON.parse(player.getDynamicProperty('qol:chest.storage') ?? 0).selectedSlotIndex) !== player.selectedSlotIndex) return
 
   const holdingEntity = findInv(player)
   if (!holdingEntity) {
@@ -171,12 +171,13 @@ export const chest_playerPlaceBlock = (data) => {
       player.sendMessage("§cCould not find saved inventory!")
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
       player.removeTag(CARRY_TAG)
-      player.setDynamicProperty('qol:chest.selectedSlotIndex', undefined)
+      player.setDynamicProperty('qol:chest.storage', undefined)
     }, 1)
     return
   }
 
   const blockTypeId = holdingEntity.getTags().find(t => t.startsWith("type "))?.substring(5) ?? CHEST_ID
+  if (block.typeId !== blockTypeId) return
   const neighbourSnapshots = []
 
   try {
@@ -219,15 +220,40 @@ export const chest_playerPlaceBlock = (data) => {
     try { holdingEntity.teleport(player.location, { dimension: player.dimension }) }
     catch (_) { }
 
-    player.sendMessage("§cCould not place the chest. Inventory restored.")
+    player.sendMessage("§cCould not place the container. Inventory restored.")
   } finally {
     player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
     player.removeTag(CARRY_TAG)
-    player.setDynamicProperty('qol:chest.selectedSlotIndex', undefined)
+    player.setDynamicProperty('qol:chest.storage', undefined)
   }
 }
 
+/**@param {Player} player*/
 export const chest_player = (player) => {
-  if (player.hasTag(CARRY_TAG))
+  if (player.hasTag(CARRY_TAG)) {
     player.addEffect("slowness", SLOWNESS_DURATION, { showParticles: false, amplifier: SLOWNESS_AMPLIFIER })
+
+    const data = JSON.parse(player.getDynamicProperty("qol:chest.storage") || "{}")
+    const slot = data?.selectedSlotIndex
+    if (data && slot === player.selectedSlotIndex) {
+      const blockTypeId = data.blockTypeId
+      const equ = player.getComponent("minecraft:equippable")
+      const item = equ.getEquipment(EquipmentSlot.Mainhand)
+
+      if (item && (item.typeId !== blockTypeId || item.nameTag !== "§r§fCarried Container")) {
+        if (!player.hasTag("qol.chest.alert")) {
+          player.sendMessage(`§cHotbar Slot #${slot + 1} need to be empty.`)
+        }
+        player.addTag('qol.chest.alert')
+        return
+      }
+
+      if (!item || item.typeId !== blockTypeId || item.nameTag !== "§r§fCarried Container") {
+        player.selectedSlotIndex = slot
+        const carryItem = buildCarryItem(blockTypeId, player)
+        equ.setEquipment(EquipmentSlot.Mainhand, carryItem)
+        player.removeTag('qol.chest.alert')
+      }
+    } else player.removeTag('qol.chest.alert')
+  }
 }

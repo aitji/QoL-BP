@@ -81,7 +81,7 @@ export const SETTINGS = Object.freeze({
             PITCH: 1.0
         })
     }),
-    WET_POWDER_CONCRTE: {
+    WET_POWDER_CONCRTE: Object.freeze({
         ENABLED: true,
         ITEM_PREFIX: "minecraft:",
         PROCESS_DELAY: 4, // how long before item vanish (tick)
@@ -95,8 +95,8 @@ export const SETTINGS = Object.freeze({
         }),
         MAX_PROCESS: 12,
         BATCH_SIZE: 12 // max entity that will get process
-    },
-    COMPOSTER: {
+    }),
+    COMPOSTER: Object.freeze({
         ENABLED: true,
         WORK_WITH_HOPPER: true, // this might slow down the game when have too many...
         HOPPER_INTERVAL_TICK: 8, // tick
@@ -337,8 +337,8 @@ export const SETTINGS = Object.freeze({
             'minecraft:rabbit_stew': 1,
             'minecraft:nether_star': 1,
         })
-    },
-    CARRIED_CHEST: {
+    }),
+    CARRIED_CHEST: Object.freeze({
         ENABLED: true,
         CARRY_TAG: "carrying",
         ENTITY_TYPE: "qol:chest",
@@ -351,5 +351,5 @@ export const SETTINGS = Object.freeze({
             VOLUME: 1.0,
             PITCH: 0.8
         })
-    }
+    })
 })
