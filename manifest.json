@@ -2,9 +2,9 @@
   "format_version": 3,
   "header": {
     "description": "§7Nice little features to make your game better!",
-    "name": "§fQ§eo§fF §c(1.1.1)",
+    "name": "§fQ§eo§fF §c(1.2.0)",
     "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "base_game_version": "1.26.3",
     "min_engine_version": "1.26.3"
   },
