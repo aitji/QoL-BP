@@ -50,7 +50,7 @@
     },
     {
       "type": "slider",
-      "text": "§7How §f'long'§7 should light stay after it turns off? §8(lower = longer) §r §r §r §r",
+      "text": "§7How §f'long'§8(game tick)§7 should light stay after it turns off? §8(higher = longer) §r §r §r §r",
       "name": "qol:LIGHT.DECAY_LIGHT_TICK",
       "min": 0,
       "max": 40,
@@ -95,7 +95,7 @@
     },
     {
       "type": "slider",
-      "text": "§7How bright should burning entities glow? §8(WILL affected by reduce setting) §r",
+      "text": "§7How bright should burning entities glow? §8(affected by reduce setting) §r",
       "name": "qol:LIGHT.LIGHT_FIRE_LEVEL",
       "min": 0,
       "max": 15,
@@ -117,7 +117,7 @@
     },
     {
       "type": "slider",
-      "text": "§7How long§8(gametick)§7 to hold before repairing starts again? §r",
+      "text": "§7How long§8(game tick)§7 to hold before repairing starts again? §r",
       "name": "qol:REPAIR_ANVIL.REPAIR_HELD_DELAY",
       "min": 0,
       "max": 20,
@@ -157,7 +157,7 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Composte More Items §7----------------------------------"
+      "text": "§l§cQ§r§lo§cL§r Compost More Items §7-----------------------------------"
     },
     {
       "type": "toggle",
@@ -213,7 +213,7 @@
     },
     {
       "type": "slider",
-      "text": "§7When carrying a container, What level of slowness will apply? §r",
+      "text": "§7When carrying a container, what level of slowness will apply? §r",
       "name": "qol:CARRIED_CHEST.SLOWNESS_AMPLIFIER",
       "min": 0,
       "max": 5,
