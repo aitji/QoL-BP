@@ -1,7 +1,7 @@
 import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world } from "@minecraft/server"
-import { SETTINGS } from "../_config"
 import { checkRandom } from "../lib"
-const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = SETTINGS
+import { RUNTIME } from "../_store"
+const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = RUNTIME
 
 const delay = {}
 const permCache = new Map() // key: typeId -> Map(direction -> BlockPermutation)

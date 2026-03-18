@@ -1,7 +1,7 @@
 import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode } from "@minecraft/server"
 import { checkRandom } from "../lib"
-import { SETTINGS } from "../_config"
-const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP } } = SETTINGS
+import { RUNTIME } from "../_store"
+const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP } } = RUNTIME
 
 const NEIGH = {
   north: { left: "west", right: "east" },

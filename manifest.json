@@ -1,11 +1,12 @@
 {
-  "format_version": 2,
+  "format_version": 3,
   "header": {
-    "description": "§7nice to have feature!",
+    "description": "§7Nice little features to make your game better!",
     "name": "§fQ§eo§fF §c(1.1.1)",
     "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
-    "version": [1,1,1],
-    "min_engine_version": [1,26,3]
+    "version": "1.1.1",
+    "base_game_version": "1.26.3",
+    "min_engine_version": "1.26.3"
   },
   "metadata": {
     "authors": ["aitji", "pickerth-12"],
@@ -14,10 +15,241 @@
     "url": "https://github.com/aitji/QoL-BP"
   },
   "dependencies": [
-    {"module_name": "@minecraft/server","version": "2.5.0"}
+    {"module_name": "@minecraft/server","version": "beta"}
   ],
   "modules": [
-    {"type": "data","uuid": "1f6786c8-d69d-4c59-a27f-f061e62ccde6","version": [1,0,0]},
-    {"type": "script","uuid": "d71d1934-0d8d-46aa-b148-bb701eba33aa","version": [1,0,0],"entry": "scripts/index.js"}
+    {"type": "data","uuid": "1f6786c8-d69d-4c59-a27f-f061e62ccde6","version": "1.0.0"},
+    {"type": "script","uuid": "d71d1934-0d8d-46aa-b148-bb701eba33aa","version": "1.0.0","entry": "scripts/index.js", "language": "javascript"}
+  ],
+  "settings": [
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r was made by §c@aitji§r (script) and §9@pickerth-12§r (ideas & design). §7You can tweak everything below to your liking!\n§cTurn on BetaAPIs in Experiments"
+    },
+    {
+      "type": "slider",
+      "text": "§7How often should QoL run? §8(lower = faster updates) §r",
+      "name": "qol:INTERVAL_DELAY",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 1
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Dynamic Light System §7----------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Enable dynamic light?",
+      "name": "qol:LIGHT.ENABLED",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "§7How §f'long'§8(game tick)§7 should light stay after it turns off? §8(higher = longer) §r §r §r §r",
+      "name": "qol:LIGHT.DECAY_LIGHT_TICK",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "slider",
+      "text": "§7How §f'much'§7 should light be reduced? §8(final = lightLevel * §o[value]§r§8) §r §r §r",
+      "name": "qol:LIGHT.REDUCE_LIGHT",
+      "min": 0.0,
+      "max": 0.9,
+      "step": 0.1,
+      "default": 0.7
+    },
+    {
+      "type": "slider",
+      "text": "§7When fading, how much light is lost each step? §r",
+      "name": "qol:LIGHT.LIGHT_REDUCE_LINEAR",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "slider",
+      "text": "§7How §f'far'§7 can light sources be detected around you? §r",
+      "name": "qol:LIGHT.LIGHT_RENDER_RADIUS",
+      "min": 0,
+      "max": 256,
+      "step": 2,
+      "default": 32
+    },
+    {
+      "type": "slider",
+      "text": "§7How §f'many'§7 light sources can affect you at once? §r",
+      "name": "qol:LIGHT.LIGHT_RENDER_PER_PLAYER",
+      "min": 0,
+      "max": 128,
+      "step": 2,
+      "default": 12
+    },
+    {
+      "type": "slider",
+      "text": "§7How bright should burning entities glow? §8(affected by reduce setting) §r",
+      "name": "qol:LIGHT.LIGHT_FIRE_LEVEL",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 10
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Anvil Repair §7-----------------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Enable anvil repairing? §r",
+      "name": "qol:REPAIR_ANVIL.ENABLED",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "§7How long§8(game tick)§7 to hold before repairing starts again? §r",
+      "name": "qol:REPAIR_ANVIL.REPAIR_HELD_DELAY",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 7
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Wet Concrete Powder §7----------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Should concrete powder react to water? §r",
+      "name": "qol:WET_POWDER_CONCRTE.ENABLED",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Keep item movement after touching water? §r",
+      "name": "qol:WET_POWDER_CONCRTE.KEEP_VELOCITY",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "§7How many can process at once? §c(can affect performance) §r",
+      "name": "qol:WET_POWDER_CONCRTE.MAX_PROCESS",
+      "min": 1,
+      "max": 64,
+      "step": 1,
+      "default": 12
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Compost More Items §7-----------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Enable improved composter? §r",
+      "name": "qol:COMPOSTER.ENABLED",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Should hoppers work with composter? §c(can affect performance) §r",
+      "name": "qol:COMPOSTER.WORK_WITH_HOPPER",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "§7How often§8(game tick)§7 hopper interacts with composter? §r",
+      "name": "qol:COMPOSTER.HOPPER_INTERVAL_TICK",
+      "min": 1,
+      "max": 40,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "slider",
+      "text": "§7How long§8(game tick)§7 before compost is ready? §r",
+      "name": "qol:COMPOSTER.DELAY_BEFORE_READY",
+      "min": 1,
+      "max": 40,
+      "step": 1,
+      "default": 17
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Carry Container System §7-------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow carrying a container?",
+      "name": "qol:CARRIED_CHEST.ENABLED",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "§7When carrying a container, How long§8(game tick)§7 is slowness duration? §r",
+      "name": "qol:CARRIED_CHEST.SLOWNESS_DURATION",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "slider",
+      "text": "§7When carrying a container, what level of slowness will apply? §r",
+      "name": "qol:CARRIED_CHEST.SLOWNESS_AMPLIFIER",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "toggle",
+      "text": "§7Disable §fjumping§7 while holding a container? §r",
+      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow jumping in §9water§7 while holding a container? §r",
+      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_WATER",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow jumping in §6lava§7 while holding a container? §r",
+      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA",
+      "default": true
+    },
+
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r's developer settings §7----------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§cDebug mode? §7(Show spam logs in chat/console) §r",
+      "name": "qol:DEBUG",
+      "default": true
+    }
   ]
 }

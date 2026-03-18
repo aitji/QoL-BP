@@ -1,12 +1,12 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player } from "@minecraft/server"
-import { SETTINGS } from "../_config"
 import { clamp } from "../lib"
-const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = SETTINGS
-
+import { RUNTIME } from "../_store"
+const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
 let AIR, WATER, LAVA, BASE_LIGHT
 if (ENABLED) system.run(() => {
+    world.sendMessage(`${typeof ENABLED}, ${typeof DECAY_LIGHT_TICK}, ${typeof REDUCE_LIGHT}, ${typeof LIGHT_RENDER_RADIUS}, ${typeof LIGHT_RENDER_PER_PLAYER}, ${typeof LIGHT_FIRE_LEVEL}, ${typeof LIGHT_REDUCE_LINEAR}`)
     AIR = BlockPermutation.resolve('minecraft:air')
     WATER = BlockPermutation.resolve('minecraft:water')
     LAVA = BlockPermutation.resolve('minecraft:lava')

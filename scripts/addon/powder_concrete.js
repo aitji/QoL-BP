@@ -1,6 +1,6 @@
 import { EntityComponentTypes, Player, world, ItemStack, system } from "@minecraft/server"
-import { SETTINGS } from "../_config"
 import { checkRandom } from "../lib"
+import { RUNTIME } from "../_store"
 const {
     DEBUG,
     SLICE_PREFIX,
@@ -9,7 +9,7 @@ const {
         KEEP_VELOCITY, BATCH_SIZE, PROCESS_DELAY,
         DONE_PARTICLE, DONE_SOUND
     }
-} = SETTINGS
+} = RUNTIME
 const queue = new Map() // Map<id, { readyAt, color, amount, dimensionId, location, velocity }>
 
 const wetDelay = (amount) => 60 + Math.floor(Math.sqrt(amount - 1) * 10)

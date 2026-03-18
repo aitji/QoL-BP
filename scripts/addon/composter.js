@@ -1,8 +1,7 @@
 import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemStack, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server"
-import { SETTINGS } from "../_config"
 import { checkRandom, clamp } from "../lib"
 import { RUNTIME } from "../_store"
-const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, VANILA_COMPOSTE, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = SETTINGS
+const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, VANILA_COMPOSTE, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = RUNTIME
 
 const clamp8 = (n) => clamp(n, 0, 8)
 const composterSet = new Set()
