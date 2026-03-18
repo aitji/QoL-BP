@@ -1,0 +1,21 @@
+execute unless score counter "aitjilib" matches ..99999 run scoreboard objectives add "aitjilib" dummy
+execute unless score counter "aitjilib" matches ..99999 run scoreboard players set counter "aitjilib" 80
+execute unless score counter "aitjilib" matches ..99999 run scoreboard players set addon "aitjilib" 0
+execute unless score counter "aitjilib" matches ..99999 run scoreboard players set heartbeat "aitjilib" 0
+execute unless score counter "aitjilib" matches ..99999 run scriptevent aitji-lib:heartbeat
+
+execute unless score heartbeat "aitjilib" matches 1 run scriptevent aitji-lib:heartbeat qol
+execute unless score heartbeat "aitjilib" matches 1 run scoreboard players set heartbeat "aitjilib" 1
+
+scoreboard players remove counter "aitjilib" 1
+execute if score addon "aitjilib" matches 2.. run scoreboard players operation counter "aitjilib" += addon "aitjilib"
+execute if score addon "aitjilib" matches 2.. run scoreboard players remove counter "aitjilib" 1
+
+execute unless score api "aitjilib" matches 1 if score counter "aitjilib" matches ..0 run tellraw @a {"rawtext":[{"translate":"§c§c@aitji Library §l§cCan't§r§7 Install QoL Addon\n\nPlease §cEnabled Beta APIs§7 That will allow §cQ§fo§cL§7 to work\n*If you already enabled, Please Update the §cAddon§r"}]}
+execute unless score api "aitjilib" matches 1 if score counter "aitjilib" matches ..0 run tellraw @a {"rawtext":[{"translate":"\n§7Addon By §caitji, pickerth-12 §7(beta-stable)\n§7Download addon at §cgithub.com/aitji/QoL-BP\n§7----------------------------"}]}
+
+execute unless score api "aitjilib" matches 0 if score counter "aitjilib" matches ..0 run scoreboard players set api "aitjilib" 0
+execute if score counter "aitjilib" matches ..0 run scoreboard players set counter "aitjilib" 300
+
+scoreboard players set addon "aitjilib" 0
+scoreboard players set heartbeat "aitjilib" 0

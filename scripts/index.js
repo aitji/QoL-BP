@@ -9,6 +9,8 @@ import * as chest from "./addon/chest"
 
 // tick
 system.run(() => {
+    world.scoreboard.getObjective("aitjilib").setScore("api", 1)
+
     const count = store_load()
     const { DEBUG, LIGHT, REPAIR_ANVIL, WET_POWDER_CONCRTE, COMPOSTER } = RUNTIME
 
@@ -65,3 +67,17 @@ world.beforeEvents.playerInteractWithBlock.subscribe(data => {
 world.afterEvents.entitySpawn.subscribe(data => {
     if (RUNTIME.WET_POWDER_CONCRTE.ENABLED) powder.powder_entitySpawn(data)
 })
+
+// beta apis check from another of my project
+system.beforeEvents.watchdogTerminate.subscribe((d) => (d.cancel = true))
+system.afterEvents.scriptEventReceive.subscribe(({ id, message }) => {
+    if (message !== "qol") return
+    const lib = world.scoreboard.getObjective("aitjilib")
+
+    switch (id) {
+        case 'aitji-lib:heartbeat':
+            lib.addScore(`addon`, 1)
+            lib.setScore("api", 1)
+        default: return
+    }
+}, { namespaces: ["aitji-lib"] })
