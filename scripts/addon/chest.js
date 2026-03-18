@@ -1,7 +1,7 @@
-import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player } from "@minecraft/server"
+import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode } from "@minecraft/server"
 import { checkRandom } from "../lib"
 import { SETTINGS } from "../_config"
-const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP } } = SETTINGS
+const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP } } = SETTINGS
 
 const NEIGH = {
   north: { left: "west", right: "east" },
@@ -12,6 +12,12 @@ const NEIGH = {
 
 const blockInDir = (b, d) => ({ north: () => b.north(1), south: () => b.south(1), east: () => b.east(1), west: () => b.west(1) }[d]?.() ?? b)
 const isFaceChest = (b, f) => b?.typeId === CHEST_ID && b.permutation.getState("minecraft:cardinal_direction") === f
+
+const setJump = (player, n) => {
+  if (!PLAYER_JUMP.NO_JUMP_HOLD_CHEST) return
+  if (DEBUG) world.sendMessage(`§7${player.name} jump=${n}`)
+  player.inputPermissions.setPermissionCategory(InputPermissionCategory.Jump, n)
+}
 
 const copyInv = (inv) => {
   const arr = []
@@ -143,23 +149,29 @@ export const chest_playerInteractWithBlock = (data) => {
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand, carryItem)
       player.setDynamicProperty('qol:chest.storage', JSON.stringify({ selectedSlotIndex: (player.selectedSlotIndex ?? 0), blockTypeId }))
       player.addTag(CARRY_TAG)
+      setJump(player, false)
       player.dimension.playSound(SOUND_PICK_UP.ID, player.location, { volume: checkRandom(SOUND_PICK_UP.VOLUME), pitch: checkRandom(SOUND_PICK_UP.PITCH) })
       block.setType("minecraft:air")
 
       if (!findInv(player)) {
         player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
         player.removeTag(CARRY_TAG)
+        setJump(player, true)
         player.setDynamicProperty('qol:chest.storage', undefined)
       }
     } catch (e) {
       try { player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand) } catch (_) { }
       player.removeTag(CARRY_TAG)
+      setJump(player.Jump, true)
       player.setDynamicProperty('qol:chest.storage', undefined)
       if (DEBUG) world.sendMessage(`§cContainer pickup error: ${e}`)
     }
   }, 1)
 }
 
+/**
+ * @param {PlayerPlaceBlockAfterEvent} data 
+ */
 export const chest_playerPlaceBlock = (data) => {
   const { player, block } = data
   if (!block || !block?.getComponent("minecraft:inventory") || !player.hasTag(CARRY_TAG)) return
@@ -171,6 +183,7 @@ export const chest_playerPlaceBlock = (data) => {
       player.sendMessage("§cCould not find saved inventory!")
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
       player.removeTag(CARRY_TAG)
+      setJump(player, true)
       player.setDynamicProperty('qol:chest.storage', undefined)
     }, 1)
     return
@@ -224,14 +237,43 @@ export const chest_playerPlaceBlock = (data) => {
   } finally {
     player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
     player.removeTag(CARRY_TAG)
+    setJump(player, true)
     player.setDynamicProperty('qol:chest.storage', undefined)
   }
 }
 
+
 /**@param {Player} player*/
 export const chest_player = (player) => {
+  const canJump = player.inputPermissions.isPermissionCategoryEnabled(InputPermissionCategory.Jump)
+  const jumpSet = (n) => setJump(player, n)
   if (player.hasTag(CARRY_TAG)) {
     player.addEffect("slowness", SLOWNESS_DURATION, { showParticles: false, amplifier: SLOWNESS_AMPLIFIER })
+
+    if (player.matches({ gameMode: GameMode.Creative })) {
+      if (!canJump) jumpSet(true)
+    } else {
+      let allowJump = false
+      if (!PLAYER_JUMP.NO_JUMP_HOLD_CHEST || APPLY_IMPULSE.ENABLED) {
+        // water
+        if (PLAYER_JUMP.ALLOW_JUMP_IN_WATER && player.isInWater) {
+          allowJump = true
+          if (APPLY_IMPULSE.ENABLED) player.applyImpulse(APPLY_IMPULSE.VECTOR)
+        }
+
+        // lava
+        if (PLAYER_JUMP.ALLOW_JUMP_IN_LAVA) {
+          const { location } = player
+          const block = player.dimension.getBlock(location)
+          if (
+            block?.typeId === 'minecraft:lava' ||
+            block?.typeId === 'minecraft:flowing_lava'
+          ) allowJump = true
+        }
+      }
+
+      if (allowJump !== canJump) jumpSet(allowJump)
+    }
 
     const data = JSON.parse(player.getDynamicProperty("qol:chest.storage") || "{}")
     const slot = data?.selectedSlotIndex
@@ -254,6 +296,9 @@ export const chest_player = (player) => {
         equ.setEquipment(EquipmentSlot.Mainhand, carryItem)
         player.removeTag('qol.chest.alert')
       }
-    } else player.removeTag('qol.chest.alert')
+    }
+  } else {
+    if (!canJump) jumpSet(true)
+    player.removeTag('qol.chest.alert')
   }
 }

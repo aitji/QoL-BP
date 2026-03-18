@@ -1,6 +1,6 @@
 export const SETTINGS = Object.freeze({
     DEBUG: true,
-    INTERVAL_DELAY: 0, // delay for each interval
+    INTERVAL_DELAY: 1, // delay for each interval
     SLICE_PREFIX: "minecraft:".length, // 10
     LIGHT: Object.freeze({
         ENABLED: true,
@@ -90,7 +90,7 @@ export const SETTINGS = Object.freeze({
         DONE_PARTICLE: "minecraft:water_evaporation_bucket_emitter",
         DONE_SOUND: Object.freeze({
             ID: "mob.happy_ghast.harness_unequip",
-            PITCH: [1.6, 1.8],
+            PITCH: Object.freeze([1.6, 1.8]),
             VOLUME: 0.8
         }),
         MAX_PROCESS: 12,
@@ -114,7 +114,7 @@ export const SETTINGS = Object.freeze({
         SOUND_FILL_BONEMEAL: Object.freeze({
             ID: "item.bone_meal.use",
             VOLUME: 2.0,
-            PITCH: [0.9, 1.1]
+            PITCH: Object.freeze([0.9, 1.1])
         }),
         SOUND_READY: Object.freeze({
             ID: "block.composter.ready",
@@ -185,7 +185,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:tall_grass",
             "minecraft:twisting_vines",
             "minecraft:vines",
-            "minecraft:wheaping_vines",
+            "minecraft:weeping_vines",
 
             // 65%
             "minecraft:apple",
@@ -325,7 +325,9 @@ export const SETTINGS = Object.freeze({
 
             // ooked
             'minecraft:cooked_chicken': 0.65,
-            'minecraft:cooked_pork': 0.65,
+            'minecraft:cooked_porkchop': 0.65,
+            'minecraft:cooked_beef': 0.65,
+            'minecraft:cooked_mutton': 0.65,
             'minecraft:cooked_rabbit': 0.65,
             'minecraft:cooked_cod': 0.65,
             'minecraft:cooked_salmon': 0.65,
@@ -347,11 +349,20 @@ export const SETTINGS = Object.freeze({
     CARRIED_CHEST: Object.freeze({
         ENABLED: true,
         CARRY_TAG: "carrying",
+        APPLY_IMPULSE: Object.freeze({ // only apply via player in water *won't effect [creative] gamemode
+            ENABLED: true,
+            VECTOR: Object.freeze({ x: 0, y: -0.02, z: 0 }) // if posstive will make player swim up easier
+        }),
+        PLAYER_JUMP: Object.freeze({
+            NO_JUMP_HOLD_CHEST: true, // lock player from jumpping when holding chest
+            ALLOW_JUMP_IN_WATER: true,
+            ALLOW_JUMP_IN_LAVA: true,
+        }),
         ENTITY_TYPE: "qol:chest",
         CHEST_ID: "minecraft:chest",
-        DOUBLE_CHEST_SIZE: 54,
-        SLOWNESS_DURATION: .5 * 20,
-        SLOWNESS_AMPLIFIER: 2,
+        DOUBLE_CHEST_SIZE: 54, // don't edit
+        SLOWNESS_DURATION: .5 * 20, // player holding chest will apply slowness effect how long? (tick)
+        SLOWNESS_AMPLIFIER: 2, // level of slowness when player holding chest
         SOUND_PICK_UP: Object.freeze({
             ID: "armor.equip_leather",
             VOLUME: 1.0,
