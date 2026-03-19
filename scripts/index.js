@@ -12,8 +12,10 @@ system.run(() => {
     world.scoreboard.getObjective("aitjilib").setScore("api", 1)
 
     const { DEBUG } = RUNTIME
-    world.sendMessage('§7qol loaded')
-    world.sendMessage(`§8${world.getAllPlayers().map(e => ` ${e.name} = ${e.id}`).join('\n')}`)
+    if (DEBUG) {
+        world.sendMessage('§7qol loaded')
+        world.sendMessage(`§8${world.getAllPlayers().map(e => ` ${e.name} = ${e.id}`).join('\n')}`)
+    }
     if (!DEBUG) world.gameRules.sendCommandFeedback = false
 
     // interval

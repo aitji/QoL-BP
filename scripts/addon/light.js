@@ -6,7 +6,6 @@ export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.perm
 
 let AIR, WATER, LAVA, BASE_LIGHT
 if (ENABLED) system.run(() => {
-    world.sendMessage(`${typeof ENABLED}, ${typeof DECAY_LIGHT_TICK}, ${typeof REDUCE_LIGHT}, ${typeof LIGHT_RENDER_RADIUS}, ${typeof LIGHT_RENDER_PER_PLAYER}, ${typeof LIGHT_FIRE_LEVEL}, ${typeof LIGHT_REDUCE_LINEAR}`)
     AIR = BlockPermutation.resolve('minecraft:air')
     WATER = BlockPermutation.resolve('minecraft:water')
     LAVA = BlockPermutation.resolve('minecraft:lava')
