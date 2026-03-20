@@ -1,3 +1,6 @@
+## info
+this file is only for top priority todo, if something like refactor some code or simple todo put it in the file
+
 ## aitji
 - [x] (light-weight) dynamic light
 - [x] repair anvil (with ingot)
@@ -6,7 +9,10 @@
 - [x] composter (poisonous potato, rotten flesh, spider ...)
 - [x] carried chest
     - [x] support other container
-- [ ] /README.md
+- [x] /README.md
+- [x] offhand items
+- [x] BUG!!: fix hoe/shovel cannot use with dynamic light
+- [ ] Harvest crop
 
 ## picker
 - [x] update light level to new version
