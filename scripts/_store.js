@@ -80,7 +80,7 @@ function buildRuntime() {
             SOUND_FILL_BONEMEAL: C.SOUND_FILL_BONEMEAL,
             SOUND_READY: C.SOUND_READY,
             SOUND_FILL: C.SOUND_FILL,
-            VANILA_COMPOSTE: C.VANILA_COMPOSTE,
+            // VANILA_COMPOSTE: C.VANILA_COMPOSTE, // didn't use anymore
             ITEMS: C.ITEMS,
         }),
 

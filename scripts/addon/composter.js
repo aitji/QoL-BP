@@ -1,7 +1,7 @@
-import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemStack, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server"
+import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server"
 import { checkRandom, clamp } from "../lib"
 import { RUNTIME } from "../_store"
-const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, VANILA_COMPOSTE, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = RUNTIME
+const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = RUNTIME
 
 const clamp8 = (n) => clamp(n, 0, 8)
 const composterSet = new Set()
@@ -152,55 +152,69 @@ export const composter_pending = () => {
             slot: -1,
             amount: 0
         }
+
+        let firstChanceItem = -1
+        let bowlSlot = -1
+        let emptySlot = -1
+        let firstStewSlot = -1
+
         for (let i = 0; i < container.size; i++) {
             const item = container.getItem(i)
-            if (!item) continue
-            const itemID = item.typeId
-            if (item.typeId.endsWith('_stew') || item.typeId.endsWith('_soup')) {
-                foundBowl.amount += 1
-                if (foundBowl.slot === -1) {
-                    foundBowl.slot = i
-                }
-            }
-            if (VANILA_COMPOSTE.has(itemID)) return
-            const chance = ITEMS[itemID]
-            if (!chance) continue
-            const success = Math.random() <= chance
-            const loc = block.center()
 
-            if (item.amount > 1) {
-                container.setItem(i, new ItemStack(item.typeId, item.amount - 1))
-            } else {
-                if (item.typeId.endsWith('_stew') || item.typeId.endsWith('_soup')) {
-                    container.setItem(i, undefined)
-
-                    let bowlSlot = -1, emptySlot = -1
-                    for (let j = 0; j < container.size; j++) {
-                        if (j === i) continue
-                        const slot = container.getItem(j)
-                        if (!slot) { if (emptySlot === -1) emptySlot = j }
-                        else if (slot.typeId === 'minecraft:bowl' && slot.amount < 64) { bowlSlot = j; break }
-                    }
-
-                    if (bowlSlot !== -1) {
-                        const existing = container.getItem(bowlSlot)
-                        container.setItem(bowlSlot, new ItemStack('minecraft:bowl', existing.amount + 1))
-                    } else if (emptySlot !== -1) {
-                        container.setItem(emptySlot, new ItemStack('minecraft:bowl', 1))
-                    }
-                } else {
-                    container.setItem(i, undefined)
-                }
+            if (!item) {
+                if (emptySlot === -1) emptySlot = i
+                continue
             }
 
-            playSound(dimension, SOUND_FILL_BONEMEAL, loc)
-            if (success) {
-                playSound(dimension, SOUND_FILL_SUCCESS, loc)
-                setLevel(block, state + 1)
-                if (state === 6) maybeFinish(block, dimension, loc)
-            } else playSound(dimension, SOUND_FILL, loc)
-            return
+            const com = item.getComponent(ItemComponentTypes.Compostable)
+            if (com?.compostingChance) return
+
+            if (firstChanceItem === -1) {
+                const isStew = item.typeId.endsWith('_stew') || item.typeId.endsWith('_soup')
+                const chance = isStew ? ITEMS[item.typeId] : ITEMS[item.typeId]
+
+                if (isStew) {
+                    foundBowl.amount += 1
+                    if (foundBowl.slot === -1) foundBowl.slot = i
+                    if (firstStewSlot === -1) firstStewSlot = i
+                    firstChanceItem = i
+                } else if (chance) firstChanceItem = i
+            }
+
+            if (bowlSlot === -1 && item.typeId === 'minecraft:bowl' && item.amount < 64) bowlSlot = i
         }
+
+        if (firstChanceItem === -1) return
+
+        const item = container.getItem(firstChanceItem)
+        const itemID = item.typeId
+        const chance = ITEMS[itemID]
+        const success = Math.random() <= chance
+        const loc = block.center()
+        const isStew = itemID.endsWith('_stew') || itemID.endsWith('_soup')
+
+        if (item.amount > 1) container.setItem(firstChanceItem, new ItemStack(itemID, item.amount - 1))
+        else {
+            container.setItem(firstChanceItem, undefined)
+
+            if (isStew) {
+                const targetBowlSlot = bowlSlot !== -1 && bowlSlot !== firstChanceItem ? bowlSlot : emptySlot
+                if (targetBowlSlot !== -1) {
+                    const existing = container.getItem(targetBowlSlot)
+                    container.setItem(
+                        targetBowlSlot,
+                        new ItemStack('minecraft:bowl', existing ? existing.amount + 1 : 1)
+                    )
+                }
+            }
+        }
+
+        playSound(dimension, SOUND_FILL_BONEMEAL, loc)
+        if (success) {
+            playSound(dimension, SOUND_FILL_SUCCESS, loc)
+            setLevel(block, state + 1)
+            if (state === 6) maybeFinish(block, dimension, loc)
+        } else playSound(dimension, SOUND_FILL, loc)
     }
 
     if (changed) world.setDynamicProperty(DATA_COMPOSTER_LOCATION, JSON.stringify([...composterSet]))

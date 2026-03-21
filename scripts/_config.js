@@ -127,7 +127,7 @@ export const SETTINGS = Object.freeze({
             VOLUME: 1.3,
             PITCH: 0.8
         }),
-        VANILA_COMPOSTE: Object.freeze(new Set([
+        /*VANILA_COMPOSTE: Object.freeze(new Set([
             // 30%
             "minecraft:beetroot_seeds",
             "minecraft:bush",
@@ -256,7 +256,7 @@ export const SETTINGS = Object.freeze({
             // 100%
             "minecraft:cake",
             "minecraft:pumpkin_pie",
-        ])),
+        ])),*/ // didn't use anymore
         ITEMS: Object.freeze({
             // chance is max 1 (0.3, 0.5, 0.65, 0.85, 1.0)
             // smelt item +0.2(tier)
