@@ -257,7 +257,7 @@
     {
       "type": "toggle",
       "text": "§7Allow offhand?",
-      "name": "qof:OFFHAND.ENABLED", // need to fix
+      "name": "qof:OFFHAND.ENABLED",
       "default": true
     },
   
