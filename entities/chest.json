@@ -2,7 +2,7 @@
 	"format_version": "1.20.10",
 	"minecraft:entity": {
 		"description": {
-			"identifier": "qol:chest",
+			"identifier": "qof:chest",
 			"is_summonable": true,
 			"is_spawnable": false,
 			"is_experimental": false

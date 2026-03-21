@@ -17,7 +17,7 @@ system.run(() => {
     if (DISABLED_COMMANDFEEDBACK) world.gameRules.sendCommandFeedback = false
     if (DEBUG) {
         system.beforeEvents.watchdogTerminate.subscribe((d) => (d.cancel = true))
-        world.sendMessage('§7qol loaded')
+        world.sendMessage('§7qof loaded')
         world.sendMessage(`§8${world.getAllPlayers().map(e => ` ${e.name} = ${e.id} §7(${e.clientSystemInfo.platformType})`).join('\n')}`)
     }
 
@@ -90,7 +90,7 @@ world.afterEvents.playerLeave.subscribe(data => {
 
 // beta apis heartbeat
 system.afterEvents.scriptEventReceive.subscribe(({ id, message }) => {
-    if (message !== "qol") return
+    if (message !== "qof") return
     if (RUNTIME.DISABLED_HEARTBEAT) return // script will never responed to mcfunction
     const lib = world.scoreboard.getObjective("aitjilib")
 

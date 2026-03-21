@@ -1,11 +1,11 @@
-# QoL Quality of Life
+# QoF Quality of Feature
 
 > [!NOTE]
 > A Minecraft Bedrock addon that adds small vanilla-friendly features. Each module is configurable through the in-game pack settings panel. Requires **BetaAPIs** enabled under Experiments.
 
 ## Table of Contents
 
-- [QoL Quality of Life](#qol-quality-of-life)
+- [QoF Quality of Feature](#qof-quality-of-feature)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Installation](#installation)
@@ -39,9 +39,9 @@
 
 ## Installation
 
-1. Download the latest `.mcpack` from [Releases](https://github.com/aitji/QoL-BP/releases).
+1. Download the latest `.mcpack` from [Releases](https://github.com/aitji/QoF-BP/releases).
 2. Open the file Minecraft will import it automatically.
-3. Create or open a world, go to **Behavior Packs**, and activate **QoL**.
+3. Create or open a world, go to **Behavior Packs**, and activate **QoF**.
 4. Under **Experiments**, enable **Beta APIs**.
 5. Launch the world. Settings are available directly in the pack settings panel.
 
@@ -201,7 +201,7 @@ Concrete powder item automatically convert to concrete when they enter water. Th
 
 **How it works:**
 
-1. When a concrete powder item entity spawns, QoL begins tracking it.
+1. When a concrete powder item entity spawns, QoF begins tracking it.
 2. Once it enters water, a timer starts larger stacks wait slightly longer.
 3. After the timer expires, the powder entity is removed and a concrete item entity is spawned in its place.
 4. A particle and sound effect play on conversion.
@@ -238,9 +238,9 @@ Expands the composter to accept many more item types not supported in vanilla, i
 > Enabling hopper integration with many composters and hoppers in a loaded area may affect performance. Tune the hopper interval setting if needed.
 
 <details>
-  <summary><strong>Additional compostable items (QoL only)</strong></summary>
+  <summary><strong>Additional compostable items (QoF only)</strong></summary>
 
-These are items added by QoL on top of the vanilla compost table. Vanilla items are handled by Minecraft natively and are excluded here to avoid double-processing.
+These are items added by QoF on top of the vanilla compost table. Vanilla items are handled by Minecraft natively and are excluded here to avoid double-processing.
 
 | Item | Success Chance |
 | - | - |
@@ -383,35 +383,35 @@ All settings are accessible through the pack settings panel in-game. No manual f
 
 | Setting | Key | Type | Default | Description |
 |---|---|---|---|---|
-| Update interval | `qol:INTERVAL_DELAY` | Slider | `1` | Ticks between each QoL update cycle. Lower is faster. |
-| Debug mode | `qol:DEBUG` | Toggle | `false` | Prints verbose logs to chat and console. |
+| Update interval | `qof:INTERVAL_DELAY` | Slider | `1` | Ticks between each QoF update cycle. Lower is faster. |
+| Debug mode | `qof:DEBUG` | Toggle | `false` | Prints verbose logs to chat and console. |
 | **Dynamic Light** | | | | |
-| Enabled | `qol:LIGHT.ENABLED` | Toggle | `true` | |
-| Decay hold ticks | `qol:LIGHT.DECAY_LIGHT_TICK` | Slider | `3` | How long (ticks) a light block persists after the source leaves before fading begins. |
-| Reduce factor | `qol:LIGHT.REDUCE_LIGHT` | Slider | `0.7` | Multiplier applied to raw light level. Lower = dimmer. |
-| Fade step | `qol:LIGHT.LIGHT_REDUCE_LINEAR` | Slider | `3` | Light levels removed per fade tick. Higher = faster fade. |
-| Render radius | `qol:LIGHT.LIGHT_RENDER_RADIUS` | Slider | `32` | Max distance (blocks) to detect light sources around the player. |
-| Sources per player | `qol:LIGHT.LIGHT_RENDER_PER_PLAYER` | Slider | `12` | Max number of light-emitting entities processed per player per tick. |
-| Fire light level | `qol:LIGHT.LIGHT_FIRE_LEVEL` | Slider | `10` | Base light level emitted by burning entities before the reduce factor is applied. |
+| Enabled | `qof:LIGHT.ENABLED` | Toggle | `true` | |
+| Decay hold ticks | `qof:LIGHT.DECAY_LIGHT_TICK` | Slider | `3` | How long (ticks) a light block persists after the source leaves before fading begins. |
+| Reduce factor | `qof:LIGHT.REDUCE_LIGHT` | Slider | `0.7` | Multiplier applied to raw light level. Lower = dimmer. |
+| Fade step | `qof:LIGHT.LIGHT_REDUCE_LINEAR` | Slider | `3` | Light levels removed per fade tick. Higher = faster fade. |
+| Render radius | `qof:LIGHT.LIGHT_RENDER_RADIUS` | Slider | `32` | Max distance (blocks) to detect light sources around the player. |
+| Sources per player | `qof:LIGHT.LIGHT_RENDER_PER_PLAYER` | Slider | `12` | Max number of light-emitting entities processed per player per tick. |
+| Fire light level | `qof:LIGHT.LIGHT_FIRE_LEVEL` | Slider | `10` | Base light level emitted by burning entities before the reduce factor is applied. |
 | **Anvil Repair** | | | | |
-| Enabled | `qol:REPAIR_ANVIL.ENABLED` | Toggle | `true` | |
-| Repair hold delay | `qol:REPAIR_ANVIL.REPAIR_HELD_DELAY` | Slider | `7` | Ticks between repeated repair interactions when holding the button. |
+| Enabled | `qof:REPAIR_ANVIL.ENABLED` | Toggle | `true` | |
+| Repair hold delay | `qof:REPAIR_ANVIL.REPAIR_HELD_DELAY` | Slider | `7` | Ticks between repeated repair interactions when holding the button. |
 | **Wet Concrete Powder** | | | | |
-| Enabled | `qol:WET_POWDER_CONCRTE.ENABLED` | Toggle | `true` | |
-| Keep velocity | `qol:WET_POWDER_CONCRTE.KEEP_VELOCITY` | Toggle | `true` | Applies the original item velocity to the converted concrete entity. |
-| Max process | `qol:WET_POWDER_CONCRTE.MAX_PROCESS` | Slider | `12` | Max concrete powder entities processed per tick batch. |
+| Enabled | `qof:WET_POWDER_CONCRTE.ENABLED` | Toggle | `true` | |
+| Keep velocity | `qof:WET_POWDER_CONCRTE.KEEP_VELOCITY` | Toggle | `true` | Applies the original item velocity to the converted concrete entity. |
+| Max process | `qof:WET_POWDER_CONCRTE.MAX_PROCESS` | Slider | `12` | Max concrete powder entities processed per tick batch. |
 | **Composter+** | | | | |
-| Enabled | `qol:COMPOSTER.ENABLED` | Toggle | `true` | |
-| Hopper integration | `qol:COMPOSTER.WORK_WITH_HOPPER` | Toggle | `true` | Allows hoppers facing down into a composter to feed it. |
-| Hopper interval | `qol:COMPOSTER.HOPPER_INTERVAL_TICK` | Slider | `8` | Ticks between each hopper-to-composter feed attempt. |
-| Ready delay | `qol:COMPOSTER.DELAY_BEFORE_READY` | Slider | `17` | Ticks after reaching level 7 before the composter becomes ready. |
+| Enabled | `qof:COMPOSTER.ENABLED` | Toggle | `true` | |
+| Hopper integration | `qof:COMPOSTER.WORK_WITH_HOPPER` | Toggle | `true` | Allows hoppers facing down into a composter to feed it. |
+| Hopper interval | `qof:COMPOSTER.HOPPER_INTERVAL_TICK` | Slider | `8` | Ticks between each hopper-to-composter feed attempt. |
+| Ready delay | `qof:COMPOSTER.DELAY_BEFORE_READY` | Slider | `17` | Ticks after reaching level 7 before the composter becomes ready. |
 | **Carry Container** | | | | |
-| Enabled | `qol:CARRIED_CHEST.ENABLED` | Toggle | `true` | |
-| Slowness duration | `qol:CARRIED_CHEST.SLOWNESS_DURATION` | Slider | `10` | Ticks each slowness effect application lasts while carrying. |
-| Slowness level | `qol:CARRIED_CHEST.SLOWNESS_AMPLIFIER` | Slider | `2` | Amplifier level of the applied slowness effect. |
-| Disable jump | `qol:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST` | Toggle | `true` | Prevents jumping while carrying a container. |
-| Allow jump in water | `qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_WATER` | Toggle | `true` | Exempts water from the jump restriction. |
-| Allow jump in lava | `qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA` | Toggle | `true` | Exempts lava from the jump restriction. |
+| Enabled | `qof:CARRIED_CHEST.ENABLED` | Toggle | `true` | |
+| Slowness duration | `qof:CARRIED_CHEST.SLOWNESS_DURATION` | Slider | `10` | Ticks each slowness effect application lasts while carrying. |
+| Slowness level | `qof:CARRIED_CHEST.SLOWNESS_AMPLIFIER` | Slider | `2` | Amplifier level of the applied slowness effect. |
+| Disable jump | `qof:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST` | Toggle | `true` | Prevents jumping while carrying a container. |
+| Allow jump in water | `qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_WATER` | Toggle | `true` | Exempts water from the jump restriction. |
+| Allow jump in lava | `qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA` | Toggle | `true` | Exempts lava from the jump restriction. |
 </details>
 
 ## Known Limitations & Notes
@@ -454,7 +454,7 @@ This project is licensed under the [MIT License](LICENSE).
 - [pickerth-12](https://github.com/pickerth-12) design, json & molang
 
 ```
-©2026 QoL™ Licensed under the MIT License
+©2026 QoF™ Licensed under the MIT License
 Made by (aitji & pickerth-12)
 
   README INFO
@@ -464,7 +464,7 @@ Has README Update: False
 
   PACK INFO
 Last Release: v1.2.0
-Last Pre-Release: v1.2.2
+Last Pre-Release: v1.2.3
 Minecraft: 26.0+
 Dependencies: ^2.6.0-beta.1.26.3-stable
 ```

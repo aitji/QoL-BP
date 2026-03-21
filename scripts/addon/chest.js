@@ -193,7 +193,7 @@ export const chest_playerInteractWithBlock = (data) => {
       const holdingContainer = holdingEntity.getComponent('minecraft:inventory')?.container
       const carryItem = buildCarryItem(blockTypeId, player, holdingContainer)
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand, carryItem)
-      player.setDynamicProperty('qol:chest.storage', JSON.stringify({ selectedSlotIndex: (player.selectedSlotIndex ?? 0), blockTypeId }))
+      player.setDynamicProperty('qof:chest.storage', JSON.stringify({ selectedSlotIndex: (player.selectedSlotIndex ?? 0), blockTypeId }))
       player.addTag(CARRY_TAG)
       setJump(player, false)
       player.dimension.playSound(SOUND_PICK_UP.ID, player.location, { volume: checkRandom(SOUND_PICK_UP.VOLUME), pitch: checkRandom(SOUND_PICK_UP.PITCH) })
@@ -203,13 +203,13 @@ export const chest_playerInteractWithBlock = (data) => {
         player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
         player.removeTag(CARRY_TAG)
         setJump(player, true)
-        player.setDynamicProperty('qol:chest.storage', undefined)
+        player.setDynamicProperty('qof:chest.storage', undefined)
       }
     } catch (e) {
       try { player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand) } catch (_) { }
       player.removeTag(CARRY_TAG)
       setJump(player, true)
-      player.setDynamicProperty('qol:chest.storage', undefined)
+      player.setDynamicProperty('qof:chest.storage', undefined)
       if (DEBUG) world.sendMessage(`§cContainer pickup error: ${e}`)
     }
   }, 1)
@@ -219,7 +219,7 @@ export const chest_playerInteractWithBlock = (data) => {
 export const chest_playerPlaceBlock = (data) => {
   const { player, block } = data
   if (!block || !block?.getComponent("minecraft:inventory") || !player.hasTag(CARRY_TAG)) return
-  if ((JSON.parse(player.getDynamicProperty('qol:chest.storage') ?? 0).selectedSlotIndex) !== player.selectedSlotIndex) return
+  if ((JSON.parse(player.getDynamicProperty('qof:chest.storage') ?? 0).selectedSlotIndex) !== player.selectedSlotIndex) return
 
   const holdingEntity = findInv(player)
   if (!holdingEntity) {
@@ -228,7 +228,7 @@ export const chest_playerPlaceBlock = (data) => {
       player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
       player.removeTag(CARRY_TAG)
       setJump(player, true)
-      player.setDynamicProperty('qol:chest.storage', undefined)
+      player.setDynamicProperty('qof:chest.storage', undefined)
     }, 1)
     return
   }
@@ -282,7 +282,7 @@ export const chest_playerPlaceBlock = (data) => {
     player.getComponent("minecraft:equippable").setEquipment(EquipmentSlot.Mainhand)
     player.removeTag(CARRY_TAG)
     setJump(player, true)
-    player.setDynamicProperty('qol:chest.storage', undefined)
+    player.setDynamicProperty('qof:chest.storage', undefined)
   }
 }
 
@@ -319,7 +319,7 @@ export const chest_player = (player) => {
       if (allowJump !== canJump) jumpSet(allowJump)
     }
 
-    const data = JSON.parse(player.getDynamicProperty("qol:chest.storage") || "{}")
+    const data = JSON.parse(player.getDynamicProperty("qof:chest.storage") || "{}")
     const slot = data?.selectedSlotIndex
     if (data && slot === player.selectedSlotIndex) {
       const blockTypeId = data.blockTypeId
@@ -327,10 +327,10 @@ export const chest_player = (player) => {
       const item = equ.getEquipment(EquipmentSlot.Mainhand)
 
       if (item && (item.typeId !== blockTypeId || item.nameTag !== CONTAINER_NAMETAG)) {
-        if (!player.hasTag("qol.chest.alert")) {
+        if (!player.hasTag("qof.chest.alert")) {
           player.sendMessage(`§cHotbar Slot #${slot + 1} need to be empty.`)
         }
-        player.addTag('qol.chest.alert')
+        player.addTag('qof.chest.alert')
         return
       }
 
@@ -346,12 +346,12 @@ export const chest_player = (player) => {
         const container = inv.getComponent(EntityComponentTypes.Inventory)?.container
         const carryItem = buildCarryItem(blockTypeId, player, container)
         equ.setEquipment(EquipmentSlot.Mainhand, carryItem)
-        player.removeTag('qol.chest.alert')
+        player.removeTag('qof.chest.alert')
       }
     }
   } else {
     if (!canJump) jumpSet(true)
-    player.removeTag('qol.chest.alert')
+    player.removeTag('qof.chest.alert')
   }
 }
 

@@ -105,8 +105,8 @@ export const SETTINGS = Object.freeze({
         HOPPER_TYPEID: "minecraft:hopper",
         BLOCK_TYPEID: "minecraft:composter",
         DELAY_BEFORE_READY: 17, // tick
-        DATA_LOSS_DYP: "qol.composter.timeout",
-        DATA_COMPOSTER_LOCATION: "qol:composterSet", // for hopper
+        DATA_LOSS_DYP: "qof.composter.timeout",
+        DATA_COMPOSTER_LOCATION: "qof:composterSet", // for hopper
         PARTICLE_FILL_SUCCESS: "minecraft:crop_growth_emitter",
         SOUND_FILL_SUCCESS: Object.freeze({
             ID: "block.composter.fill_success",
@@ -359,7 +359,7 @@ export const SETTINGS = Object.freeze({
             ALLOW_JUMP_IN_WATER: true,
             ALLOW_JUMP_IN_LAVA: true,
         }),
-        ENTITY_TYPE: "qol:chest",
+        ENTITY_TYPE: "qof:chest",
         CHEST_ID: "minecraft:chest",
         CONTAINER_NAMETAG: "§r§fCarried Container",
         DOUBLE_CHEST_SIZE: 54, // don't edit

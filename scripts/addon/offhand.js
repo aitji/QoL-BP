@@ -6,8 +6,8 @@ const DOUBLE_SNEAK_WINDOW_MOBILE = 20
 const DOUBLE_SNEAK_WINDOW_DEFAULT = 12
 
 const DYP = {
-    lastSneakTick: id => `qol:lst:${id}`,
-    wasSneaking: id => `qol:ws:${id}`,
+    lastSneakTick: id => `qof:lst:${id}`,
+    wasSneaking: id => `qof:ws:${id}`,
 }
 
 /**

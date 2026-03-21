@@ -26,7 +26,7 @@ if (!existsSync(manifestPath)) {
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"))
 let changed = false
 for (const s of manifest.settings || []) {
-    if (s.name === "qol:DEBUG" && s.default === true) {
+    if (s.name === "qof:DEBUG" && s.default === true) {
         s.default = false
         changed = true
         break
@@ -35,5 +35,5 @@ for (const s of manifest.settings || []) {
 
 if (changed) {
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
-    console.log("Set qol:DEBUG default to false in manifest.json")
-} else console.log("qol:DEBUG already false or not found")
+    console.log("Set qof:DEBUG default to false in manifest.json")
+} else console.log("qof:DEBUG already false or not found")

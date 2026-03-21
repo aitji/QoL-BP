@@ -2,9 +2,9 @@
   "format_version": 3,
   "header": {
     "description": "§7Nice little features to make your game much better!",
-    "name": "§fQ§eo§fF §c(1.2.2)",
+    "name": "§fQ§eo§fF §c(1.2.3)",
     "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "base_game_version": "1.26.3",
     "min_engine_version": "1.26.3"
   },
@@ -12,7 +12,7 @@
     "authors": ["aitji", "pickerth-12"],
     "product_type": "addon",
     "license": "MIT",
-    "url": "https://github.com/aitji/QoL-BP"
+    "url": "https://github.com/aitji/QoF-BP"
   },
   "dependencies": [
     {"module_name": "@minecraft/server","version": "beta"}
@@ -24,12 +24,12 @@
   "settings": [
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r was made by §c@aitji§r (script) and §9@pickerth-12§r (ideas & design). §7You can tweak everything below to your liking!\n§cTurn on BetaAPIs in Experiments"
+      "text": "§l§cQ§r§lo§cF§r was made by §c@aitji§r (script) and §9@pickerth-12§r (ideas & design). §7You can tweak everything below to your liking!\n§cTurn on BetaAPIs in Experiments"
     },
     {
       "type": "slider",
-      "text": "§7How often should QoL run? §8(lower = faster updates) §r",
-      "name": "qol:INTERVAL_DELAY",
+      "text": "§7How often should QoF run? §8(lower = faster updates) §r",
+      "name": "qof:INTERVAL_DELAY",
       "min": 0,
       "max": 20,
       "step": 1,
@@ -40,18 +40,18 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Dynamic Light System §7----------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Dynamic Light System §7----------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Enable dynamic light?",
-      "name": "qol:LIGHT.ENABLED",
+      "name": "qof:LIGHT.ENABLED",
       "default": true
     },
     {
       "type": "slider",
       "text": "§7How §f'long'§8(game tick)§7 should light stay after it turns off? §8(higher = longer) §r §r §r §r",
-      "name": "qol:LIGHT.DECAY_LIGHT_TICK",
+      "name": "qof:LIGHT.DECAY_LIGHT_TICK",
       "min": 0,
       "max": 40,
       "step": 1,
@@ -60,7 +60,7 @@
     {
       "type": "slider",
       "text": "§7How §f'much'§7 should light be reduced? §8(final = lightLevel * §o[value]§r§8) §r §r §r",
-      "name": "qol:LIGHT.REDUCE_LIGHT",
+      "name": "qof:LIGHT.REDUCE_LIGHT",
       "min": 0.0,
       "max": 0.9,
       "step": 0.1,
@@ -69,7 +69,7 @@
     {
       "type": "slider",
       "text": "§7When fading, how much light is lost each step? §r",
-      "name": "qol:LIGHT.LIGHT_REDUCE_LINEAR",
+      "name": "qof:LIGHT.LIGHT_REDUCE_LINEAR",
       "min": 0,
       "max": 20,
       "step": 1,
@@ -78,7 +78,7 @@
     {
       "type": "slider",
       "text": "§7How §f'far'§7 can light sources be detected around you? §r",
-      "name": "qol:LIGHT.LIGHT_RENDER_RADIUS",
+      "name": "qof:LIGHT.LIGHT_RENDER_RADIUS",
       "min": 0,
       "max": 256,
       "step": 2,
@@ -87,7 +87,7 @@
     {
       "type": "slider",
       "text": "§7How §f'many'§7 light sources can affect you at once? §r",
-      "name": "qol:LIGHT.LIGHT_RENDER_PER_PLAYER",
+      "name": "qof:LIGHT.LIGHT_RENDER_PER_PLAYER",
       "min": 0,
       "max": 128,
       "step": 2,
@@ -96,7 +96,7 @@
     {
       "type": "slider",
       "text": "§7How bright should burning entities glow? §8(affected by reduce setting) §r",
-      "name": "qol:LIGHT.LIGHT_FIRE_LEVEL",
+      "name": "qof:LIGHT.LIGHT_FIRE_LEVEL",
       "min": 0,
       "max": 15,
       "step": 1,
@@ -107,18 +107,18 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Anvil Repair §7-----------------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Anvil Repair §7-----------------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Enable anvil repairing? §r",
-      "name": "qol:REPAIR_ANVIL.ENABLED",
+      "name": "qof:REPAIR_ANVIL.ENABLED",
       "default": true
     },
     {
       "type": "slider",
       "text": "§7How long§8(game tick)§7 to hold before repairing starts again? §r",
-      "name": "qol:REPAIR_ANVIL.REPAIR_HELD_DELAY",
+      "name": "qof:REPAIR_ANVIL.REPAIR_HELD_DELAY",
       "min": 0,
       "max": 20,
       "step": 1,
@@ -129,24 +129,24 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Wet Concrete Powder §7----------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Wet Concrete Powder §7----------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Should concrete powder react to water? §r",
-      "name": "qol:WET_POWDER_CONCRTE.ENABLED",
+      "name": "qof:WET_POWDER_CONCRTE.ENABLED",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§7Keep item movement after touching water? §r",
-      "name": "qol:WET_POWDER_CONCRTE.KEEP_VELOCITY",
+      "name": "qof:WET_POWDER_CONCRTE.KEEP_VELOCITY",
       "default": true
     },
     {
       "type": "slider",
       "text": "§7How many items can process at once? §c(can affect performance) §r",
-      "name": "qol:WET_POWDER_CONCRTE.MAX_PROCESS",
+      "name": "qof:WET_POWDER_CONCRTE.MAX_PROCESS",
       "min": 1,
       "max": 64,
       "step": 1,
@@ -157,24 +157,24 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Compost More Items §7-----------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Compost More Items §7-----------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Enable improved composter? §r",
-      "name": "qol:COMPOSTER.ENABLED",
+      "name": "qof:COMPOSTER.ENABLED",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§7Should hopper work with composter? §c(can affect performance) §r",
-      "name": "qol:COMPOSTER.WORK_WITH_HOPPER",
+      "name": "qof:COMPOSTER.WORK_WITH_HOPPER",
       "default": true
     },
     {
       "type": "slider",
       "text": "§7How often§8(game tick)§7 does the hopper interact with the composter? §r",
-      "name": "qol:COMPOSTER.HOPPER_INTERVAL_TICK",
+      "name": "qof:COMPOSTER.HOPPER_INTERVAL_TICK",
       "min": 1,
       "max": 40,
       "step": 1,
@@ -183,7 +183,7 @@
     {
       "type": "slider",
       "text": "§7How long§8(game tick)§7 before the composter is ready? §r",
-      "name": "qol:COMPOSTER.DELAY_BEFORE_READY",
+      "name": "qof:COMPOSTER.DELAY_BEFORE_READY",
       "min": 1,
       "max": 40,
       "step": 1,
@@ -194,18 +194,18 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Carry Container System §7-------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Carry Container System §7-------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Allow carrying a container?",
-      "name": "qol:CARRIED_CHEST.ENABLED",
+      "name": "qof:CARRIED_CHEST.ENABLED",
       "default": true
     },
     {
       "type": "slider",
       "text": "§7How many items list will get display inside item lores? §r",
-      "name": "qol:CARRIED_CHEST.MAX_DISPLAY",
+      "name": "qof:CARRIED_CHEST.MAX_DISPLAY",
       "min": 0,
       "max": 27,
       "step": 1,
@@ -214,7 +214,7 @@
     {
       "type": "slider",
       "text": "§7When carrying a container, how long§8(game tick)§7 is the slowness duration? §r",
-      "name": "qol:CARRIED_CHEST.SLOWNESS_DURATION",
+      "name": "qof:CARRIED_CHEST.SLOWNESS_DURATION",
       "min": 0,
       "max": 40,
       "step": 1,
@@ -223,7 +223,7 @@
     {
       "type": "slider",
       "text": "§7When carrying a container, what level of slowness will apply? §r",
-      "name": "qol:CARRIED_CHEST.SLOWNESS_AMPLIFIER",
+      "name": "qof:CARRIED_CHEST.SLOWNESS_AMPLIFIER",
       "min": 0,
       "max": 5,
       "step": 1,
@@ -232,19 +232,19 @@
     {
       "type": "toggle",
       "text": "§7Disable §fjumping§7 while holding a container? §r",
-      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST",
+      "name": "qof:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§7Allow jumping in §9water§7 while holding a container? §r",
-      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_WATER",
+      "name": "qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_WATER",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§7Allow jumping in §6lava§7 while holding a container? §r",
-      "name": "qol:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA",
+      "name": "qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA",
       "default": true
     },
 
@@ -252,12 +252,12 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r OFFHAND System §7---------------------------------------"
+      "text": "§l§cQ§r§lo§cF§r OFFHAND System §7---------------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Allow offhand?",
-      "name": "qol:CARRIED_CHEST.ENABLED",
+      "name": "qof:CARRIED_CHEST.ENABLED",
       "default": true
     },
   
@@ -265,18 +265,18 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r Harvest System §7---------------------------------------"
+      "text": "§l§cQ§r§lo§cF§r Harvest System §7---------------------------------------"
     },
     {
       "type": "toggle",
       "text": "§7Allow harvest crop?",
-      "name": "qol:HARVEST.ENABLED",
+      "name": "qof:HARVEST.ENABLED",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§7Will Seeds got used for replant §c(If player doesn't have seed or plant didn't drop seed the harvest won't replant for you)",
-      "name": "qol:HARVEST.LOSS_SEED",
+      "name": "qof:HARVEST.LOSS_SEED",
       "default": true
     },
 
@@ -284,24 +284,24 @@
 
     {
       "type": "label",
-      "text": "§l§cQ§r§lo§cL§r's developer settings §7----------------------------------"
+      "text": "§l§cQ§r§lo§cF§r's developer settings §7----------------------------------"
     },
     {
       "type": "toggle",
       "text": "§cDebug mode? §7(Show spam logs in chat/console) §r",
-      "name": "qol:DEBUG",
+      "name": "qof:DEBUG",
       "default": false
     },
     {
       "type": "toggle",
       "text": "§cDisbaled Command Log? §7(sendCommandFeedback gamerule) §r",
-      "name": "qol:DISABLED_COMMANDFEEDBACK",
+      "name": "qof:DISABLED_COMMANDFEEDBACK",
       "default": true
     },
     {
       "type": "toggle",
       "text": "§cDisbaled HeartBeat §7(script will never responed to mcfunction) §r",
-      "name": "qol:DISABLED_HEARTBEAT",
+      "name": "qof:DISABLED_HEARTBEAT",
       "default": true
     }
   ]
