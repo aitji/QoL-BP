@@ -400,6 +400,10 @@ export const SETTINGS = Object.freeze({
             'minecraft:lit_smoker': true,
             'minecraft:smithing_table': true,
             'minecraft:noteblock': true,
+            // dev
+            'minecraft:command_block': true,
+            'minecraft:chain_command_block': true,
+            'minecraft:repeating_command_block': true,
         }),
         FACE_TO_TORCH_DIR: Object.freeze({
             Up: 'top',

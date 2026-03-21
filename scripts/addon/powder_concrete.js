@@ -18,9 +18,9 @@ export const powder_entityRemove = ({ removedEntityId }) => {
 }
 
 export const powder_entitySpawn = ({ entity }) => {
-    if (entity.typeId !== "minecraft:item") return
-
-    const component = entity.getComponent(EntityComponentTypes.Item)
+    if (entity?.typeId !== "minecraft:item") return
+    if (!entity?.isValid) return
+    const component = entity?.getComponent(EntityComponentTypes.Item)
     const itemStack = component?.itemStack
     if (!itemStack) return
 
@@ -82,7 +82,7 @@ export const powder_pending = () => {
         const dimension = world.getDimension(dimensionId)
 
         system.runTimeout(() => {
-            if (!entity) return
+            if (!entity.isValid) return
             const concrete = dimension.spawnItem(
                 new ItemStack(`${ITEM_PREFIX}${color}_concrete`, amount),
                 location

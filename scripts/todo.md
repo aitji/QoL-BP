@@ -12,7 +12,7 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] /README.md
 - [x] offhand items
 - [x] BUG!!: fix hoe/shovel cannot use with dynamic light
-- [ ] Harvest crop
+- [x] Harvest crop
 
 ## picker
 - [x] update light level to new version
@@ -20,3 +20,12 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] [aitji/composter] and add composte list
 - [x] entity loot drops
 - [x] recipes
+- [ ] add more config in manifest pack
+  - [ ] offhand's settings
+    - [ ] update _config.js
+    - [ ] update _store.js
+    - [ ] update manifest.json
+  - [ ] crop.js
+    - [ ] update _config.js
+    - [ ] update _store.js
+    - [ ] update manifest.json

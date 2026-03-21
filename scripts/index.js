@@ -7,6 +7,7 @@ import * as powder from "./addon/powder_concrete"
 import * as composter from "./addon/composter"
 import * as chest from "./addon/chest"
 import * as offhand from "./addon/offhand"
+import * as crop from "./addon/crop"
 
 // tick
 system.run(() => {
@@ -65,6 +66,7 @@ world.afterEvents.playerPlaceBlock.subscribe(data => {
 })
 world.beforeEvents.playerBreakBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerBreakBlock(data)
+    crop.crop_playerBreakBlock(data)
 })
 world.beforeEvents.playerInteractWithBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerInteractWithBlock(data)
