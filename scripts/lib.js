@@ -38,7 +38,6 @@ export const applyItemDamage = (player, item) => { // only for weapon, not armor
         item = new ItemStack('minecraft:air', 1)
         player.dimension.playSound('random.break', player.location)
         changed = true
-        return
     } else {
         dur.damage = newDurability
         changed = true
