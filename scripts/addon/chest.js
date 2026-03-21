@@ -1,6 +1,5 @@
 import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes } from "@minecraft/server"
-import { checkRandom } from "../lib"
-import { RUNTIME } from "../_store"
+import { checkRandom, RUNTIME } from "../lib"
 const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP, CONTAINER_NAMETAG, MAX_DISPLAY } } = RUNTIME
 
 const NEIGH = {

@@ -1,6 +1,7 @@
 export const SETTINGS = Object.freeze({
     DEBUG: true,
     DISABLED_COMMANDFEEDBACK: false,
+    DISABLED_HEARTBEAT: false,
     INTERVAL_DELAY: 1, // delay for each interval
     SLICE_PREFIX: "minecraft:".length, // 10
     LIGHT: Object.freeze({
@@ -332,7 +333,6 @@ export const SETTINGS = Object.freeze({
             'minecraft:cooked_rabbit': 0.65,
             'minecraft:cooked_cod': 0.65,
             'minecraft:cooked_salmon': 0.65,
-            // 'minecraft:cooked_salmon': 0.65,
 
             'minecraft:golden_carrot': 0.65,
             'minecraft:glistering_melon_slice': 0.65,
@@ -340,7 +340,6 @@ export const SETTINGS = Object.freeze({
             'minecraft:mushroom_stew': 0.85,
             'minecraft:suspicious_stew': 0.85,
             'minecraft:beetroot_soup': 0.85,
-            // 'minecraft:golden_carrot': 0.85,
             'minecraft:golden_apple': 0.85,
             'minecraft:enchanted_golden_apple': 1,
             'minecraft:rabbit_stew': 1,
@@ -427,6 +426,19 @@ export const SETTINGS = Object.freeze({
             ID: "dig.wood", // new version might be chnage to "place.wood"
             VOLUME: 1.0,
             PITCH: 0.8
+        }),
+    }),
+    CROP: Object.freeze({
+        ENABLED: true,
+        LOSS_SEED: true,
+
+        // only hoe for now...
+        PLANT_LEVEL: Object.freeze({
+            "minecraft:wheat": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
+            "minecraft:carrots": Object.freeze({ level: 7, seed: "minecraft:carrot" }),
+            "minecraft:potatoes": Object.freeze({ level: 7, seed: "minecraft:potato" }),
+            "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
+            "minecraft:nether_wart": Object.freeze({ level: 3, seed: "minecraft:nether_wart" }),
         }),
     })
 })

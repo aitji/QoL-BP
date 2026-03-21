@@ -1,6 +1,5 @@
 import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, world } from "@minecraft/server"
-import { checkRandom, clamp } from "../lib"
-import { RUNTIME } from "../_store"
+import { checkRandom, clamp, RUNTIME } from "../lib"
 const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = RUNTIME
 
 const clamp8 = (n) => clamp(n, 0, 8)
@@ -101,6 +100,7 @@ export const composter_playerInteractWithBlock = (data) => {
         }
 
         try {
+            // cannot use reduceItem() directly, speical case
             if (itemStack.amount <= 1) {
                 if (itemID.endsWith('_stew') || itemID.endsWith('_soup')) equ.setEquipment(EquipmentSlot.Mainhand, new ItemStack('bowl', 1))
                 else equ.setEquipment(EquipmentSlot.Mainhand, undefined)

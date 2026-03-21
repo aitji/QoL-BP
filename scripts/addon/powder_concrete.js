@@ -1,6 +1,5 @@
 import { EntityComponentTypes, Player, world, ItemStack, system } from "@minecraft/server"
-import { checkRandom } from "../lib"
-import { RUNTIME } from "../_store"
+import { checkRandom, RUNTIME } from "../lib"
 const {
     DEBUG,
     SLICE_PREFIX,

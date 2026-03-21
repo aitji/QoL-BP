@@ -1,6 +1,5 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent } from "@minecraft/server"
-import { checkRandom, clamp } from "../lib"
-import { RUNTIME } from "../_store"
+import { applyItemDamage, checkRandom, clamp, getEqu, RUNTIME } from "../lib"
 const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
@@ -240,39 +239,41 @@ export const light_processFrames = () => {
 export const light_playerInteractWithBlock = (data) => {
     const { player, block, blockFace, itemStack, isFirstEvent } = data
     if (!itemStack && !block) return
-    const reduceDurability = (sound, vol, pitch) => {
-        const equ = player.getComponent(EntityComponentTypes.Equippable)
-        const durability = itemStack.getComponent(ItemComponentTypes.Durability)
-        // TODO: handel unbreaking -aitji
-
-        if ((durability.damage + 1) >= durability.maxDurability) equ.setEquipment(EquipmentSlot.Mainhand, undefined)
-        else {
-            const clone = itemStack.clone()
-            clone.getComponent(ItemComponentTypes.Durability).damage += 1
-            equ.setEquipment(EquipmentSlot.Mainhand, clone)
-        }
-
-        player.dimension.playSound(sound, block.center(), {
-            volume: vol,
-            pitch: checkRandom(pitch)
-        })
-    }
     if (block?.hasTag('dirt')) {
         const above = block.above(1)
         if (above && above?.permutation?.matches('minecraft:light_block')) {
             system.run(() => {
+                let toolUsed = false
                 if (itemStack?.hasTag('minecraft:is_shovel')) {
                     if (block.typeId === 'minecraft:grass_path') return
                     block.setPermutation(BlockPermutation.resolve('minecraft:grass_path'))
-                    reduceDurability('use.gravel', 1.0, 0.8) // sound, vol, pitch
+                    toolUsed = true
+
+                    player.dimension.playSound('use.gravel', block.center(), { // todo: config.js
+                        volume: 1.0,
+                        pitch: 0.8
+                    })
                 }
                 if (itemStack?.hasTag('minecraft:is_hoe')) {
                     if (block.typeId === 'minecraft:farmland') return
                     block.setPermutation(BlockPermutation.resolve('minecraft:farmland'))
-                    reduceDurability('use.grass', 1.0, 0.8) // sound, vol, pitch
+                    toolUsed = true
+
+                    player.dimension.playSound('use.grass', block.center(), { // todo: config.js
+                        volume: 1.0,
+                        pitch: 0.8
+                    })
+                }
+
+                // all logic
+                if (toolUsed) {
+                    const { changed, item } = applyItemDamage(player, itemStack)
+                    if (changed) {
+                        const equ = getEqu(player)
+                        equ.setEquipment(EquipmentSlot.Mainhand, item)
+                    }
                 }
             })
         }
     }
-
 }

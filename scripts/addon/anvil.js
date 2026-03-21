@@ -1,6 +1,5 @@
 import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world } from "@minecraft/server"
-import { checkRandom } from "../lib"
-import { RUNTIME } from "../_store"
+import { checkRandom, reduceItem, RUNTIME } from "../lib"
 const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = RUNTIME
 
 const delay = {}
@@ -93,15 +92,7 @@ export const anvil_playerInteractWithBlock = (data) => {
 
             // NOW: selectedSlotIndex === slot & currItem == itemStack
             try {
-                if (itemStack.amount <= 1) {
-                    // clear item
-                    equ.setEquipment(EquipmentSlot.Mainhand, undefined)
-                } else {
-                    const reduceItem = currItem.clone()
-                    reduceItem.amount -= 1
-                    equ.setEquipment(EquipmentSlot.Mainhand, reduceItem)
-                }
-
+                equ.setEquipment(EquipmentSlot.Mainhand, reduceItem(itemStack))
                 playSound()
             } catch (e) { if (DEBUG) console.warn('[ANVIL] unknown case:', e) }
         })

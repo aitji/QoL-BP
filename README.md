@@ -347,14 +347,14 @@ Full carry flow
 The player runs in, picks up a chest next to a black sheep, then visibly slows down while carrying it. They walk to a second chest and place theirs beside it, forming a double chest. Contents from both halves are preserved.
 
 > [!WARNING]
-> Double chest support is partially implemented. Picking up one half of a double chest will attempt to preserve both halves, but edge cases may result in item loss. Always **back up world** before tranfer the important chests before carrying them.
+> ~~Double chest support is partially implemented. Picking up one half of a double chest will attempt to preserve both halves, but edge cases may result in item loss. Always **back up world** before tranfer the important chests before carrying them.~~ 100% work, We has been extensively tested!
 
 <details>
   <summary><strong>Supported containers</strong></summary>
 
 Any block that has a `minecraft:inventory` component can be picked up. Common examples include:
 
-| Container | Double chest support |
+| Container | Chest support |
 | - | - |
 | chest | yes |
 | trapped_chest | yes |
@@ -362,15 +362,16 @@ Any block that has a `minecraft:inventory` component can be picked up. Common ex
 | hopper | yes |
 | dispenser | yes |
 | dropper | yes |
-| blast_furnace | no |
-| furnace | no |
-| smoker | yes |
-| brewing_stand | maybe not |
-| crafter | maybe |
-| Shulker | maybe |
+| blast_furnace | yes`*` |
+| furnace | yes`*` |
+| smoker | yes`*` |
+| brewing_stand | yes |
+| crafter | no |
+| Shulker | yes |
 
 > [!NOTE]
-> (Shulker boxes, Crafter & Brewing Stand) are also inventory blocks and should work, but have not been extensively tested.
+> ~~(Shulker boxes, Crafter & Brewing Stand) are also inventory blocks and should work, but have not been extensively tested.~~
+> `*` for furnace item will 100% correct, But heat state will be loss.
 </details>
 
 ## Configuration Reference
@@ -454,8 +455,16 @@ This project is licensed under the [MIT License](LICENSE).
 
 ```
 ©2026 QoL™ Licensed under the MIT License
+Made by (aitji & pickerth-12)
 
-QoL v1.2.0
-Last updated : 2026
-Author       : aitji, pickerth-12
+  README INFO
+Version: v1.2.0
+Last updated: 18 Mar 2026
+Has README Update: False
+
+  PACK INFO
+Last Release: v1.2.0
+Last Pre-Release: v1.2.2
+Minecraft: 26.0+
+Dependencies: ^2.6.0-beta.1.26.3-stable
 ```

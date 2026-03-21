@@ -66,7 +66,7 @@ world.afterEvents.playerPlaceBlock.subscribe(data => {
 })
 world.beforeEvents.playerBreakBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerBreakBlock(data)
-    crop.crop_playerBreakBlock(data)
+    if (RUNTIME.CROP.ENABLED) crop.crop_playerBreakBlock(data)
 })
 world.beforeEvents.playerInteractWithBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerInteractWithBlock(data)
@@ -91,12 +91,13 @@ world.afterEvents.playerLeave.subscribe(data => {
 // beta apis heartbeat
 system.afterEvents.scriptEventReceive.subscribe(({ id, message }) => {
     if (message !== "qol") return
+    if (RUNTIME.DISABLED_HEARTBEAT) return // script will never responed to mcfunction
     const lib = world.scoreboard.getObjective("aitjilib")
 
     switch (id) {
         case 'aitji-lib:heartbeat':
-            lib.addScore(`addon`, 1)
-            lib.setScore("api", 1)
+            lib.addScore('addon', 1)
+            lib.setScore('api', 1)
         default: return
     }
 }, { namespaces: ["aitji-lib"] })

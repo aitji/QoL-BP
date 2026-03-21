@@ -19,10 +19,13 @@ function buildRuntime() {
     const C = S.COMPOSTER
     const CH = S.CARRIED_CHEST
     const OH = S.OFFHAND
+    const CR = S.CROP
 
     return Object.freeze({
         DEBUG: g("qol:DEBUG", S.DEBUG),
         DISABLED_COMMANDFEEDBACK: g("qol:DISABLED_COMMANDFEEDBACK", S.DISABLED_COMMANDFEEDBACK),
+        DISABLED_HEARTBEAT: g("qol:DISABLED_HEARTBEAT", S.DISABLED_HEARTBEAT),
+
         INTERVAL_DELAY: g("qol:INTERVAL_DELAY", S.INTERVAL_DELAY),
         SLICE_PREFIX: S.SLICE_PREFIX,
 
@@ -105,7 +108,8 @@ function buildRuntime() {
             SOUND_PICK_UP: CH.SOUND_PICK_UP,
         }),
         OFFHAND: Object.freeze({
-            ENABLED: g("qol:CHEST.ENABLED", C.ENABLED),
+            ENABLED: g("qol:CHEST.ENABLED", OH.ENABLED),
+            // need more customization
 
             // static
             ALLOW_REPLACE: OH.ALLOW_REPLACE,
@@ -115,6 +119,14 @@ function buildRuntime() {
             TORCH_ID: OH.TORCH_ID,
             LIGHT: OH.LIGHT,
             PLACE_SOUND: OH.PLACE_SOUND
+        }),
+        CROP: Object.freeze({
+            ENABLED: g("qol:HARVEST.ENABLED", CR.ENABLED),
+            LOSS_SEED: g("qol:HARVEST.LOSS_SEED", CR.LOSS_SEED),
+            // need more customization
+
+            // static
+            PLANT_LEVEL: CR.PLANT_LEVEL,
         })
     })
 }

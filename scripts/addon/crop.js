@@ -1,15 +1,6 @@
 import { world, system, EquipmentSlot, ItemDurabilityComponent, ItemStack, EntityEquippableComponent, EntityInventoryComponent, Container, BlockPermutation, Block, PlayerBreakBlockBeforeEvent, EntityComponentTypes, Player } from "@minecraft/server"
-import { applyItemDamage, reduceItem } from "../lib"
-import { RUNTIME } from "../_store"
-const { DEBUG } = RUNTIME
-
-const PLANT_LEVEL = Object.freeze({
-    "minecraft:wheat": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
-    "minecraft:carrots": Object.freeze({ level: 7, seed: "minecraft:carrot" }),
-    "minecraft:potatoes": Object.freeze({ level: 7, seed: "minecraft:potato" }),
-    "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
-    "minecraft:nether_wart": Object.freeze({ level: 3, seed: "minecraft:nether_wart" }),
-})
+import { applyItemDamage, reduceItem, RUNTIME } from "../lib"
+const { DEBUG, CROP: { LOSS_SEED, PLANT_LEVEL } } = RUNTIME
 
 /**@param {PlayerBreakBlockBeforeEvent} data*/
 export const crop_playerBreakBlock = (data) => {
@@ -30,7 +21,8 @@ export const crop_playerBreakBlock = (data) => {
                     const { changed, item: newItem } = applyItemDamage(player, item)
                     if (changed) equippable?.setEquipment(EquipmentSlot.Mainhand, newItem)
                     const apply = () => dimension.getBlock(location).setPermutation(BlockPermutation.resolve(typeId))
-                    // item
+
+                    if (LOSS_SEED) return apply()
                     const container = player.getComponent(EntityComponentTypes.Inventory).container
                     const slot = container.find(new ItemStack(seed, 1))
                     if (slot) {

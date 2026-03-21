@@ -2,9 +2,9 @@
   "format_version": 3,
   "header": {
     "description": "§7Nice little features to make your game much better!",
-    "name": "§fQ§eo§fF §c(1.2.1)",
+    "name": "§fQ§eo§fF §c(1.2.2)",
     "uuid": "bfdc43e4-e4a8-4d50-8883-7d3bdd1667de",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "base_game_version": "1.26.3",
     "min_engine_version": "1.26.3"
   },
@@ -252,6 +252,38 @@
 
     {
       "type": "label",
+      "text": "§l§cQ§r§lo§cL§r OFFHAND System §7---------------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow offhand?",
+      "name": "qol:CARRIED_CHEST.ENABLED",
+      "default": true
+    },
+  
+
+
+    {
+      "type": "label",
+      "text": "§l§cQ§r§lo§cL§r Harvest System §7---------------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow harvest crop?",
+      "name": "qol:HARVEST.ENABLED",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Will Seeds got used for replant §c(If player doesn't have seed or plant didn't drop seed the harvest won't replant for you)",
+      "name": "qol:HARVEST.LOSS_SEED",
+      "default": true
+    },
+
+
+
+    {
+      "type": "label",
       "text": "§l§cQ§r§lo§cL§r's developer settings §7----------------------------------"
     },
     {
@@ -264,6 +296,12 @@
       "type": "toggle",
       "text": "§cDisbaled Command Log? §7(sendCommandFeedback gamerule) §r",
       "name": "qol:DISABLED_COMMANDFEEDBACK",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§cDisbaled HeartBeat §7(script will never responed to mcfunction) §r",
+      "name": "qol:DISABLED_HEARTBEAT",
       "default": true
     }
   ]

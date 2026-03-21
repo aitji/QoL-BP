@@ -1,6 +1,7 @@
-import { EnchantmentType, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, world } from "@minecraft/server"
-import { RUNTIME } from "./_store"
-const { DEBUG } = RUNTIME
+import { EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, world } from "@minecraft/server"
+import { RUNTIME as E } from "./_store"
+const { DEBUG } = E
+export const RUNTIME = E
 
 export const clamp = (n, min = 0, max = 8) => Math.max(min, Math.min(max, Math.ceil(n)))
 export const checkRandom = (arr) => {
@@ -56,3 +57,15 @@ export const reduceItem = (item) => {
         return reduceItem
     }
 }
+
+// lazy helper
+/**
+ * @param {Entity} entity 
+ * @returns {EntityEquippableComponent}
+ */
+export const getEqu = (entity) => entity.getComponent(EntityComponentTypes.Equippable)
+/**
+ * @param {Entity} entity 
+ * @returns {EntityInventoryComponent}
+ */
+export const getInv = (entity) => entity.getComponent(EntityComponentTypes.Inventory)

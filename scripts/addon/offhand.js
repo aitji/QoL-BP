@@ -1,6 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, system, world } from "@minecraft/server"
-import { RUNTIME } from "../_store"
-import { checkRandom } from "../lib"
+import { checkRandom, RUNTIME } from "../lib"
 const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND } } = RUNTIME
 
 const DOUBLE_SNEAK_WINDOW_MOBILE = 20
