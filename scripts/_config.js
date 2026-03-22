@@ -358,6 +358,8 @@ export const SETTINGS = Object.freeze({
             NO_JUMP_HOLD_CHEST: true, // lock player from jumpping when holding chest
             ALLOW_JUMP_IN_WATER: true,
             ALLOW_JUMP_IN_LAVA: true,
+            ALLOW_JUMP_IN_SCAFFOLDING: true,
+            ALLOW_JUMP_IN_LADDER: true
         }),
         ENTITY_TYPE: "qof:chest",
         CHEST_ID: "minecraft:chest",

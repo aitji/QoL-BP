@@ -247,6 +247,18 @@
       "name": "qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LAVA",
       "default": true
     },
+    {
+      "type": "toggle",
+      "text": "§7Allow climbing in §escafolding§7 while holding a container? §r",
+      "name": "qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_SCAFFOLDING",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow climbing in §pladder§7 while holding a container? §r",
+      "name": "qof:CARRIED_CHEST.PLAYER_JUMP.ALLOW_JUMP_IN_LADDER",
+      "default": true
+    },
 
 
 

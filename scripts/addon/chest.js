@@ -306,12 +306,24 @@ export const chest_player = (player) => {
         }
 
         // lava
+        const { location } = player
+        const block = player.dimension.getBlock(location)
         if (PLAYER_JUMP.ALLOW_JUMP_IN_LAVA) {
-          const { location } = player
-          const block = player.dimension.getBlock(location)
           if (
             block?.typeId === 'minecraft:lava' ||
             block?.typeId === 'minecraft:flowing_lava'
+          ) allowJump = true
+        }
+
+        // scaffolding
+        if (PLAYER_JUMP.ALLOW_JUMP_IN_SCAFFOLDING) {
+          if (
+            block?.typeId === 'minecraft:scaffolding'
+          ) allowJump = true
+        }
+        if (PLAYER_JUMP.ALLOW_JUMP_IN_LADDER) {
+          if (
+            block?.typeId === 'minecraft:ladder'
           ) allowJump = true
         }
       }
