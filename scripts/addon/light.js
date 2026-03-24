@@ -240,11 +240,11 @@ export const light_processFrames = () => {
 const farmland = Object.freeze({ 'minecraft:farmland': true, 'minecraft:soul_sand': true })
 /** @type {Readonly<{[k: string]: Readonly<{asBlock: string; pot: string}>}>} */
 const seedToBlock = Object.freeze({ // todo: add to config
-    'minecraft:wheat_seeds': Object.freeze({ asBlock: 'minecraft:wheat', pot: 'minecraft:farmland' }),
-    'minecraft:carrots': Object.freeze({ asBlock: 'minecraft:carrots', pot: 'minecraft:farmland' }),
-    'minecraft:potatoes': Object.freeze({ asBlock: 'minecraft:potatoes', pot: 'minecraft:farmland' }),
-    'minecraft:beetroot_seeds': Object.freeze({ asBlock: 'minecraft:beetroot', pot: 'minecraft:farmland' }),
-    'minecraft:nether_wart': Object.freeze({ asBlock: 'minecraft:nether_wart', pot: 'minecraft:soul_sand' }),
+    'minecraft:wheat_seeds': Object.freeze({ asBlock: 'minecraft:wheat', pot: 'minecraft:farmland', sound: 'nature' }),
+    'minecraft:carrots': Object.freeze({ asBlock: 'minecraft:carrots', pot: 'minecraft:farmland', sound: 'nature' }),
+    'minecraft:potatoes': Object.freeze({ asBlock: 'minecraft:potatoes', pot: 'minecraft:farmland', sound: 'nature' }),
+    'minecraft:beetroot_seeds': Object.freeze({ asBlock: 'minecraft:beetroot', pot: 'minecraft:farmland', sound: 'nature' }),
+    'minecraft:nether_wart': Object.freeze({ asBlock: 'minecraft:nether_wart', pot: 'minecraft:soul_sand', sound: 'nether' }),
 })
 
 const delay = {}
@@ -308,14 +308,31 @@ export const light_playerInteractWithBlock = (data) => {
         if (!isAboveLight()) return
         const raw = seedToBlock[itemStack?.typeId || '']
         if (!raw) return
-        const { asBlock, pot } = raw
+        const { asBlock, pot, sound } = raw
 
         if (pot === blockType) {
             const isCreative = player.matches({ gameMode: GameMode.Creative })
-            const playSound = () => player.dimension.playSound('place.grass', block.center(), {
-                volume: 0.8,
-                pitch: checkRandom([0.8, 1])
-            })
+            const playSound = () => {
+                // if (DEBUG) world.sendMessage(`sound=${sound}`)
+                const center = block.center()
+                switch (sound) {
+                    // make sound config-able
+                    case 'nature':
+                        return player.dimension.playSound('place.grass', center, {
+                            volume: 0.8,
+                            pitch: checkRandom([0.8, 1])
+                        })
+                    case 'nether':
+                        return player.dimension.playSound('dig.nether_wart', center, {
+                            volume: 0.7,
+                            pitch: checkRandom([0.8, 1])
+                        })
+                    default:
+                        if (DEBUG) world.sendMessage(`${sound} is invaild`)
+                        return
+                }
+
+            }
 
             let scam = false
             system.run(() => {
