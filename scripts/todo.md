@@ -17,6 +17,7 @@ this file is only for top priority todo, if something like refactor some code or
   - [x] fix seeds not work on farmlands
   - [x] support edge case for offhand like buckets
 - [x] harvest crop
+- [ ] piston is change state to air when extract it will del piston...
 - [ ] changelog/*.md ??
 
 ## picker

@@ -146,6 +146,8 @@ const ITEMBUTBLOCK = Object.freeze({ // aka, skip item ; todo: add to config
     "minecraft:tadpole_bucket": true,
     "minecraft:tropical_fish_bucket": true,
     "minecraft:bucket": true, // edge case, not a block but need to skip
+    "minecraft:redstone": true,
+    "minecraft:redstone_torch": true,
 })
 
 const delay = {}
