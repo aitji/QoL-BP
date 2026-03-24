@@ -439,7 +439,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:wheat": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
             "minecraft:carrots": Object.freeze({ level: 7, seed: "minecraft:carrot" }),
             "minecraft:potatoes": Object.freeze({ level: 7, seed: "minecraft:potato" }),
-            "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:wheat_seeds" }),
+            "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:beetroot_seeds" }),
             "minecraft:nether_wart": Object.freeze({ level: 3, seed: "minecraft:nether_wart" }),
         }),
     })
