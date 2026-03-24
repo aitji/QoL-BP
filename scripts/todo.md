@@ -4,6 +4,7 @@ this file is only for top priority todo, if something like refactor some code or
 ## aitji
 - [x] (light-weight) dynamic light
 - [x] repair anvil (with ingot)
+- [x] migrate addon manifest to format_version v3
 - [x] wet powder concrete
     - [x] delay on water keep track for x second before turn in to concrete
 - [x] composter (poisonous potato, rotten flesh, spider ...)

@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
-import { checkRandom, RUNTIME } from "../lib"
+import { checkRandom, getDistance, RUNTIME } from "../lib"
 const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND } } = RUNTIME
 
 const DOUBLE_SNEAK_WINDOW_MOBILE = 20
@@ -173,17 +173,18 @@ export const offhand_playerInteractWithBlock = (data) => {
                 pitch: checkRandom(PLACE_SOUND.PITCH)
             })
 
-            if (offhandItem.amount <= 1) {
-                equ.setEquipment(EquipmentSlot.Offhand, undefined)
-            } else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount - 1}`)
+            if (offhandItem.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+            else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount - 1}`)
         } catch (e) { if (DEBUG) console.warn('[OFFHAND] unknown case:', e) }
     }
 
     const cache = FACE_TO_NEIGHBOUR[blockFace]
     if (offhandItem?.typeId !== TORCH_ID) return
     const mainhandIsBlock = (() => {
-        const typeId = mainhandItem.typeId ?? ''
+        const typeId = mainhandItem?.typeId ?? ''
         if (ITEMBUTBLOCK[typeId] === true) return true
+        const distance = getDistance(block.center(), player.location)
+        if (distance < 1) return false
 
         try { return mainhandItem && BlockPermutation.resolve(typeId) !== undefined }
         catch { return false }

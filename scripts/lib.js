@@ -106,3 +106,15 @@ export const setEqu = (entity, itemStack = undefined, slot = EquipmentSlot.Mainh
         return false
     }
 }
+
+/**
+ * @param {{x:number, y:number, z:number}} loc1 
+ * @param {{x:number, y:number, z:number}} loc2 
+ * @returns {number}
+ */
+export const getDistance = (a, b) => {
+  const dx = a.x - b.x
+  const dy = a.y - b.y
+  const dz = a.z - b.z
+  return dx*dx + dy*dy + dz*dz // faster than (Math.sqrt)
+}
