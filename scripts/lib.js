@@ -1,4 +1,4 @@
-import { EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, world } from "@minecraft/server"
+import { EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, EquipmentSlot, GameMode, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, world } from "@minecraft/server"
 import { RUNTIME as E } from "./_store"
 const { DEBUG } = E
 export const RUNTIME = E
@@ -47,18 +47,37 @@ export const applyItemDamage = (player, item) => { // only for weapon, not armor
     return { changed, item }
 }
 
-/**@param {ItemStack} item*/
-export const reduceItem = (item) => {
-    if (item.amount <= 1) return new ItemStack("minecraft:air", 1)
-    else {
-        const reduceItem = item.clone()
-        reduceItem.amount -= 1
+/**
+ * @param {ItemStack} item
+ * @param {number} amount=1 ; support negative
+ * @param {Entity|null} entity=null ; if use negative number
+ * @param {Boolean} ignoreCreative=false
+ */
+export const reduceItem = (item, amount = 1, entity = null) => {
+    if (amount === 0) return item // ??
+    else if (amount > 0) {
+        if (item.amount <= 1) return new ItemStack("minecraft:air", 1)
+        else {
+            const reduceItem = item.clone()
+            reduceItem.amount -= 1
 
-        return reduceItem
+            return reduceItem
+        }
+    } else if (amount < 0) {
+        const clone = item.clone()
+        const container = getInv(entity)?.container
+
+        clone.amount = Math.abs(amount)
+        container.addItem(clone)
+
+        return clone
+    } else {
+        if (DEBUG) world.sendMessage(`${item?.typeId || '[??]'} add amount +${amount || '[??]'} which is ${typeof amount || '[??]'}`)
+        return item
     }
 }
 
-// lazy helper
+// lazy helper, for lazy dev
 /**
  * @param {Entity} entity 
  * @returns {EntityEquippableComponent}
@@ -69,3 +88,21 @@ export const getEqu = (entity) => entity.getComponent(EntityComponentTypes.Equip
  * @returns {EntityInventoryComponent}
  */
 export const getInv = (entity) => entity.getComponent(EntityComponentTypes.Inventory)
+/**
+ * @param {Player|Entity} entity
+ * @param {ItemStack} itemStack=[undefined] ; set to nothing
+ * @param {'Mainhand'|'Offhand'|'Head'|'Body'|'Legs'|'Feet'|EquipmentSlot} slot=[Mainhand] ; common
+ * @returns {Boolean} is success?
+ */
+export const setEqu = (entity, itemStack = undefined, slot = EquipmentSlot.Mainhand, ignoreCreative = false) => {
+    if (ignoreCreative && entity instanceof Player && entity.matches(GameMode.Creative)) return
+
+    try {
+        const equ = getEqu(entity)
+        equ.setEquipment(slot, itemStack)
+        return true
+    } catch (e) {
+        if (DEBUG) world.sendMessage(`entity=${typeof entity}, itemStack=${typeof itemStack}, slot=${typeof slot}`)
+        return false
+    }
+}

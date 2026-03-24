@@ -127,12 +127,26 @@ export const offhand_playerInteractWithEntity = (event) => {
 
 function canPlaceTorchOn(block) {
     if (block.isAir) return true
+    // if (block.isLiquid) return false // block is alr NOT liquid
     if (block.permutation.matches(LIGHT)) return true
     const replace = ALLOW_REPLACE[block.typeId]
     if (replace === true) return true
     if (replace === false) return block.below()?.isSolid ?? false
     return false
 }
+
+const ITEMBUTBLOCK = Object.freeze({ // aka, skip item ; todo: add to config
+    "minecraft:water_bucket": true,
+    "minecraft:axolotl_bucket": true,
+    "minecraft:cod_bucket": true,
+    "minecraft:lava_bucket": true,
+    "minecraft:powder_snow_bucket": true,
+    "minecraft:pufferfish_bucket": true,
+    "minecraft:salmon_bucket": true,
+    "minecraft:tadpole_bucket": true,
+    "minecraft:tropical_fish_bucket": true,
+    "minecraft:bucket": true, // edge case, not a block but need to skip
+})
 
 const delay = {}
 /**
@@ -141,8 +155,6 @@ const delay = {}
  */
 export const offhand_playerInteractWithBlock = (data) => {
     const { player, block, blockFace, isFirstEvent } = data
-
-    // anti torch offhand item dupe
     if (!isFirstEvent) {
         const playerDelay = delay[player.id] || 0
         if (playerDelay > system.currentTick) return
@@ -154,8 +166,7 @@ export const offhand_playerInteractWithBlock = (data) => {
     const mainhandItem = equ.getEquipment(EquipmentSlot.Mainhand)
 
     const reduceItem = () => {
-        if (player.matches({ gameMode: GameMode.Creative }))
-            return
+        if (player.matches({ gameMode: GameMode.Creative })) return
         try {
             player.dimension.playSound(PLACE_SOUND.ID, block.center(), {
                 volume: checkRandom(PLACE_SOUND.VOLUME),
@@ -171,7 +182,10 @@ export const offhand_playerInteractWithBlock = (data) => {
     const cache = FACE_TO_NEIGHBOUR[blockFace]
     if (offhandItem?.typeId !== TORCH_ID) return
     const mainhandIsBlock = (() => {
-        try { return mainhandItem && BlockPermutation.resolve(mainhandItem.typeId) !== undefined }
+        const typeId = mainhandItem.typeId ?? ''
+        if (ITEMBUTBLOCK[typeId] === true) return true
+
+        try { return mainhandItem && BlockPermutation.resolve(typeId) !== undefined }
         catch { return false }
     })()
     if (block && cache.typeId !== block.typeId && mainhandIsBlock) return
@@ -200,7 +214,7 @@ export const offhand_playerInteractWithBlock = (data) => {
 
     system.run(() => {
         if (replace === false && !(block.below()?.isSolid)) return
-        block.setPermutation(BlockPermutation.resolve(TORCH_ID).withState('torch_facing_direction', 'top'))
+        if (canPlaceTorchOn(block)) block.setPermutation(BlockPermutation.resolve(TORCH_ID).withState('torch_facing_direction', 'top'))
         reduceItem()
     })
 }

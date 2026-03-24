@@ -11,8 +11,12 @@ this file is only for top priority todo, if something like refactor some code or
     - [x] support other container
 - [x] /README.md
 - [x] offhand items
-- [x] BUG!!: fix hoe/shovel cannot use with dynamic light
+- [x] bug fix
+  - [x] fix hoe/shovel cannot use with dynamic light
+  - [x] fix seeds not work on farmlands
+  - [x] support edge case for offhand like buckets
 - [x] harvest crop
+- [ ] changelog/*.md ??
 
 ## picker
 - [x] update light level to new version
@@ -22,10 +26,12 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] recipes
 - [ ] add more config in manifest pack
   - [ ] offhand's settings
-    - [ ] update _config.js
-    - [ ] update _store.js
-    - [ ] update manifest.json
+    - [x] update _config.js
+    - [x] update _store.js
+    - [x] update manifest.json
+    - [ ] still need to add more tho -aitji
   - [ ] crop.js
-    - [ ] update _config.js
-    - [ ] update _store.js
-    - [ ] update manifest.json
+    - [x] update _config.js
+    - [x] update _store.js
+    - [x] update manifest.json
+    - [ ] still need to add more tho -aitji

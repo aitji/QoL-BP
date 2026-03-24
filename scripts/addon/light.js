@@ -1,5 +1,5 @@
-import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent } from "@minecraft/server"
-import { applyItemDamage, checkRandom, clamp, getEqu, RUNTIME } from "../lib"
+import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block } from "@minecraft/server"
+import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
@@ -235,42 +235,102 @@ export const light_processFrames = () => {
         if (DEBUG) world.sendMessage(`§8clear frame: §7${dead[i]}`)
     }
 }
+
+// vanilla bug fix ; read "todo.md" will give more context
+const farmland = Object.freeze({ 'minecraft:farmland': true, 'minecraft:soul_sand': true })
+/** @type {Readonly<{[k: string]: Readonly<{asBlock: string; pot: string}>}>} */
+const seedToBlock = Object.freeze({ // todo: add to config
+    'minecraft:wheat_seeds': Object.freeze({ asBlock: 'minecraft:wheat', pot: 'minecraft:farmland' }),
+    'minecraft:carrots': Object.freeze({ asBlock: 'minecraft:carrots', pot: 'minecraft:farmland' }),
+    'minecraft:potatoes': Object.freeze({ asBlock: 'minecraft:potatoes', pot: 'minecraft:farmland' }),
+    'minecraft:beetroot_seeds': Object.freeze({ asBlock: 'minecraft:beetroot', pot: 'minecraft:farmland' }),
+    'minecraft:nether_wart': Object.freeze({ asBlock: 'minecraft:nether_wart', pot: 'minecraft:soul_sand' }),
+})
+
+const delay = {}
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
 export const light_playerInteractWithBlock = (data) => {
     const { player, block, blockFace, itemStack, isFirstEvent } = data
-    if (!itemStack && !block) return
-    if (block?.hasTag('dirt')) {
-        const above = block.above(1)
-        if (above && above?.permutation?.matches('minecraft:light_block')) {
+    if (!isFirstEvent) {
+        const playerDelay = delay[player.id] || 0
+        if (playerDelay > system.currentTick) return
+    }
+    delay[player.id] = system.currentTick + 4
+
+    if (!itemStack || !block) return
+
+    /** @type {Block?} */
+    let above
+    const isAboveLight = () => { // don't perm check if unnesscery
+        above = block.above(1)
+        return above?.permutation?.matches('minecraft:light_block') ?? false
+    }
+
+    if (block.hasTag('dirt')) {
+        if (!isAboveLight()) return
+        system.run(() => {
+            let toolUsed = false
+            if (itemStack?.hasTag('minecraft:is_shovel')) {
+                if (block.typeId === 'minecraft:grass_path') return
+                block.setPermutation(BlockPermutation.resolve('minecraft:grass_path'))
+                toolUsed = true
+
+                player.dimension.playSound('use.grass', block.center(), { // todo: config.js
+                    volume: 1.0,
+                    pitch: 0.8
+                })
+            }
+            if (itemStack?.hasTag('minecraft:is_hoe')) {
+                if (block.typeId === 'minecraft:farmland') return
+                block.setPermutation(BlockPermutation.resolve('minecraft:farmland'))
+                toolUsed = true
+
+                player.dimension.playSound('use.gravel', block.center(), { // todo: config.js
+                    volume: 1.0,
+                    pitch: 0.8
+                })
+            }
+
+            // all logic
+            if (toolUsed) {
+                const { changed, item } = applyItemDamage(player, itemStack)
+                if (changed) {
+                    const equ = getEqu(player)
+                    equ.setEquipment(EquipmentSlot.Mainhand, item)
+                }
+            }
+        })
+    }
+
+    // farmland
+    const blockType = block.typeId
+    if (farmland[blockType]) {
+        if (!isAboveLight()) return
+        const raw = seedToBlock[itemStack?.typeId || '']
+        if (!raw) return
+        const { asBlock, pot } = raw
+
+        if (pot === blockType) {
+            const isCreative = player.matches({ gameMode: GameMode.Creative })
+            const playSound = () => player.dimension.playSound('place.grass', block.center(), {
+                volume: 0.8,
+                pitch: checkRandom([0.8, 1])
+            })
+
+            let scam = false
             system.run(() => {
-                let toolUsed = false
-                if (itemStack?.hasTag('minecraft:is_shovel')) {
-                    if (block.typeId === 'minecraft:grass_path') return
-                    block.setPermutation(BlockPermutation.resolve('minecraft:grass_path'))
-                    toolUsed = true
-
-                    player.dimension.playSound('use.grass', block.center(), { // todo: config.js
-                        volume: 1.0,
-                        pitch: 0.8
-                    })
-                }
-                if (itemStack?.hasTag('minecraft:is_hoe')) {
-                    if (block.typeId === 'minecraft:farmland') return
-                    block.setPermutation(BlockPermutation.resolve('minecraft:farmland'))
-                    toolUsed = true
-
-                    player.dimension.playSound('use.gravel', block.center(), { // todo: config.js
-                        volume: 1.0,
-                        pitch: 0.8
-                    })
-                }
-
-                // all logic
-                if (toolUsed) {
-                    const { changed, item } = applyItemDamage(player, itemStack)
-                    if (changed) {
-                        const equ = getEqu(player)
-                        equ.setEquipment(EquipmentSlot.Mainhand, item)
+                try {
+                    above.setType(asBlock)
+                    playSound()
+                    if (!isCreative) scam = setEqu(player, reduceItem(itemStack))
+                } catch {
+                    try {
+                        above.setPermutation(BlockPermutation.resolve(asBlock))
+                        playSound()
+                        if (!isCreative) scam = setEqu(player, reduceItem(itemStack))
+                    } catch {
+                        const command = above.dimension.runCommand(`setblock ${above.x} ${above.y} ${above.z} ${asBlock}`)
+                        if (command.successCount <= 0 && scam && !isCreative) reduceItem(itemStack, -1, player) // give item back
                     }
                 }
             })
