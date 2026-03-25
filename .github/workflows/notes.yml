@@ -17,12 +17,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Get changed changelog files
         id: changed
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '.github/changelog/*.md')
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.sha }}"
+
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(git diff --name-only HEAD -- '.github/changelog/*.md')
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "$AFTER" -- '.github/changelog/*.md')
+          fi
+
           echo "Changed files: $CHANGED"
           echo "files=$CHANGED" >> $GITHUB_OUTPUT
 
