@@ -1,0 +1,46 @@
+name: Update Release Notes
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/changelog/**.md
+
+jobs:
+  update-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Get changed changelog files
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '.github/changelog/*.md')
+          echo "Changed files: $CHANGED"
+          echo "files=$CHANGED" >> $GITHUB_OUTPUT
+
+      - name: Update each matching release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for FILE in ${{ steps.changed.outputs.files }}; do
+            BASENAME=$(basename "$FILE" .md)
+            VERSION="${BASENAME#v}"
+            TAG="v${VERSION}"
+
+            RELEASE=$(gh release view "$TAG" --json tagName 2>/dev/null || echo "")
+            if [ -z "$RELEASE" ]; then
+              echo "No release found for tag $TAG, skipping"
+              continue
+            fi
+
+            echo "Updating release $TAG with body from $FILE"
+            gh release edit "$TAG" --notes-file "$FILE"
+          done

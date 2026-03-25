@@ -50,7 +50,6 @@ jobs:
         id: changelog
         run: |
           VERSION="${{ steps.check.outputs.version_string }}"
-
           MINOR_VERSION=$(echo "$VERSION" | cut -d. -f1-2)
 
           EXACT_FILE=".github/changelog/v${VERSION}.md"
@@ -79,7 +78,6 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: |
           PACK_NAME="${{ steps.check.outputs.pack_name }}"
-
           zip -r "$PACK_NAME" . \
             -x "*.git*" \
             -x ".github/*" \
