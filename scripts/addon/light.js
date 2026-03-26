@@ -1,4 +1,4 @@
-import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block } from "@minecraft/server"
+import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent } from "@minecraft/server"
 import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
@@ -21,6 +21,8 @@ const getItemLight = (id) => id ? (light[id.split(':')[1]?.toLowerCase()]?.light
 const lightMap = new Map() // key: "dim:x:y:z"  val: { time, level, isWater, owner }
 const frameSet = new Set() // key: "dim:x:y:z"
 const entityLights = new Map() // owner id -> Set<blockKey>
+const suppressedLocs = new Map() // key: "dim:x:y:z"  val: expireTick ;; no backup DYP just for visual
+const SUPP_BREAK = 8 // need to be config-able
 
 const bKey = (dim, x, y, z) => `${dim}:${x}:${y}:${z}`
 const blockBKey = (b) => bKey(dimId(b), b.location.x, b.location.y, b.location.z)
@@ -44,6 +46,12 @@ function _restoreFromDYP() {
         } else if (dy.startsWith('frame:')) {
             const p = dy.split(':')
             frameSet.add(bKey(p[1], p[2], p[3], p[4]))
+        } else if (dy.startsWith('supp:')) {
+            const p = dy.split(':')
+            const dur = world.getDynamicProperty(dy)
+            if (typeof dur === 'number' && dur > 0)
+                suppressedLocs.set(bKey(p[1], p[2], p[3], p[4]), system.currentTick + dur)
+            world.setDynamicProperty(dy, undefined)
         } else if (dy.startsWith('chuck_unload:')) {
             // chuck_unload:light:dim:x:y:z:level:isWater:owner
             const p = dy.split(':')
@@ -57,12 +65,14 @@ function _restoreFromDYP() {
 
 function put_light(block, level, owner, force = false) {
     try {
+        const k = blockBKey(block)
+        const exp = suppressedLocs.get(k)
+        if (exp !== undefined && system.currentTick < exp) return
         if (block.isLiquid && block.permutation.getState('liquid_depth') !== 0) return
         const isWater = block.permutation.matches('minecraft:water')
         const isLava = block.permutation.matches('minecraft:lava')
         if (isLava) return
         const ownerId = force ? 'Infinity' : (owner?.id || owner?.name || owner?.nameTag || owner?.typeId || String(owner))
-        const k = blockBKey(block)
 
         if (lightMap.has(k)) {
             const e = lightMap.get(k)
@@ -127,7 +137,7 @@ function processEntity(en, isPlayer = false) {
     } catch (e) { if (DEBUG) world.sendMessage(`§7e: ${e}`) }
 }
 
-export const light_pending = () => {
+export const light_pending = (tick) => {
     const dead = []
     lightMap.forEach((v, k) => {
         const [dim, x, y, z] = k.split(':')
@@ -208,12 +218,7 @@ export const light_playerPlaceBlock = ({ block }) => {
     if (DEBUG) world.sendMessage(`§8add frame:§7 ${k}`)
 }
 
-export const light_playerBreakBlock = (data) => {
-    if (!data.player.matches({ gameMode: GameMode.Creative }) && data.block.permutation.matches('minecraft:light_block'))
-        data.cancel = true
-}
-
-export const light_processFrames = () => {
+export const light_processFrames = (tick) => {
     const dead = []
     frameSet.forEach(k => {
         try {
@@ -236,7 +241,17 @@ export const light_processFrames = () => {
     }
 }
 
-// vanilla bug fix ; read "todo.md" will give more context
+export const light_playerPlaceBlock_before = ({ block }) => suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
+/**@param {PlayerBreakBlockBeforeEvent} data*/
+export const light_playerBreakBlock = (data) => {
+    const { player, block } = data
+    if (
+        !player.matches({ gameMode: GameMode.Creative }) &&
+        block.permutation.matches('minecraft:light_block')
+    ) data.cancel = true
+    suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
+}
+
 const farmland = Object.freeze({ 'minecraft:farmland': true, 'minecraft:soul_sand': true })
 /** @type {Readonly<{[k: string]: Readonly<{asBlock: string; pot: string}>}>} */
 const seedToBlock = Object.freeze({ // todo: add to config

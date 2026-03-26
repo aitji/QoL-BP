@@ -5,55 +5,26 @@ const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FAC
 const DOUBLE_SNEAK_WINDOW_MOBILE = 20
 const DOUBLE_SNEAK_WINDOW_DEFAULT = 12
 
-const DYP = {
-    lastSneakTick: id => `qof:lst:${id}`,
-    wasSneaking: id => `qof:ws:${id}`,
-}
-
 /**
  * @typedef {{ lastSneakTick: number, wasSneaking: boolean }} SneakState
  * @type {Map<string, SneakState>}
  */
 const sneakState = new Map()
-export const offhand_playerSpawn = (data) => data.initialSpawn && _restorePlayerState(data.player)
+export const offhand_playerSpawn = (data) => data.initialSpawn && _initPlayer(data.player)
 export const offhand_playerLeave = (data) => sneakState.delete(data.playerId)
-system.run(() => { for (const player of world.getAllPlayers()) _restorePlayerState(player) })
+system.run(() => { for (const player of world.getAllPlayers()) _initPlayer(player) })
 
 /**@param {Player} player*/
-function _restorePlayerState(player) {
+function _initPlayer(player) {
     const { id } = player
     if (sneakState.has(id)) return
-
-    /** @type {number} */
-    const lastSneakTick = player.getDynamicProperty(DYP.lastSneakTick(id)) ?? -999
-    /** @type {boolean} */
-    const wasSneaking = player.getDynamicProperty(DYP.wasSneaking(id)) ?? false
-
-    sneakState.set(id, {
-        lastSneakTick: (lastSneakTick),
-        wasSneaking: (wasSneaking),
-    })
-}
-
-/** @param {Player} player @param {Partial<SneakState>} patch */
-function _writeSneakState(player, patch) {
-    const state = sneakState.get(player.id)
-    if (!state) return
-
-    if (patch.lastSneakTick !== undefined) {
-        state.lastSneakTick = patch.lastSneakTick
-        player.setDynamicProperty(DYP.lastSneakTick(player.id), patch.lastSneakTick)
-    }
-    if (patch.wasSneaking !== undefined) {
-        state.wasSneaking = patch.wasSneaking
-        player.setDynamicProperty(DYP.wasSneaking(player.id), patch.wasSneaking)
-    }
+    sneakState.set(id, { lastSneakTick: -999, wasSneaking: false })
 }
 
 /**@param {Player} player@param {number} now*/
 export function offhand_player(player, now) {
     const { id, isSneaking } = player
-    if (!sneakState.has(id)) _restorePlayerState(player) // lazy init
+    if (!sneakState.has(id)) _initPlayer(player)
 
     const state = sneakState.get(id)
     const window = player.clientSystemInfo.platformType === "Mobile"
@@ -64,11 +35,10 @@ export function offhand_player(player, now) {
     if (justReleased) {
         const gap = now - state.lastSneakTick
         if (gap <= window) swapItem(player)
-        _writeSneakState(player, { lastSneakTick: now })
+        state.lastSneakTick = now
     }
 
-    if (state.wasSneaking !== isSneaking)
-        _writeSneakState(player, { wasSneaking: isSneaking })
+    state.wasSneaking = isSneaking
 }
 
 /** @param {ItemStack | undefined} item @returns {boolean} */
@@ -79,6 +49,7 @@ function hasUnsafeProperties(item) {
     const enchants = item.getComponent(ItemComponentTypes.Enchantable)
     if (enchants?.getEnchantments().length > 0) return true
 
+    // nvm i found the way!
     // const durability = item.getComponent(ItemComponentTypes.Durability)
     // if ((durability?.damage ?? 0) > 0) return true
 
