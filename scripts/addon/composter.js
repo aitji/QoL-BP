@@ -219,7 +219,7 @@ export const composter_pending = (tick) => {
 
             if (firstChanceItem === -1) {
                 const isStew = item.typeId.endsWith('_stew') || item.typeId.endsWith('_soup')
-                const chance = isStew ? ITEMS[item.typeId] : ITEMS[item.typeId]
+                const chance = ITEMS[item.typeId]
 
                 if (isStew) {
                     foundBowl.amount += 1
