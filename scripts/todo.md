@@ -19,9 +19,10 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] harvest crop
 - [ ] ongoing problem ; might ship without fix this
   - [ ] (24-Mar-2026) piston is change state to air when extract it will del piston
-        ; (24-Mar-2026) still doesn't idea how to fix "cleanly" tho
-        ; (26-Mar-2026) found problem! vanilla light block is pushable by piston (???) idk why they not [pop] it
-          so best way to fix is create a `qof:light_block` and have a piston componet to pop it, and that need textures.... which mean res-pack duh, gonna have to find workaround somehow
+        ; (25-Mar-2026) still doesn't idea how to fix "cleanly" tho\
+        ; (26-Mar-2026) found problem! vanilla light block is pushable by piston (???) idk why they not [pop] it\
+        ; (27-Mar-2026) i found workaround, how? i create `qof:light_block` that have all vanilla components but it popped on piston moving\
+          \ trade off: it show error that it missing geometry because i use invaild geometry so it doesn't have a block but will inculde the resoure pack to fix that, if didn't install error just pop up once IF player enabled console gui log, great deal i take that
   - [x] player break block are showing light block particle ; after block become air it got replace to light block and minecraft decide to render it
 - [x] add changelog/*.md and github action bot pull file and update it
 
@@ -60,9 +61,7 @@ elytra: peak 7000+ bytes (90+ dyp)\
 elytra+firework (any level): peak 8000+ bytes (150+ dyp)\
 
 > item is -1.83 times of player
-> if everyone have elytra and firework same time it will take 12 player to take dynamic light to limit, rn i'm ok with that tho!
-
-peak: 6,000 bytes
+> if everyone have elytra and firework same time it will take 12 player to take dynamic light to limit, it still working even it hit limit but it will run in-memory instant of persistance database rn i'm ok with that tho!
 
 ## picker
 - [x] update light level to new version

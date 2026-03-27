@@ -8,14 +8,14 @@ if (ENABLED) system.run(() => {
     AIR = BlockPermutation.resolve('minecraft:air')
     WATER = BlockPermutation.resolve('minecraft:water')
     LAVA = BlockPermutation.resolve('minecraft:lava')
-    BASE_LIGHT = BlockPermutation.resolve('minecraft:light_block')
+    BASE_LIGHT = BlockPermutation.resolve('qof:light_block')
     _restoreFromDYP()
 })
 
-const lightPerm = (lv) => BASE_LIGHT.withState('block_light_level', lv < 0 ? 0 : lv > 15 ? 15 : lv)
+const lightPerm = (lv) => BASE_LIGHT.withState('qof:light_level', lv < 0 ? 0 : lv > 15 ? 15 : lv)
 const clamp15 = (n) => clamp(n, 0, 15)
 const dimId = (b) => b.dimension.id.split(':')[1]
-const isLightable = (b, liq) => b.isAir || (liq && b.isLiquid) || b.permutation.matches('minecraft:light_block')
+const isLightable = (b, liq) => b.isAir || (liq && b.isLiquid) || b.permutation.matches('qof:light_block')
 const getItemLight = (id) => id ? (light[id.split(':')[1]?.toLowerCase()]?.light || 0) : 0
 
 const lightMap = new Map() // key: "dim:x:y:z"  val: { time, level, isWater, owner }
@@ -98,7 +98,7 @@ function spreadLight(block, level, en, height = 2, force = false) {
         if (!blo) return
         const k = blockBKey(blo)
         if (seen.has(k)) return
-        if (blo.isLiquid || blo.isAir || blo.permutation.matches('minecraft:light_block')) {
+        if (blo.isLiquid || blo.isAir || blo.permutation.matches('qof:light_block')) {
             seen.add(k)
             put_light(blo, level, en, force)
         }
@@ -146,7 +146,7 @@ export const light_pending = (tick) => {
             if (!block) { dead.push(k); return }
 
             if (v.time < 0) {
-                const lig = block.permutation.getState('block_light_level') || 0
+                const lig = block.permutation.getState('qof:light_level') || 0
                 if (lig <= 0) {
                     if (isLightable(block, v.isWater)) block.setPermutation(v.isWater ? WATER : AIR)
                     dead.push(k)
@@ -247,7 +247,7 @@ export const light_playerBreakBlock = (data) => {
     const { player, block } = data
     if (
         !player.matches({ gameMode: GameMode.Creative }) &&
-        block.permutation.matches('minecraft:light_block')
+        block.permutation.matches('qof:light_block')
     ) data.cancel = true
     suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
 }
@@ -278,7 +278,7 @@ export const light_playerInteractWithBlock = (data) => {
     let above
     const isAboveLight = () => { // don't perm check if unnesscery
         above = block.above(1)
-        return above?.permutation?.matches('minecraft:light_block') ?? false
+        return above?.permutation?.matches('qof:light_block') ?? false
     }
 
     if (block.hasTag('dirt')) {

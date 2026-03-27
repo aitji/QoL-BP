@@ -423,7 +423,7 @@ export const SETTINGS = Object.freeze({
             West: (b) => b.west(),
         }),
         TORCH_ID: "minecraft:torch",
-        LIGHT: 'minecraft:light_block',
+        LIGHT: 'qof:light_block',
         PLACE_SOUND: Object.freeze({
             ID: "dig.wood", // new version might be chnage to "place.wood"
             VOLUME: 1.0,
