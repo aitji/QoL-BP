@@ -156,8 +156,9 @@ export const offhand_playerInteractWithBlock = (data) => {
     const mainhandIsBlock = (() => {
         const typeId = mainhandItem?.typeId ?? ''
         if (ITEMBUTBLOCK[typeId] === true) return true
-        const distance = getDistance(block.center(), player.location)
-        if (distance < 1) return false
+        // TOO MANY edge case too handle, and mostly doesn't look great for ux
+        // const distance = getDistance(block.center(), player.location)
+        // if (distance < 1) return false
 
         try { return mainhandItem && BlockPermutation.resolve(typeId) !== undefined }
         catch { return false }
