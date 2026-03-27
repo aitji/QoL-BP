@@ -29,8 +29,14 @@
         },
         {
             "type": "toggle",
-            "text": "§cCompatibility§r with addon/scripts",
-            "name": "qof:compatibility",
+            "text": "§cDebug mode? §7nothing yet §r",
+            "name": "qofrp:DEBUG",
+            "default": true
+        },
+        {
+            "type": "toggle",
+            "text": "§cCompatibility §7with addon/scripts §r",
+            "name": "qofrp:compatibility",
             "default": true
         }
     ]
