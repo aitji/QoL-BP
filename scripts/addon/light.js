@@ -1,4 +1,4 @@
-import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent } from "@minecraft/server"
+import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity } from "@minecraft/server"
 import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
@@ -16,7 +16,20 @@ const lightPerm = (lv) => BASE_LIGHT.withState('qof:light_level', lv < 0 ? 0 : l
 const clamp15 = (n) => clamp(n, 0, 15)
 const dimId = (b) => b.dimension.id.split(':')[1]
 const isLightable = (b, liq) => b.isAir || (liq && b.isLiquid) || b.permutation.matches('qof:light_block')
-const getItemLight = (id) => id ? (light[id.split(':')[1]?.toLowerCase()]?.light || 0) : 0
+/**@param {Entity} en */
+const getItemLight = (id, en, tick) => {
+    const found = light[id ? id.split(':')[1]?.toLowerCase() : '']
+    if (!found) return 0
+
+    if (found?.inLiquid !== undefined) {
+        if (found.inLiquid === en.isInWater) return found.light || 0
+        const loc = en.location
+        if (found.inLiquid === false && tick % 60 === 1) en.dimension.spawnParticle("minecraft:water_evaporation_bucket_emitter", { x: loc.x - .5, y: loc.y, z: loc.z - .5 }) // todo: make this config-able
+        return 0
+    }
+
+    return found.light ?? 0
+}
 
 const lightMap = new Map() // key: "dim:x:y:z"  val: { time, level, isWater, owner }
 const frameSet = new Set() // key: "dim:x:y:z"
@@ -119,15 +132,15 @@ function spreadLight(block, level, en, height = 2, force = false) {
     }
     tryPut(block.above(height - 1))
 }
-
-function processEntity(en, isPlayer = false) {
+/**@param {Entity} en @param {Boolean} isPlayer*/
+function processEntity(en, isPlayer = false, tick) {
     try {
         const equip = en.getComponent('equippable')
         const mItem = isPlayer ? equip?.getEquipment(EquipmentSlot.Mainhand) : en.getComponent('item')?.itemStack
         const oItem = isPlayer ? equip?.getEquipment(EquipmentSlot.Offhand) : undefined
 
-        const a = getItemLight(mItem?.typeId)
-        const b = getItemLight(oItem?.typeId)
+        const a = getItemLight(mItem?.typeId, en, tick)
+        const b = getItemLight(oItem?.typeId, en, tick)
         if (!(a | b)) return
 
         const level = clamp15(Math.ceil(Math.hypot(a, b) * REDUCE_LIGHT))
@@ -171,8 +184,8 @@ export const light_pending = (tick) => {
     }
 }
 /**@param {Player} pl */
-export const light_player = (pl) => {
-    processEntity(pl, true)
+export const light_player = (pl, tick) => {
+    processEntity(pl, true, tick)
     pl.dimension.getEntities({
         location: pl.location,
         maxDistance: LIGHT_RENDER_RADIUS,
@@ -182,7 +195,7 @@ export const light_player = (pl) => {
         if (!en) return
         if (en.typeId === 'minecraft:item'
             // || en.typeId === 'minecraft:armor_stand' // armor stand not support equippable rn
-        ) return processEntity(en)
+        ) return processEntity(en, false, tick)
 
         let lightLevel = 0
         if (en.getComponent(EntityComponentTypes.OnFire)) lightLevel += LIGHT_FIRE_LEVEL * REDUCE_LIGHT

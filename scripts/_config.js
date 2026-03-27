@@ -14,28 +14,28 @@ export const SETTINGS = Object.freeze({
         LIGHT_FIRE_LEVEL: 10, // this will be reduce by REDUCE_LIGHT
         LIGHT_WIKI: Object.freeze({
             // light 15
-            "beacon": Object.freeze({ light: 15 }), "campfire": Object.freeze({ light: 15 }),
+            "beacon": Object.freeze({ light: 15 }), "campfire": Object.freeze({ light: 15, inLiquid: false }),
             "conduit": Object.freeze({ light: 15 }), "ochre_froglight": Object.freeze({ light: 15 }),
             "pearlescent_froglight": Object.freeze({ light: 15 }), "verdant_froglight": Object.freeze({ light: 15 }),
             "glowstone": Object.freeze({ light: 15 }), "lit_pumpkin": Object.freeze({ light: 15 }),
-            "lantern": Object.freeze({ light: 15 }), "lava_bucket": Object.freeze({ light: 15 }),
+            "lantern": Object.freeze({ light: 15, inLiquid: false }), "lava_bucket": Object.freeze({ light: 15, inLiquid: false }),
             "sea_lantern": Object.freeze({ light: 15 }), "shroomlight": Object.freeze({ light: 15 }),
-            "copper_lantern": Object.freeze({ light: 15 }), "waxed_copper_lantern": Object.freeze({ light: 15 }),
-            "exposed_copper_lantern": Object.freeze({ light: 15 }), "waxed_exposed_copper_lantern": Object.freeze({ light: 15 }),
-            "weathered_copper_lantern": Object.freeze({ light: 15 }), "waxed_weathered_copper_lantern": Object.freeze({ light: 15 }),
-            "oxidized_copper_lantern": Object.freeze({ light: 15 }), "waxed_oxidized_copper_lantern": Object.freeze({ light: 15 }),
+            "copper_lantern": Object.freeze({ light: 15, inLiquid: false }), "waxed_copper_lantern": Object.freeze({ light: 15, inLiquid: false }),
+            "exposed_copper_lantern": Object.freeze({ light: 15, inLiquid: false }), "waxed_exposed_copper_lantern": Object.freeze({ light: 15, inLiquid: false }),
+            "weathered_copper_lantern": Object.freeze({ light: 15, inLiquid: false }), "waxed_weathered_copper_lantern": Object.freeze({ light: 15, inLiquid: false }),
+            "oxidized_copper_lantern": Object.freeze({ light: 15, inLiquid: false }), "waxed_oxidized_copper_lantern": Object.freeze({ light: 15, inLiquid: false }),
 
             // light 14
             "end_rod": Object.freeze({ light: 14 }), "glow_berries": Object.freeze({ light: 14 }),
-            "torch": Object.freeze({ light: 14 }), "copper_torch": Object.freeze({ light: 14 }),
+            "torch": Object.freeze({ light: 14, inLiquid: false }), "copper_torch": Object.freeze({ light: 14, inLiquid: false }),
 
             // light 10
-            "crying_obsidian": Object.freeze({ light: 10 }), "soul_campfire": Object.freeze({ light: 10 }),
-            "soul_lantern": Object.freeze({ light: 10 }), "soul_torch": Object.freeze({ light: 10 }),
+            "crying_obsidian": Object.freeze({ light: 10 }), "soul_campfire": Object.freeze({ light: 10, inLiquid: false }),
+            "soul_lantern": Object.freeze({ light: 10, inLiquid: false }), "soul_torch": Object.freeze({ light: 10, inLiquid: false }),
 
             // light 7
             "enchanting_table": Object.freeze({ light: 7 }), "ender_chest": Object.freeze({ light: 7 }),
-            "glow_lichen": Object.freeze({ light: 7 }), "redstone_torch": Object.freeze({ light: 7 }),
+            "glow_lichen": Object.freeze({ light: 7 }), "redstone_torch": Object.freeze({ light: 7, inLiquid: false }),
 
             // light 6
             "sculk_catalyst": Object.freeze({ light: 6 }), "sea_pickle": Object.freeze({ light: 6, inLiquid: true }),
