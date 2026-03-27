@@ -34,8 +34,10 @@ export function offhand_player(player, now) {
     const justReleased = state.wasSneaking && !isSneaking
     if (justReleased) {
         const gap = now - state.lastSneakTick
-        if (gap <= window) swapItem(player)
-        state.lastSneakTick = now
+        if (gap <= window) {
+            swapItem(player)
+            state.lastSneakTick = 0
+        } else state.lastSneakTick = now
     }
 
     state.wasSneaking = isSneaking
