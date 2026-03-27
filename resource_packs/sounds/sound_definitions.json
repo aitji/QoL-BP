@@ -1,6 +1,0 @@
-{
-    "null": {
-      "category": "ui",
-      "sounds": [{"name":"sounds/null", "load_on_low_memory": false}]
-    }
-}
