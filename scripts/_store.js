@@ -47,6 +47,7 @@ function buildRuntime() {
             FARMLAND_BLOCK: L.FARMLAND_BLOCK,
             SOUND_SHOVEL_USE: L.SOUND_SHOVEL_USE,
             SOUND_HOE_USE: L.SOUND_HOE_USE,
+            BLOCK_INTERACTION_DELAY: L.BLOCK_INTERACTION_DELAY
         }),
 
         REPAIR_ANVIL: Object.freeze({
@@ -126,7 +127,9 @@ function buildRuntime() {
             FACE_TO_NEIGHBOUR: OH.FACE_TO_NEIGHBOUR,
             TORCH_ID: OH.TORCH_ID,
             LIGHT: OH.LIGHT,
-            PLACE_SOUND: OH.PLACE_SOUND
+            PLACE_SOUND: OH.PLACE_SOUND,
+            BLOCK_INTERACTION_DELAY: OH.BLOCK_INTERACTION_DELAY,
+            ITEMBUTBLOCK: OH.ITEMBUTBLOCK
         }),
         CROP: Object.freeze({
             ENABLED: g("qof:HARVEST.ENABLED", CR.ENABLED),

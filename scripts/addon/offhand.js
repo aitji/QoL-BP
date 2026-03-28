@@ -1,6 +1,6 @@
 import { Block, BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
 import { checkRandom, getDistance, RUNTIME } from "../lib"
-const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND } } = RUNTIME
+const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK } } = RUNTIME
 
 const DOUBLE_SNEAK_WINDOW_MOBILE = 20
 const DOUBLE_SNEAK_WINDOW_DEFAULT = 12
@@ -108,21 +108,6 @@ function canPlaceTorchOn(block) {
     return false
 }
 
-const ITEMBUTBLOCK = Object.freeze({ // aka, skip item ; todo: add to config
-    "minecraft:water_bucket": true,
-    "minecraft:axolotl_bucket": true,
-    "minecraft:cod_bucket": true,
-    "minecraft:lava_bucket": true,
-    "minecraft:powder_snow_bucket": true,
-    "minecraft:pufferfish_bucket": true,
-    "minecraft:salmon_bucket": true,
-    "minecraft:tadpole_bucket": true,
-    "minecraft:tropical_fish_bucket": true,
-    "minecraft:bucket": true, // edge case, not a block but need to skip
-    "minecraft:redstone": true,
-    "minecraft:redstone_torch": true,
-})
-
 const delay = {}
 /**
  * @param {PlayerInteractWithBlockBeforeEvent} data 
@@ -134,7 +119,7 @@ export const offhand_playerInteractWithBlock = (data) => {
         const playerDelay = delay[player.id] || 0
         if (playerDelay > system.currentTick) return
     }
-    delay[player.id] = system.currentTick + 4 // vanilla delay ;todo: make this config
+    delay[player.id] = system.currentTick + BLOCK_INTERACTION_DELAY
 
     const equ = player.getComponent(EntityComponentTypes.Equippable)
     const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)

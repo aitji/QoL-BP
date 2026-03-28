@@ -15,7 +15,7 @@ export const SETTINGS = Object.freeze({
         LIGHT_FIRE_LEVEL: 10, // this will be reduce by REDUCE_LIGHT
         FAIL_PARTICLE: "minecraft:water_evaporation_bucket_emitter",
         PARTICLE_OFFSET: Object.freeze({ x: -.5, y: 0, z: -.5 }),
-        
+
         // vanilla bug patched ---
         /** @type {Readonly<{[k: string]: Readonly<{asBlock: string; pot: string}>}>} */
         SEEDTOBLOCK: Object.freeze({
@@ -36,6 +36,7 @@ export const SETTINGS = Object.freeze({
             VOLUME: 1.0,
             PITCH: 0.8
         }),
+        BLOCK_INTERACTION_DELAY: 4, // tick
         // ---
         LIGHT_WIKI: Object.freeze({
             // light 15
@@ -454,6 +455,23 @@ export const SETTINGS = Object.freeze({
             VOLUME: 1.0,
             PITCH: 0.8
         }),
+        BLOCK_INTERACTION_DELAY: 4, // tick
+        ITEMBUTBLOCK: Object.freeze({
+            "minecraft:water_bucket": true,
+            "minecraft:axolotl_bucket": true,
+            "minecraft:cod_bucket": true,
+            "minecraft:lava_bucket": true,
+            "minecraft:powder_snow_bucket": true,
+            "minecraft:pufferfish_bucket": true,
+            "minecraft:salmon_bucket": true,
+            "minecraft:tadpole_bucket": true,
+            "minecraft:tropical_fish_bucket": true,
+            "minecraft:bucket": true,
+
+            "minecraft:redstone": true,
+            "minecraft:redstone_torch": true,
+            // maybe add more :?
+        })
     }),
     CROP: Object.freeze({
         ENABLED: true,
