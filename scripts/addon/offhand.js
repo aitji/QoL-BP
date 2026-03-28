@@ -126,20 +126,23 @@ export const offhand_playerInteractWithBlock = (data) => {
     const mainhandItem = equ.getEquipment(EquipmentSlot.Mainhand)
 
     const reduceItem = () => {
-        if (player.matches({ gameMode: GameMode.Creative })) return
         try {
             player.dimension.playSound(PLACE_SOUND.ID, block.center(), {
                 volume: checkRandom(PLACE_SOUND.VOLUME),
                 pitch: checkRandom(PLACE_SOUND.PITCH)
             })
 
+            if (player.matches({ gameMode: GameMode.Creative })) return
             if (offhandItem.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
             else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount - 1}`)
         } catch (e) { if (DEBUG) console.warn('[OFFHAND] unknown case:', e) }
     }
 
     const cache = FACE_TO_NEIGHBOUR[blockFace]
-    if (offhandItem?.typeId !== TORCH_ID) return
+    let blockId = TORCH_ID[offhandItem?.typeId]
+    if (!blockId) return
+    if (blockId === true) blockId = offhandItem.typeId
+
     const mainhandIsBlock = (() => {
         const typeId = mainhandItem?.typeId ?? ''
         if (ITEMBUTBLOCK[typeId] === true) return true
@@ -167,7 +170,7 @@ export const offhand_playerInteractWithBlock = (data) => {
             const target = getNeighbour(block)
             if (!target || !canPlaceTorchOn(target)) return
             reduceItem()
-            target.setPermutation(BlockPermutation.resolve(TORCH_ID).withState('torch_facing_direction', torchDir))
+            target.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', torchDir))
         })
     }
 
@@ -176,7 +179,7 @@ export const offhand_playerInteractWithBlock = (data) => {
 
     system.run(() => {
         if (replace === false && !(block.below()?.isSolid)) return
-        if (canPlaceTorchOn(block)) block.setPermutation(BlockPermutation.resolve(TORCH_ID).withState('torch_facing_direction', 'top'))
+        if (canPlaceTorchOn(block)) block.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', 'top'))
         reduceItem()
     })
 }

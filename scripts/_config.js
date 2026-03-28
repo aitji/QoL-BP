@@ -13,7 +13,13 @@ export const SETTINGS = Object.freeze({
         LIGHT_RENDER_RADIUS: 32, // max distance light render around player
         LIGHT_RENDER_PER_PLAYER: 12, // max light entity(item) render per player
         LIGHT_FIRE_LEVEL: 10, // this will be reduce by REDUCE_LIGHT
+        FAIL_SOUND_INTERVAL: 30,
         FAIL_PARTICLE: "minecraft:water_evaporation_bucket_emitter",
+        SOUND_FAIL: Object.freeze({
+            ID: "cauldron_drip.water.pointed_dripstone",
+            VOLUME: 1,
+            PITCH: Object.freeze([0.8, 1.0])
+        }),
         PARTICLE_OFFSET: Object.freeze({ x: -.5, y: 0, z: -.5 }),
 
         // vanilla bug patched ---
@@ -448,7 +454,12 @@ export const SETTINGS = Object.freeze({
             East: (b) => b.east(),
             West: (b) => b.west(),
         }),
-        TORCH_ID: "minecraft:torch",
+        TORCH_ID: Object.freeze({
+            "minecraft:torch": true,
+            "minecraft:redstone_torch": true,
+            "minecraft:copper_torch": true,
+            "minecraft:soul_torch": true
+        }),
         LIGHT: 'qof:light_block',
         PLACE_SOUND: Object.freeze({
             ID: "dig.wood", // new version might be chnage to "place.wood"

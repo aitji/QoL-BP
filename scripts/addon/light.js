@@ -1,6 +1,6 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity } from "@minecraft/server"
 import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, RUNTIME, setEqu, sumLoc } from "../lib"
-const { DEBUG, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR, FAIL_PARTICLE, PARTICLE_OFFSET, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY } } = RUNTIME
+const { DEBUG, INTERVAL_DELAY, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR, FAIL_PARTICLE, PARTICLE_OFFSET, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, SOUND_FAIL, FAIL_SOUND_INTERVAL } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
 let AIR, WATER, LAVA, BASE_LIGHT
@@ -24,7 +24,11 @@ const getItemLight = (id, en, tick) => {
     if (found?.inLiquid !== undefined) {
         if (found.inLiquid === en.isInWater) return found.light || 0
         const loc = en.location
-        if (found.inLiquid === false && tick % 60 === 1) en.dimension.spawnParticle(FAIL_PARTICLE, sumLoc(loc, PARTICLE_OFFSET))
+        if (found.inLiquid === false && tick % FAIL_SOUND_INTERVAL === 0) {
+            const dim = en.dimension
+            dim.spawnParticle(FAIL_PARTICLE, sumLoc(loc, PARTICLE_OFFSET))
+            dim.playSound(SOUND_FAIL.ID, loc, { pitch: checkRandom(SOUND_FAIL.PITCH), volume: checkRandom(SOUND_FAIL.VOLUME) })
+        }
         return 0
     }
 

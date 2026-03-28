@@ -41,7 +41,9 @@ function buildRuntime() {
             // static
             LIGHT_WIKI: L.LIGHT_WIKI,
             LIGHT_ENTITY: L.LIGHT_ENTITY,
+            FAIL_SOUND_INTERVAL: L.FAIL_SOUND_INTERVAL,
             FAIL_PARTICLE: L.FAIL_PARTICLE,
+            SOUND_FAIL: L.SOUND_FAIL,
             PARTICLE_OFFSET: L.PARTICLE_OFFSET,
             SEEDTOBLOCK: L.SEEDTOBLOCK,
             FARMLAND_BLOCK: L.FARMLAND_BLOCK,
@@ -125,8 +127,8 @@ function buildRuntime() {
             NEED_SNEAK: OH.NEED_SNEAK,
             FACE_TO_TORCH_DIR: OH.FACE_TO_TORCH_DIR,
             FACE_TO_NEIGHBOUR: OH.FACE_TO_NEIGHBOUR,
-            TORCH_ID: OH.TORCH_ID,
             LIGHT: OH.LIGHT,
+            TORCH_ID: OH.TORCH_ID,
             PLACE_SOUND: OH.PLACE_SOUND,
             BLOCK_INTERACTION_DELAY: OH.BLOCK_INTERACTION_DELAY,
             ITEMBUTBLOCK: OH.ITEMBUTBLOCK
