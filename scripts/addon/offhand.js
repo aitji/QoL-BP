@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
-import { checkRandom, getDistance, RUNTIME } from "../lib"
+import { checkRandom, getDistance, getEqu, RUNTIME, setEqu } from "../lib"
 const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK } } = RUNTIME
 
 const DOUBLE_SNEAK_WINDOW_MOBILE = 20
@@ -70,11 +70,25 @@ function swapItem(player) {
     const mainhand = equippable.getEquipment(EquipmentSlot.Mainhand)
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
-    if (hasUnsafeProperties(mainhand) || hasUnsafeProperties(offhand)) return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/durability/color")
+    if (hasUnsafeProperties(mainhand) || hasUnsafeProperties(offhand)) return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/color")
+
+    // const savedEnchants = mainhand?.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments() ?? []
     const durability = mainhand?.getComponent(ItemComponentTypes.Durability)
+
     equippable.setEquipment(EquipmentSlot.Mainhand, offhand ?? undefined)
-    if (mainhand) player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${mainhand.typeId} ${mainhand.amount} ${durability ? durability.damage : 0}`)
-    else equippable.setEquipment(EquipmentSlot.Offhand, undefined)
+
+    if (mainhand) {
+        player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${mainhand.typeId} ${mainhand.amount} ${durability ? durability.damage : 0}`)
+        /*if (savedEnchants.length > 0) {
+            system.run(() => {
+                const oh = equippable.getEquipment(EquipmentSlot.Offhand)
+                if (!oh) return
+                const enc = oh.getComponent(ItemComponentTypes.Enchantable)
+                if (!enc) return
+                for (const e of savedEnchants) enc.addEnchantment(e)
+            })
+        }*/
+    } else equippable.setEquipment(EquipmentSlot.Offhand, undefined)
 }
 
 export const offhand_playerInteractWithEntity = (event) => {
