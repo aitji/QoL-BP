@@ -1,5 +1,6 @@
 import { DisplaySlotId, ScoreboardObjective, system, world } from "@minecraft/server"
 import { RUNTIME } from "./_store"
+import * as helper from "./_helper"
 
 import * as light from "./addon/light"
 import * as anvil from "./addon/anvil"
@@ -101,6 +102,8 @@ world.afterEvents.entityDie.subscribe(data => {
 world.afterEvents.entityRemove.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_entityRemove(data)
     if (RUNTIME.WET_POWDER_CONCRTE.ENABLED) powder.powder_entityRemove(data)
+
+    helper.helper_entityRemove(data)
 })
 world.afterEvents.playerPlaceBlock.subscribe(data => {
     if (RUNTIME.LIGHT.ENABLED) light.light_playerPlaceBlock(data)
@@ -133,6 +136,10 @@ world.afterEvents.playerSpawn.subscribe(data => {
 world.afterEvents.playerLeave.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerLeave(data)
 })
+// helpers
+world.beforeEvents.entityItemPickup.subscribe(data => {
+    helper.helper_entityItemPickup(data)
+}, { entityFilter: { type: "minecraft:player" } })
 
 // beta apis heartbeat
 system.afterEvents.scriptEventReceive.subscribe(({ id, message }) => {
