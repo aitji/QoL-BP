@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout behavior_packs branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: behavior_packs
           fetch-depth: 2
@@ -133,7 +133,7 @@ jobs:
 
       - name: Checkout resource_packs branch
         if: steps.resolve.outputs.changed == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: resource_packs
           path: _rp
