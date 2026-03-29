@@ -117,6 +117,30 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: node .github/scripts/set-debug.js
 
+      - name: Cache terser (global npm)
+        if: steps.resolve.outputs.changed == 'true'
+        id: cache-terser
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global
+          key: terser-${{ runner.os }}-${{ hashFiles('.github/scripts/minify-release.js') }}
+          restore-keys: |
+            terser-${{ runner.os }}-
+
+      - name: Install terser (if not cached)
+        if: steps.resolve.outputs.changed == 'true' && steps.cache-terser.outputs.cache-hit != 'true'
+        run: |
+          npm install -g terser
+          echo "Installed terser $(terser --version)"
+
+      - name: Minify JSON & JS (behavior_packs)
+        if: steps.resolve.outputs.changed == 'true'
+        run: node .github/scripts/minify-release.js
+
+      - name: Minify JSON & JS (resource_packs)
+        if: steps.resolve.outputs.changed == 'true'
+        run: node .github/scripts/minify-release.js --rp
+
       - name: Zip behavior_packs mcpack
         if: steps.resolve.outputs.changed == 'true'
         run: |
