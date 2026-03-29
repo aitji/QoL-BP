@@ -123,7 +123,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm-global
-          key: terser-${{ runner.os }}-${{ hashFiles('.github/scripts/minify-release.js') }}
+          key: terser-${{ runner.os }}-${{ hashFiles('.github/scripts/minify.js') }}
           restore-keys: |
             terser-${{ runner.os }}-
 
@@ -135,11 +135,11 @@ jobs:
 
       - name: Minify JSON & JS (behavior_packs)
         if: steps.resolve.outputs.changed == 'true'
-        run: node .github/scripts/minify-release.js
+        run: node .github/scripts/minify.js
 
       - name: Minify JSON & JS (resource_packs)
         if: steps.resolve.outputs.changed == 'true'
-        run: node .github/scripts/minify-release.js --rp
+        run: node .github/scripts/minify.js --rp
 
       - name: Zip behavior_packs mcpack
         if: steps.resolve.outputs.changed == 'true'
