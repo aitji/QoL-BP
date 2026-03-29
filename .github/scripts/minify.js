@@ -78,13 +78,6 @@ const minifyJSFile = async file => {
             jsCount++
             continue
         }
-
-        if (path.basename(file) === 'notes.md') {
-            const dest = path.join('.', '.dev.notes.md')
-            fs.copyFileSync(file, dest)
-            console.log(`[COPY] ${file} -> ${dest}`)
-            continue
-        }
     }
 
     console.log(`\nDone, minified ${jsonCount} JSON file(s) and ${jsCount} JS file(s).`)
