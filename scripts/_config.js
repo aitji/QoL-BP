@@ -16,7 +16,7 @@ export const SETTINGS = Object.freeze({
     LIGHT: Object.freeze({
         ENABLED: true,
         DECAY_LIGHT_TICK: 3, // before light when off time
-        REDUCE_LIGHT: 0.7, // lightLevel * REDUCE_LIGHT
+        REDUCE_LIGHT: 7, // lightLevel * REDUCE_LIGHT
         LIGHT_REDUCE_LINEAR: -1,
         LIGHT_RENDER_RADIUS: 32, // max distance light render around player
         LIGHT_RENDER_PER_PLAYER: 12, // max light entity(item) render per player
