@@ -4,14 +4,15 @@ import { minify as minifyJS } from 'terser'
 
 const IS_RP = process.argv.includes('--rp')
 const ROOT = IS_RP ? '_rp' : '.'
-const MINIFY_JSON = new Map({ ".json": true, ".jsonc": true })
-const MINIFY_JS = new Map({ ".js": true })
 
-const SKIP = new Set([
+const MINIFY_JSON = Object.freeze(new Set(['.json', '.jsonc']))
+const MINIFY_JS = Object.freeze(new Set(['.js']))
+
+const SKIP = Object.freeze(new Set([
     'node_modules',
     '.git',
     '.github',
-])
+]))
 
 const walk = dir => {
     const entries = fs.readdirSync(dir, { withFileTypes: true })
