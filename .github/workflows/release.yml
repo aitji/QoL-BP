@@ -2,8 +2,10 @@ name: Auto Release!
 
 on:
   push:
-    branches: [behavior_packs]
-    paths: [manifest.json]
+    branches:
+      - behavior_packs
+    paths:
+      - manifest.json
   workflow_dispatch:
 
 jobs:
@@ -20,6 +22,7 @@ jobs:
           fetch-depth: 2
 
       - name: Read old and new BP manifest versions
+        if: github.event_name == 'push'
         id: versions
         run: |
           NEW_VER=$(node -e "const m=require('./manifest.json'); console.log(JSON.stringify(m.header.version));")
@@ -39,17 +42,57 @@ jobs:
           echo "New version: $NEW_VER"
 
       - name: Determine release type
+        if: github.event_name == 'push'
         id: check
         env:
           OLD_VERSION: ${{ env.OLD_VERSION }}
           NEW_VERSION: ${{ env.NEW_VERSION }}
         run: node .github/scripts/check-version.js
 
+      - name: Read manifest version (dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        id: check_dispatch
+        run: |
+          VERSION=$(node -e "const m=require('./manifest.json'); console.log(m.header.version.join('.'));")
+          PATCH=$(echo "$VERSION" | cut -d. -f3)
+
+          if [ "$PATCH" -eq 0 ]; then
+            RELEASE_TYPE="release"
+          else
+            RELEASE_TYPE="prerelease"
+          fi
+
+          PACK_NAME="QoF-${VERSION}.mcaddon"
+
+          echo "version_string=${VERSION}" >> $GITHUB_OUTPUT
+          echo "pack_name=${PACK_NAME}"    >> $GITHUB_OUTPUT
+          echo "release_type=${RELEASE_TYPE}" >> $GITHUB_OUTPUT
+          echo "changed=true"             >> $GITHUB_OUTPUT
+
+          echo "Version: $VERSION"
+          echo "Release type: $RELEASE_TYPE"
+          echo "Pack: $PACK_NAME"
+
+      - name: Resolve version outputs
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "changed=${{ steps.check_dispatch.outputs.changed }}"               >> $GITHUB_OUTPUT
+            echo "version_string=${{ steps.check_dispatch.outputs.version_string }}" >> $GITHUB_OUTPUT
+            echo "pack_name=${{ steps.check_dispatch.outputs.pack_name }}"           >> $GITHUB_OUTPUT
+            echo "release_type=${{ steps.check_dispatch.outputs.release_type }}"     >> $GITHUB_OUTPUT
+          else
+            echo "changed=${{ steps.check.outputs.changed }}"               >> $GITHUB_OUTPUT
+            echo "version_string=${{ steps.check.outputs.version_string }}" >> $GITHUB_OUTPUT
+            echo "pack_name=${{ steps.check.outputs.pack_name }}"           >> $GITHUB_OUTPUT
+            echo "release_type=${{ steps.check.outputs.release_type }}"     >> $GITHUB_OUTPUT
+          fi
+
       - name: Read changelogs
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         id: changelogs
         run: |
-          VERSION="${{ steps.check.outputs.version_string }}"
+          VERSION="${{ steps.resolve.outputs.version_string }}"
           MINOR_VERSION=$(echo "$VERSION" | cut -d. -f1-2)
 
           EXACT_FILE=".github/changelogs/v${VERSION}.md"
@@ -71,13 +114,13 @@ jobs:
           echo "has_changelogs=true" >> $GITHUB_OUTPUT
 
       - name: Set DEBUG to false (behavior_packs)
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         run: node .github/scripts/set-debug.js
 
       - name: Zip behavior_packs mcpack
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         run: |
-          BP_PACK="QoF_v${{ steps.check.outputs.version_string }}_behavior_packs.mcpack"
+          BP_PACK="QoF_v${{ steps.resolve.outputs.version_string }}_behavior_packs.mcpack"
           zip -r "$BP_PACK" . \
             -x "*.git*" \
             -x ".github/*" \
@@ -89,24 +132,24 @@ jobs:
           echo "Created: $BP_PACK"
 
       - name: Checkout resource_packs branch
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         uses: actions/checkout@v4
         with:
           ref: resource_packs
           path: _rp
 
       - name: Read resource_packs version
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         id: rp_version
         run: node .github/scripts/read-manifest.js _rp/manifest.json
 
       - name: Set DEBUG to false (resource_packs)
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         working-directory: _rp
         run: node ../.github/scripts/set-debug.js --rp
 
       - name: Zip resource_packs mcpack
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         run: |
           RP_PACK="QoF_v${{ steps.rp_version.outputs.rp_version }}_resource_packs.mcpack"
           zip -r "$RP_PACK" _rp/. \
@@ -115,36 +158,32 @@ jobs:
             -x "*/.gitignore" \
             -x "*/*.md"
           echo "RP_PACK=$RP_PACK" >> $GITHUB_ENV
+          echo "Created: $RP_PACK"
 
       - name: Bundle into .mcaddon
-        if: steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.resolve.outputs.changed == 'true'
         run: |
-          ADDON_NAME="${{ steps.check.outputs.pack_name }}"
+          ADDON_NAME="${{ steps.resolve.outputs.pack_name }}"
           zip "$ADDON_NAME" "$BP_PACK" "$RP_PACK"
+          echo "Created: $ADDON_NAME"
 
-      - name: Delete existing tag (if rerun)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          git tag -d "v${{ steps.check.outputs.version_string }}" || true
-          git push origin ":refs/tags/v${{ steps.check.outputs.version_string }}" || true
-
-      - name: Create GitHub Release (with changelogs)
-        if: (steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && steps.changelogs.outputs.has_changelogs == 'true'
+      - name: Create / Update GitHub Release (with changelogs)
+        if: steps.resolve.outputs.changed == 'true' && steps.changelogs.outputs.has_changelogs == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ steps.check.outputs.version_string }}"
-          name: "QoF v${{ steps.check.outputs.version_string }}"
-          prerelease: ${{ steps.check.outputs.release_type == 'prerelease' }}
-          files: ${{ steps.check.outputs.pack_name }}
+          tag_name: "v${{ steps.resolve.outputs.version_string }}"
+          name: "QoF v${{ steps.resolve.outputs.version_string }}"
+          prerelease: ${{ steps.resolve.outputs.release_type == 'prerelease' }}
+          files: ${{ steps.resolve.outputs.pack_name }}
           body_path: /tmp/changelogs_body.md
           generate_release_notes: false
 
-      - name: Create GitHub Release (auto notes)
-        if: (steps.check.outputs.changed == 'true' || github.event_name == 'workflow_dispatch') && steps.changelogs.outputs.has_changelogs == 'false'
+      - name: Create / Update GitHub Release (auto notes)
+        if: steps.resolve.outputs.changed == 'true' && steps.changelogs.outputs.has_changelogs == 'false'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v${{ steps.check.outputs.version_string }}"
-          name: "QoF v${{ steps.check.outputs.version_string }}"
-          prerelease: ${{ steps.check.outputs.release_type == 'prerelease' }}
-          files: ${{ steps.check.outputs.pack_name }}
+          tag_name: "v${{ steps.resolve.outputs.version_string }}"
+          name: "QoF v${{ steps.resolve.outputs.version_string }}"
+          prerelease: ${{ steps.resolve.outputs.release_type == 'prerelease' }}
+          files: ${{ steps.resolve.outputs.pack_name }}
           generate_release_notes: true
