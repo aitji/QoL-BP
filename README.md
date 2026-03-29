@@ -12,9 +12,6 @@
   - [Installation](#installation)
   - [Modules](#modules)
     - [Dynamic Light](#dynamic-light)
-      - [Fading Light of Soul Lantern when Pickup and Drop](#fading-light-of-soul-lantern-when-pickup-and-drop)
-      - [Light of the Flaming Arrow and Burning Entities](#light-of-the-flaming-arrow-and-burning-entities)
-      - [Water Light when Boating and Diving with a Light Source](#water-light-when-boating-and-diving-with-a-light-source)
     - [Anvil Repairing](#anvil-repairing)
       - [Full Repairing Loop](#full-repairing-loop)
     - [Wet Concrete Powder](#wet-concrete-powder)
@@ -39,15 +36,15 @@
 
 ## Overview
 
-- [x] Dynamic lighting from held and dropped items
-- [x] Repair damaged anvils by using iron ingots
-- [x] Concrete powder hardens when it touches water as an item
-- [x] Composter accepts more items and works with hoppers
+- [x] Dynamic lighting
+- [x] Repair damaged anvils
+- [x] Concrete powder hardens when it touches water `as an item`
+- [x] Composter accepts more items
 - [x] Pick up and carry containers while keeping their contents
 - [x] Swap mainhand and offhand with a double sneak, place torches from offhand
-- [x] Hold a hoe to harvest crops with automatic seed replanting
-- [x] Extra mob drops from Goat, Silverfish, Sniffer, and Piglin Brute
-- [x] Extra crafting and smelting recipes for more accessible item obtaining
+- [x] Hold harvest crops with automatic seed replanting with Hoe
+- [x] Extra mob drops
+- [x] Extra crafting and smelting recipes
 - [ ] And many more to come later
 
 ## Changelog
@@ -62,11 +59,11 @@
 
 ## Installation
 
-1. Download the latest `.mcpack` from [Releases](https://github.com/aitji/QoF/releases).
+1. Download the latest `.mcaddon` from [Releases](https://github.com/aitji/QoF/releases).
 2. Open the file and Minecraft will import it automatically.
 3. Create or open a world, then go to **Behavior Packs**, and activate **QoF**.
 4. Under **Experiments**, enable **Beta APIs**.
-5. Launch the world. Settings are available in the pack settings panel inside the world settings.
+5. Settings are available in the pack settings panel inside the world settings.
 
 > [!IMPORTANT]
 > Beta APIs **must be enabled** or the pack will not function at all.
@@ -79,15 +76,30 @@
   <img src=".github/img/light-banner.png" alt="Dynamic Light night walk with soul lantern" width="1080">
 </p>
 
-Held items and dropped items emit light based on their type. Light smoothly fades after the source moves away or is removed. Item frames also contribute light based on whatever is placed inside them.
+Held items and dropped items emit light based on their type. Light smoothly fades after the source moves away or is removed. `Burning Entity`, `Glowing Entity` and `Item frames` also contribute light based on whatever is placed inside them.
 
 **How It Works:**
 
-- When a player holds or drops a light-emitting item, a `qof:light_block` is placed at the relevant position each tick.
-- Light level is calculated from the item's base value multiplied by the reduce factor.
-- When the source is gone, light steps down linearly each tick until it reaches zero, then the block is restored to air or water.
-- Nearby entities such as Blaze, Glow Squid, Allay, Vex, and Warden also emit light passively.
-- Some items are prevented from emitting light underwater (e.g. torches, lanterns, campfires). Sea Pickle **only** emits light underwater.
+<img src=".github/img/light-fade.gif" alt="Player picks up soul lantern in mushroom cave, light fades after drop" width="1080">
+
+> **alt-message** In a mushroom cave, a soul lantern sits on the ground emitting light. The player walks in from the right, picks it up the room goes dark. And then drop it back in the same spot, then walk away.
+>
+> - When a player holds or drops a light-emitting item, a `qof:light_block` is placed at the relevant position each tick.
+> - When the source is gone, light steps down linearly each tick until it reaches zero, then the block is restored to air or water.
+
+<img src=".github/img/light-fire.gif" alt="Player shoots flame arrows into targets, picks up arrow, walks away" width="1080">
+
+> **alt-message** A flaming arrow is fired into a target block. While the arrow is burning, it emits light. The player walks through the lit area, picks the arrow up, and leaves. Light disappears when the source is gone.
+>
+> - Nearby glowing entities or burning entities also emit light passively.
+
+<img src=".github/img/light-water.gif" alt="Player holds conduit while swimming in ocean, light visible underwater" width="1080">
+
+> **alt-message** In the open ocean, the player boats while holding a lantern making the water surface glow below. They stop, jump in, switch to a conduit, and swim deeper. The `qof:light_block` is placed inside the water itself, illuminating the seafloor and kelp.
+>
+> - Some items are prevented from emitting light underwater
+
+<div align="center">
 
 | Item               | Reaction                        | Level |
 | ------------------ | ------------------------------- | ----- |
@@ -107,26 +119,11 @@ Held items and dropped items emit light based on their type. Light smoothly fade
 |                    |                                 | <br>  |
 | Sea Pickle         | **Only** emits light underwater | 6     |
 
-#### Fading Light of Soul Lantern when Pickup and Drop
-
-<img src=".github/img/light-fade.gif" alt="Player picks up soul lantern in mushroom cave, light fades after drop" width="544">
-
-**alt-message** In a mushroom cave, a soul lantern sits on the ground emitting light. The player walks in from the right, picks it up the room goes dark. And then drop it back in the same spot, then walk away.
-
-#### Light of the Flaming Arrow and Burning Entities
-
-<img src=".github/img/light-fire.gif" alt="Player shoots flame arrows into targets, picks up arrow, walks away" width="544">
-
-**alt-message** A flaming arrow is fired into a target block. While the arrow is burning, it emits light. The player walks through the lit area, picks the arrow up, and leaves. Light disappears when the source is gone.
-
-#### Water Light when Boating and Diving with a Light Source
-
-<img src=".github/img/light-water.gif" alt="Player holds conduit while swimming in ocean, light visible underwater" width="544">
-
-**alt-message** In the open ocean, the player boats while holding a lantern making the water surface glow below. They stop, jump in, switch to a conduit, and swim deeper. The `qof:light_block` is placed inside the water itself, illuminating the seafloor and kelp.
+</div>
 
 <details>
   <summary><strong>Items that Emit the Light</strong></summary>
+  <div align="center">
 
 | Item                           | Light Level                               |
 | ------------------------------ | ----------------------------------------- |
@@ -189,10 +186,12 @@ Held items and dropped items emit light based on their type. Light smoothly fade
 | Sculk Sensor                   | 1                                         |
 | Small Amethyst Bud             | 1                                         |
 
+</div>
 </details>
 
 <details>
   <summary><strong>Entities that Emit the Light</strong></summary>
+  <div align="center">
 
 | Entity     | Light Level |
 | ---------- | ----------- |
@@ -202,6 +201,7 @@ Held items and dropped items emit light based on their type. Light smoothly fade
 | Blaze      | 12          |
 | Warden     | 6           |
 
+</div>
 </details>
 
 ### Anvil Repairing
@@ -220,9 +220,9 @@ Damaged Anvil  ->  Chipped Anvil  ->  Anvil
 
 #### Full Repairing Loop
 
-<img src=".github/img/repair-anvil.gif" alt="Player repairs anvil twice, mines it, places damaged one, and walks out" width="544">
+<img src=".github/img/repair-anvil.gif" alt="Player repairs anvil twice, mines it, places damaged one, and walks out" width="1080">
 
-**alt-message** The player walks into a cozy spruce house, repairs a damaged anvil twice to bring it back to full, mines it with an iron pickaxe, places a new damaged anvil, and walks out.
+> **alt-message** The player walks into a cozy spruce house, repairs a damaged anvil twice to bring it back to full, mines it with an iron pickaxe, places a new damaged anvil, and walks out.
 
 > [!TIP]
 > Hold the interact button to repair continuously. A short delay between repairs is applied to prevent accidental over-use.
@@ -250,20 +250,19 @@ Concrete powder items automatically convert to concrete when they enter water. T
 4. A particle and sound effect play on conversion.
 
 The delay formula is:
-
 $$ \text{DELAY} = BASE + \lfloor \sqrt{item_amount - 1} \cdot MULTIPLIER \rfloor $$
 
 where `BASE` and `MULTIPLIER` are configurable in pack settings.
 
 #### Conversion In Action
 
-<img src=".github/img/powder-result.gif" alt="Top-down view: player throws concrete powder into water pool, allay nearby, powder converts to concrete" width="544">
+<img src=".github/img/powder-result.gif" alt="Top-down view: player throws concrete powder into water pool, allay nearby, powder converts to concrete" width="1080">
 
-**alt-message** Top-down view centered on a water pool with an allay floating nearby emitting soft light. The player walks in from the bottom-center and throws concrete powder into the pool. After a short delay the powder converts, and the player picks up the resulting concrete and walks off.
+> **alt-message** Top-down view centered on a water pool with an allay floating nearby emitting soft light. The player walks in from the bottom-center and throws concrete powder into the pool. After a short delay the powder converts, and the player picks up the resulting concrete and walks off.
 
 ### Composter+
 
-Expands the composter to accept many more item types not supported in vanilla, including mob drops, cooked food, wool, and various nether materials. Hoppers placed directly above a composter can also feed it automatically.
+Expands the composter to accept many more item types not supported in vanilla, including mob drops, food, wool, and various materials.
 
 **How It Works:**
 
@@ -273,15 +272,15 @@ Expands the composter to accept many more item types not supported in vanilla, i
 
 #### Hopper Integration
 
-<img src=".github/img/composter-work_hopper.gif" alt="Player composts string, places hopper on top, throws rotten flesh in, composter fills automatically" width="544">
+<img src=".github/img/composter-work_hopper.gif" alt="Player composts string, places hopper on top, throws rotten flesh in, composter fills automatically" width="1080">
 
-**alt-message** The player manually composts some string _`(not in the vanilla list)`_, then places a hopper above the composter and throws in rotten flesh _`(also not in the vanilla list)`_. The hopper feeds the composter automatically until it fills and becomes ready.
+> **alt-message** The player manually composts some string _`(not in the vanilla list)`_, then places a hopper above the composter and throws in rotten flesh _`(also not in the vanilla list)`_. The hopper feeds the composter automatically until it fills and becomes ready.
 
 #### Stew & Soup Bowl Returning
 
-<img src=".github/img/composter-stew.gif" alt="Player composts stew and soup items, receives empty bowls back" width="544">
+<img src=".github/img/composter-stew.gif" alt="Player composts stew and soup items, receives empty bowls back" width="1080">
 
-**alt-message** Stew and soup items are composted one by one. After each is consumed, an empty bowl is returned in player hand matching the vanilla eating behavior.
+> **alt-message** Stew and soup items are composted one by one. After each is consumed, an empty bowl is returned in player hand matching the vanilla eating behavior.
 
 > [!WARNING]
 > Enabling hopper integration with many composters and hoppers in a loaded area may affect performance. Tune the hopper interval setting if needed.
@@ -290,6 +289,8 @@ Expands the composter to accept many more item types not supported in vanilla, i
   <summary><strong>Additional Compostable Items (QoF Only)</strong></summary>
 
 These are items added by QoF on top of the vanilla compost table. Vanilla items are handled by Minecraft natively and are excluded here to avoid double-processing.
+
+<div align="center">
 
 | Item                   | Success Chance                        |
 | ---------------------- | ------------------------------------- |
@@ -371,6 +372,8 @@ These are items added by QoF on top of the vanilla compost table. Vanilla items 
 | rabbit_stew            | 100%                                  |
 | nether_star            | 100%                                  |
 
+</div>
+
 </details>
 
 ### Carrying Container
@@ -387,15 +390,15 @@ Allows players to pick up chests and other containers while preserving their con
 
 Full Carry Flow
 
-<img src=".github/img/chest-flow.gif" alt="Player puts cod in barrel, picks it up, walks to composter area, places barrel on hopper" width="544">
+<img src=".github/img/chest-flow.gif" alt="Player puts cod in barrel, picks it up, walks to composter area, places barrel on hopper" width="1080">
 
-**alt-message** The player walks in holding a cod, places it inside a barrel, then picks the barrel up. They carry it slowly across the scene — slowness visible — and place it on top of a hopper. The barrel lands with its contents intact.
+> **alt-message** The player walks in holding a cod, places it inside a barrel, then picks the barrel up. They carry it slowly across the scene, slowness visible, and place it on top of a hopper. The barrel lands with its contents intact.
 
 #### Slowness and Double Chest
 
-<img src=".github/img/chest-slownessdouble.gif" alt="Player picks up chest near sheep, walks slowly, places it into double chest formation" width="544">
+<img src=".github/img/chest-slownessdouble.gif" alt="Player picks up chest near sheep, walks slowly, places it into double chest formation" width="1080">
 
-The player runs in, picks up a chest next to a black sheep, then visibly slows down while carrying it. They walk to a second chest and place theirs beside it, forming a double chest. Contents from both halves are preserved.
+> **alt-message** The player runs in, picks up a chest next to a black sheep, then visibly slows down while carrying it. They walk to a second chest and place theirs beside it, forming a double chest. Contents from both halves are preserved.
 
 > [!WARNING]
 > ~~Double chest support is partially implemented. Picking up one half of a double chest will attempt to preserve both halves, but edge cases may result in item loss. Always **back up world** before transferring the important chests before carrying them.~~ 100% working. It has been extensively tested.
@@ -405,24 +408,30 @@ The player runs in, picks up a chest next to a black sheep, then visibly slows d
 
 Any block with a `minecraft:inventory` component can be picked up. Common examples include:
 
-| Container     | Chest support |
-| ------------- | ------------- |
-| Chest         | yes           |
-| Trapped Chest | yes           |
-| Barrel        | yes           |
-| Hopper        | yes           |
-| Dispenser     | yes           |
-| Dropper       | yes           |
-| Blast Furnace | yes`*`        |
-| Furnace       | yes`*`        |
-| Smoker        | yes`*`        |
-| Brewing Stand | yes           |
-| Crafter       | no            |
-| Shulker Box   | yes           |
+<div align="center">
+
+| Container     | Chest support | Double Chest |
+| ------------- | ------------- | ------------ |
+| Chest         | yes           | yes          |
+| Trapped Chest | yes           | yes          |
+| Copper Chest  | yes           | yes`**`      |
+| Barrel        | yes           | no           |
+| Hopper        | yes           | no           |
+| Dispenser     | yes           | no           |
+| Dropper       | yes           | no           |
+| Blast Furnace | yes`*`        | no           |
+| Furnace       | yes`*`        | no           |
+| Smoker        | yes`*`        | no           |
+| Brewing Stand | yes           | no           |
+| Crafter       | no            | no           |
+| Shulker Box   | yes           | no           |
+
+</div>
 
 > [!NOTE]
 > ~~(Shulker boxes, Crafter & Brewing Stand) are also inventory blocks and should work, but have not been extensively tested.~~\
-> `*` for furnace items will 100% correct, but heat state will be lost.
+> `*` For furnace items, the contents remain 100% correct, but the heat state is lost.\
+> `**` Copper chests currently have a bug in Minecraft vanilla where the oxidized state of copper affects the behavior of double chests
 
 </details>
 
@@ -446,12 +455,13 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 
 #### Swap and Torch Placement
 
-<img src=".github/img/placeholder.png" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="544">
+<img src=".github/img/placeholder.png" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="1080">
 <!-- todo: @pickerth-12 replace to real image/gif: "offhand-swap.gif.png" -aitji -->
 <!-- beef: **alt-message** First person view, The player stands holding a sword. They double-sneak and the sword and torch swap hands. The player then places a torch directly from the offhand onto a wall without switching hotbar slots. -->
 
 <details>
   <summary><strong>Torch Types Supported for Offhand Placement</strong></summary>
+  <div align="center">
 
 | Item           |
 | -------------- |
@@ -460,6 +470,7 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 | Copper Torch   |
 | Soul Torch     |
 
+</div>
 </details>
 
 ### Harvest
@@ -480,14 +491,14 @@ Allows players to harvest fully grown crops by right-clicking while holding any 
 
 $$ \mathrm{Loss} = \mathrm{random} < \frac{1}{\mathrm{level} + 1} $$
 
-where `level` is the hoe's Unbreaking enchantment level.
+where `level` is the hoe's `Unbreaking` enchantment level.
 
 > [!TIP]
 > Using a hoe with high Unbreaking reduces durability loss significantly on large farms.
 
 #### Auto Replanting in Action
 
-<img src=".github/img/placeholder.png" alt="Player harvests a row of wheat with a hoe, seeds replant automatically" width="544">
+<img src=".github/img/placeholder.png" alt="Player harvests a row of wheat with a hoe, seeds replant automatically" width="1080">
 <!-- todo: @pickerth-12 replace to real image/gif: "harvest-replant.gif" -aitji -->
 <!-- beef:
 **alt-message** The player walks along a row of fully grown wheat holding a diamond hoe. Each crop is harvested on interact and the farmland immediately has a new seed replanted. The harvested wheat drops and the player collects it. -->
@@ -504,7 +515,7 @@ Adds drops to previously loot-less mobs, making them more rewarding to farm.
 
 #### Loot Showcase
 
-<img src=".github/img/placeholder.png" alt="Player kills goat, silverfish, sniffer and piglin brute, loot drops shown" width="544">
+<img src=".github/img/placeholder.png" alt="Player kills goat, silverfish, sniffer and piglin brute, loot drops shown" width="1080">
 
 <!--
  todo: @pickerth-12 replace to real image/gif: "mobloot-banner.png"
@@ -571,21 +582,27 @@ Adds new crafting, smelting, and stonecutter recipes for a more accessible way t
 
 #### Recipe Showcase
 
-<img src=".github/img/placeholder.png" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="544">
+<img src=".github/img/placeholder.png" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="1080">
 <!-- todo: @pickerth-12 replace to real image/gif: "recipe-showcase.gif"
 beef: **alt-message** The player opens a blast furnace and smelts sand into glass, then gilded blackstone into gold ingots. They open a crafting table and craft rooted dirt from dirt and roots, then craft a banner pattern from a skull and paper. -->
 
 <details>
   <summary><strong>Full Recipe List</strong></summary>
 
-**Smelting (Furnace)**
+**Smelting** `(Furnace)`
+
+<div align="center">
 
 | Input                 | Output   | Station |
 | --------------------- | -------- | ------- |
 | Bamboo Block          | Charcoal | Furnace |
 | Stripped Bamboo Block | Charcoal | Furnace |
 
-**Smelting (Blast Furnace / Furnace)**
+</div>
+
+**Smelting** `(Blast Furnace / Furnace)`
+
+<div align="center">
 
 | Input             | Output       | Station                |
 | ----------------- | ------------ | ---------------------- |
@@ -594,7 +611,11 @@ beef: **alt-message** The player opens a blast furnace and smelts sand into glas
 | Stone             | Smooth Stone | Blast Furnace          |
 | Cobblestone       | Stone        | Blast Furnace          |
 
-**Crafting (Crafting Table)**
+</div>
+
+**Crafting** `(Crafting Table)`
+
+<div align="center">
 
 | Input                | Output         | Notes     |
 | -------------------- | -------------- | --------- |
@@ -602,11 +623,13 @@ beef: **alt-message** The player opens a blast furnace and smelts sand into glas
 | Dirt + Hanging Roots | Rooted Dirt    | Shapeless |
 | Any Skull + Paper    | Banner Pattern | Shapeless |
 
+</div>
+
 > [!CAUTION]
-> **Removed recipes (rebalanced):**
+> **Removed recipes**: `(rebalanced)`
 >
-> - Rotten Flesh → Rabbit Hide (Furnace / Smoker / Campfire / Soul Campfire) — removed in v1.2.2
-> - Charcoal → Coal Block (Crafting Table) — removed in v1.2.2
+> - Rotten Flesh -> Rabbit Hide `(Furnace / Smoker / Campfire / Soul Campfire)` — `removed` in [v1.2.2](https://github.com/aitji/QoF/releases/tag/v1.2.2)
+> - Charcoal -> Coal Block `(Crafting Table)` — `removed` in [v1.2.2](https://github.com/aitji/QoF/releases/tag/v1.2.2)
 
 **Stonecutter (Wood)**
 
@@ -656,7 +679,7 @@ Nether wood edge cases:
 
 </details>
 
-**Crafting (Slab to Block (2 Slabs → 1 Block))**
+**Crafting (Slab to Block (2 Slabs -> 1 Block))**
 
 Two of the same slab stacked vertically craft back into their corresponding full block.
 
@@ -756,7 +779,7 @@ Made by (aitji & pickerth-12)
 
   README INFO
 Version: v1.3.0
-Last updated: 28 Mar 2026
+Last updated: 29 Mar 2026
 Has README Update: True
 
   PACK INFO
