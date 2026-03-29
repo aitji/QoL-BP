@@ -7,12 +7,12 @@
         },
         "components": {
             "minecraft:collision_box": false,
-            "minecraft:selection_box": true,
+            "minecraft:selection_box": false,
             "minecraft:loot": "loot_tables/empty.json",
-            "minecraft:geometry": { "identifier": "minecraft:geometry.full_block" },
+            "minecraft:geometry": { "identifier": "geometry.light_block" },
             "minecraft:material_instances": {
                 "*": {
-                    "texture": "structure_void",
+                    "texture": "light_block_0",
                     "render_method": "blend",
                     "ambient_occlusion": false,
                     "face_dimming": false
