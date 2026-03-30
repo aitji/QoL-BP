@@ -1,6 +1,6 @@
-import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes } from "@minecraft/server"
+import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent } from "@minecraft/server"
 import { checkRandom, RUNTIME } from "../lib"
-const { DEBUG, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP, CONTAINER_NAMETAG, MAX_DISPLAY } } = RUNTIME
+const { DEBUG, SLICE_PREFIX, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP, CONTAINER_NAMETAG, MAX_DISPLAY } } = RUNTIME
 
 const NEIGH = {
   north: { left: "west", right: "east" },
@@ -59,6 +59,12 @@ const findInv = (player) => {
   return null
 }
 
+/**
+ * @param {String} blockTypeId 
+ * @param {Player} player 
+ * @param {Container} container 
+ * @returns 
+ */
 const buildCarryItem = (blockTypeId, player, container) => {
   const it = new ItemStack(blockTypeId, 1)
   it.nameTag = CONTAINER_NAMETAG
@@ -177,6 +183,7 @@ const inv2block = (heldInv, block, neighbourInv) => {
   }, 1)
 }
 
+/**@param {PlayerInteractWithBlockBeforeEvent} data*/
 export const chest_playerInteractWithBlock = (data) => {
   const { player, block } = data
   if (!block || !block?.getComponent("minecraft:inventory") || player.getComponent("minecraft:equippable").getEquipment(EquipmentSlot.Mainhand) || !player.isSneaking || player.hasTag(CARRY_TAG)) return
@@ -187,6 +194,7 @@ export const chest_playerInteractWithBlock = (data) => {
       const blockInv = block.getComponent("minecraft:inventory")
       if (!blockInv) return
       const blockTypeId = block.typeId
+      if (blockTypeId.includes('lit_')) return
       const holdingEntity = spawnInv(player)
       holdingEntity.addTag(`type ${blockTypeId}`)
       block2inv(block, holdingEntity)
