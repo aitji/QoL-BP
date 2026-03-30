@@ -24,14 +24,13 @@
     - [Offhand](#offhand)
       - [Swap and Torch Placement](#swap-and-torch-placement)
     - [Harvest](#harvest)
-      - [Auto Replanting in Action](#auto-replanting-in-action)
     - [Mob Loot+](#mob-loot)
-      - [Loot Showcase](#loot-showcase)
     - [Recipe+](#recipe)
       - [Recipe Showcase](#recipe-showcase)
   - [Configuration References](#configuration-references)
   - [Known Limitations \& Notes](#known-limitations--notes)
   - [License](#license)
+  - [Disclosure](#disclosure)
   - [Credits](#credits)
 
 ## Overview
@@ -73,7 +72,7 @@
 ### Dynamic Light
 
 <p align="center">
-  <img src=".github/img/light-banner.png" alt="Dynamic Light night walk with soul lantern" width="1080">
+  <img src=".github/img/light.png" alt="Dynamic Light night walk with soul lantern" width="1080">
 </p>
 
 Held and dropped items emit light based on their type. The light smoothly fades after the source moves away or is removed. `burning entities`, `glowing entities` and `item frames` also emit light based on what they contain.
@@ -207,7 +206,7 @@ Held and dropped items emit light based on their type. The light smoothly fades 
 ### Anvil Repairing
 
 <p align="center">
-  <img src=".github/img/repair-anvil.png" alt="Anvil Repair repairing at a chipped anvil in a spruce house" width="1080">
+  <img src=".github/img/anvil-repair.png" alt="Anvil Repair repairing at a chipped anvil in a spruce house" width="1080">
 </p>
 
 Damaged anvils can be repaired by interacting with them while holding an iron ingot. The anvil steps up one stage per ingot consumed.
@@ -438,8 +437,7 @@ Any block with a `minecraft:inventory` component can be picked up. Common exampl
 ### Offhand
 
 <p align="center">
-  <img src=".github/img/placeholder.png" alt="Offhand swap and torch placement banner" width="1080">
-  <!-- todo: @pickerth-12 replace to real offhand banner: "offhand-banner.png" -aitji -->
+  <img src=".github/img/offhand.png" alt="Offhand swap and torch placement banner" width="1080">
 </p>
 
 Allows players to double-sneak to swap items between their mainhand and offhand. Additionally, torches and other light sources held in the offhand can be placed directly without switching slots.
@@ -455,9 +453,9 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 
 #### Swap and Torch Placement
 
-<img src=".github/img/placeholder.png" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="1080">
-<!-- todo: @pickerth-12 replace to real image/gif: "offhand-swap.gif.png" -aitji -->
-<!-- beef: **alt-message** First person view, The player stands holding a sword. They double-sneak and the sword and torch swap hands. The player then places a torch directly from the offhand onto a wall without switching hotbar slots. -->
+<img src=".github/img/offhand-swap.gif" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="1080">
+
+> **alt-message** First-person view. The player is holding a `Trident` in the main hand and a `Soul Torch` in the offhand. They double-sneak, causing the `Trident` and `Soul Torch` to swap places, while another player walks across the screen.
 
 <details>
   <summary><strong>Torch Types Supported for Offhand Placement</strong></summary>
@@ -476,11 +474,10 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 ### Harvest
 
 <p align="center">
-  <img src=".github/img/placeholder.png" alt="Player harvesting wheat field with hoe" width="1080">
-  <!-- todo: @pickerth-12 replace to real image/gif: "offhand-swap.gif.png" -aitji -->
+  <img src=".github/img/harvesting.gif" alt="Player harvesting wheat field with hoe" width="1080">
 </p>
 
-Allows players to harvest fully grown crops by right-clicking while holding any hoe. Seeds are automatically replanted after harvesting. The hoe loses durability on each harvest to balance the automation.
+Allows players to harvest fully grown crops while holding any hoe. Seeds are automatically replanted after harvesting, and the hoe loses durability on each harvest to balance the automation.
 
 **How It Works:**
 
@@ -496,30 +493,13 @@ where `level` is the hoe's `Unbreaking` enchantment level.
 > [!TIP]
 > Using a hoe with high Unbreaking reduces durability loss significantly on large farms.
 
-#### Auto Replanting in Action
-
-<img src=".github/img/placeholder.png" alt="Player harvests a row of wheat with a hoe, seeds replant automatically" width="1080">
-<!-- todo: @pickerth-12 replace to real image/gif: "harvest-replant.gif" -aitji -->
-<!-- beef:
-**alt-message** The player walks along a row of fully grown wheat holding a diamond hoe. Each crop is harvested on interact and the farmland immediately has a new seed replanted. The harvested wheat drops and the player collects it. -->
-
 ### Mob Loot+
 
 <p align="center">
-  <img src=".github/img/placeholder.png" alt="Mob Loot+ showcase banner" width="1080">
-  <!-- todo: @pickerth-12 replace to real image/gif: "mobloot-banner.png"
-  beef: banner showing the 4 mobs -aitji -->
+  <img src=".github/img/mobloot.gif" alt="Mob Loot+ showcase banner" width="1080">
 </p>
 
 Adds drops to previously mobs without loot, making them more rewarding to farm.
-
-#### Loot Showcase
-
-<img src=".github/img/placeholder.png" alt="Player kills goat, silverfish, sniffer and piglin brute, loot drops shown" width="1080">
-
-<!--
- todo: @pickerth-12 replace to real image/gif: "mobloot-banner.png"
- beef: **alt-message** The player kills a goat and raw mutton drops. Then a silverfish is killed and string drops with a 20% chance visual. A sniffer is killed and a moss block drops. Finally a piglin brute is killed and gilded blackstone drops. -->
 
 <details>
   <summary><strong>Mob Loot Table</strong></summary>
@@ -573,18 +553,14 @@ $$ P(\text{Drop}) \in \langle 0,\ 1 \rangle $$
 ### Recipe+
 
 <p align="center">
-  <img src=".github/img/placeholder.png" alt="Recipe+ banner showing various crafting and smelting screens" width="1080">
-<!-- todo: @pickerth-12 replace to real image/gif: "recipe-banner.png"
-wide banner of crafting/smelting screens -->
+  <img src=".github/img/recipe.png" alt="Recipe+ banner showing various crafting and smelting screens" width="1080">
 </p>
 
 Adds new crafting, smelting, and stonecutter recipes for a more accessible way to obtain items.
 
 #### Recipe Showcase
 
-<img src=".github/img/placeholder.png" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="1080">
-<!-- todo: @pickerth-12 replace to real image/gif: "recipe-showcase.gif"
-beef: **alt-message** The player opens a blast furnace and smelts sand into glass, then gilded blackstone into gold ingots. They open a crafting table and craft rooted dirt from dirt and roots, then craft a banner pattern from a skull and paper. -->
+<img src=".github/img/recipe.gif" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="1080">
 
 <details>
   <summary><strong>Full Recipe List</strong></summary>
@@ -767,6 +743,10 @@ All settings are accessible through the pack settings panel in-game. No manual f
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Disclosure
+
+All gameplay footage, images, and GIFs were recorded using [Vibrant Visual](https://www.minecraft.net/en-us/vibrant-visuals-update) and [Action And Stuff](https://www.minecraft.net/en-us/article/let-s-play--actions---stuff).
 
 ## Credits
 
