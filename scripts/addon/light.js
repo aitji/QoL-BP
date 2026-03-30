@@ -115,7 +115,13 @@ function spreadLight(block, level, en, height = 2, force = false) {
     const tryPut = (blo) => {
         if (!blo) return
         const k = blockBKey(blo)
+        const below = blo.below(1)
         if (seen.has(k)) return
+        try {
+            const key = blockBKey(below)
+            if (!seen.has(key) && below.typeId === 'minecraft:grass_path') return
+        } catch { }
+
         if (blo.isLiquid || blo.isAir || blo.permutation.matches('qof:light_block')) {
             seen.add(k)
             put_light(blo, level, en, force)
