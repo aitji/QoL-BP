@@ -1,6 +1,6 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity } from "@minecraft/server"
 import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, roundLoc, RUNTIME, setEqu, sumLoc } from "../lib"
-const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR, FAIL_PARTICLE, PARTICLE_OFFSET, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, SOUND_FAIL, FAIL_SOUND_INTERVAL, FIRE_ITEM } } = RUNTIME
+const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { LIGHT_WIKI: light, ENABLED, LIGHT_ENTITY, DECAY_LIGHT_TICK, REDUCE_LIGHT, LIGHT_RENDER_RADIUS, LIGHT_RENDER_PER_PLAYER, LIGHT_FIRE_LEVEL, LIGHT_REDUCE_LINEAR, FAIL_PARTICLE, PARTICLE_OFFSET, LIGHT_BLOCK, SOUND_FAIL, FAIL_SOUND_INTERVAL } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
 let AIR, WATER, LAVA, BASE_LIGHT, FIRE
@@ -8,7 +8,7 @@ if (ENABLED) system.run(() => {
     AIR = BlockPermutation.resolve('minecraft:air')
     WATER = BlockPermutation.resolve('minecraft:water')
     LAVA = BlockPermutation.resolve('minecraft:lava')
-    BASE_LIGHT = BlockPermutation.resolve('qof:light_block')
+    BASE_LIGHT = BlockPermutation.resolve(LIGHT_BLOCK)
     FIRE = BlockPermutation.resolve('minecraft:fire')
     _restoreFromDYP()
 })
@@ -16,7 +16,7 @@ if (ENABLED) system.run(() => {
 const lightPerm = (lv) => BASE_LIGHT.withState('qof:light_level', lv < 0 ? 0 : lv > 15 ? 15 : lv)
 const clamp15 = (n) => clamp(n, 0, 15)
 const dimId = (b) => b.dimension.id.split(':')[1]
-const isLightable = (b, liq) => b.isAir || (liq && b.isLiquid) || b.permutation.matches('qof:light_block')
+const isLightable = (b, liq) => b.isAir || (liq && b.isLiquid) || b.permutation.matches(LIGHT_BLOCK)
 /**@param {Entity} en */
 const getItemLight = (id, en, tick) => {
     const found = light[id ? id.split(':')[1]?.toLowerCase() : '']
@@ -126,7 +126,7 @@ function spreadLight(block, level, en, height = 2, force = false) {
             if (!seen.has(key) && below.typeId === 'minecraft:grass_path') return
         } catch { }
 
-        if (blo.isLiquid || blo.isAir || blo.permutation.matches('qof:light_block')) {
+        if (blo.isLiquid || blo.isAir || blo.permutation.matches(LIGHT_BLOCK)) {
             seen.add(k)
             put_light(blo, level, en, force)
         }
@@ -275,7 +275,7 @@ export const light_playerBreakBlock = (data) => {
     const { player, block } = data
     if (
         !player.matches({ gameMode: GameMode.Creative }) &&
-        block.permutation.matches('qof:light_block')
+        block.permutation.matches(LIGHT_BLOCK)
     ) data.cancel = true
     suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
 }

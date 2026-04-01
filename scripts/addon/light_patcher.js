@@ -1,7 +1,7 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity } from "@minecraft/server"
 import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 import { blockBKey, SUPP_BREAK, suppressedLocs } from "./light"
-const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM } } = RUNTIME
+const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM, LIGHT_BLOCK} } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
 const delay = {}
@@ -18,7 +18,7 @@ export const light_playerInteractWithBlock = (data) => {
 
     /** @type {Block?} */
     let above
-    const isLight = (b) => b.permutation?.matches('qof:light_block') ?? false
+    const isLight = (b) => b.permutation?.matches(LIGHT_BLOCK) ?? false
     const isAboveLight = () => { // don't perm check if unnesscery
         above = block.above(1)
         return isLight(above)

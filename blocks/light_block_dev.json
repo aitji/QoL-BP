@@ -2,17 +2,17 @@
     "format_version": "1.26.10",
     "minecraft:block": {
         "description": {
-            "identifier": "qof:light_block",
+            "identifier": "qof:light_block_dev",
             "states": { "qof:light_level": [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] }
         },
         "components": {
             "minecraft:collision_box": false,
             "minecraft:selection_box": false,
             "minecraft:loot": "loot_tables/empty.json",
-            "minecraft:geometry": { "identifier": "geometry.light_block" },
+            "minecraft:geometry": { "identifier": "minecraft:geometry.full_block" },
             "minecraft:material_instances": {
                 "*": {
-                    "texture": "light_block_0",
+                    "texture": "structure_void",
                     "render_method": "blend",
                     "ambient_occlusion": false,
                     "face_dimming": false
@@ -23,7 +23,7 @@
             "minecraft:connection_rule": { "accepts_connections_from": "none" },
             "minecraft:destructible_by_explosion": { "explosion_resistance": 0 },
             "minecraft:destructible_by_mining": { "seconds_to_destroy": 0 },
-            "minecraft:display_name": "QoF Light Block",
+            "minecraft:display_name": "QoF Light Block Dev",
             "minecraft:light_emission": 0,
             "minecraft:liquid_detection": {
                 "detection_rules": [
@@ -37,17 +37,17 @@
             "minecraft:movable": { "movement_type": "popped" }
         },
         "permutations": [
-            { "condition": "q.block_state('qof:light_level') == 1", "components": { "minecraft:light_emission": 1 } },
-            { "condition": "q.block_state('qof:light_level') == 2", "components": { "minecraft:light_emission": 2 } },
-            { "condition": "q.block_state('qof:light_level') == 3", "components": { "minecraft:light_emission": 3 } },
-            { "condition": "q.block_state('qof:light_level') == 4", "components": { "minecraft:light_emission": 4 } },
-            { "condition": "q.block_state('qof:light_level') == 5", "components": { "minecraft:light_emission": 5 } },
-            { "condition": "q.block_state('qof:light_level') == 6", "components": { "minecraft:light_emission": 6 } },
-            { "condition": "q.block_state('qof:light_level') == 7", "components": { "minecraft:light_emission": 7 } },
-            { "condition": "q.block_state('qof:light_level') == 8", "components": { "minecraft:light_emission": 8 } },
-            { "condition": "q.block_state('qof:light_level') == 9", "components": { "minecraft:light_emission": 9 } },
+            { "condition": "q.block_state('qof:light_level') == 1", "components":  { "minecraft:light_emission": 1  } },
+            { "condition": "q.block_state('qof:light_level') == 2", "components":  { "minecraft:light_emission": 2  } },
+            { "condition": "q.block_state('qof:light_level') == 3", "components":  { "minecraft:light_emission": 3  } },
+            { "condition": "q.block_state('qof:light_level') == 4", "components":  { "minecraft:light_emission": 4  } },
+            { "condition": "q.block_state('qof:light_level') == 5", "components":  { "minecraft:light_emission": 5  } },
+            { "condition": "q.block_state('qof:light_level') == 6", "components":  { "minecraft:light_emission": 6  } },
+            { "condition": "q.block_state('qof:light_level') == 7", "components":  { "minecraft:light_emission": 7  } },
+            { "condition": "q.block_state('qof:light_level') == 8", "components":  { "minecraft:light_emission": 8  } },
+            { "condition": "q.block_state('qof:light_level') == 9", "components":  { "minecraft:light_emission": 9  } },
             { "condition": "q.block_state('qof:light_level') == 10", "components": { "minecraft:light_emission": 10 } },
-            { "condition": "q.block_state('qof:light_level') == 11", "components": { "minecraft:light_emission": 11} },
+            { "condition": "q.block_state('qof:light_level') == 11", "components": { "minecraft:light_emission": 11 } },
             { "condition": "q.block_state('qof:light_level') == 12", "components": { "minecraft:light_emission": 12 } },
             { "condition": "q.block_state('qof:light_level') == 13", "components": { "minecraft:light_emission": 13 } },
             { "condition": "q.block_state('qof:light_level') == 14", "components": { "minecraft:light_emission": 14 } },

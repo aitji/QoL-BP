@@ -145,6 +145,7 @@ jobs:
             -x ".gitattributes" \
             -x ".gitignore" \
             -x "recipes/shaped/gen.js" \
+            -x "blocks/light_block_dev.json" \
             -x "recipes/stonecutter/wood/gen.js" \
             -x "README.md" \
             -x "scripts/todo.md" \

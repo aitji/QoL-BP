@@ -487,6 +487,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:soul_torch": true
         }),
         LIGHT: 'qof:light_block',
+        LIGHT_DEV: 'qof:light_block_dev',
         PLACE_SOUND: Object.freeze({
             ID: "dig.wood", // new version might be chnage to "place.wood"
             VOLUME: 1.0,
