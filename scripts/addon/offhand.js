@@ -191,8 +191,17 @@ export const offhand_playerInteractWithBlock = (data) => {
     if (block && cache.typeId !== block.typeId && mainhandIsBlock) return
     if (block.isLiquid) return
 
-    const isSolidOrLight = block.isSolid || block.permutation.matches(LIGHT)
+    const isLightBlock = block.permutation.matches(LIGHT)
+    const isSolidOrLight = (block.isSolid || isLightBlock) && !isLightBlock
     if (isSolidOrLight && NEED_SNEAK[block.typeId] && !player.isSneaking) return
+
+    if (isLightBlock) {
+        data.cancel = true
+        return system.run(() => {
+            reduceItem()
+            block.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', 'top'))
+        })
+    }
 
     if (isSolidOrLight) {
         if (CARRIED_CHEST.ENABLED && NEED_SNEAK[block.typeId] && player.isSneaking && block.getComponent("minecraft:inventory")?.container) return

@@ -461,7 +461,7 @@ export const SETTINGS = Object.freeze({
 
             // 2 block tall need neig check
             'minecraft:tall_grass': false,
-            'minecraft:tall_fern': false,
+            'minecraft:large_fern': false,
         }),
         NEED_SNEAK: Object.freeze({ // o(1) search
             'minecraft:crafting_table': true,
