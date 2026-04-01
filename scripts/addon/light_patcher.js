@@ -1,8 +1,17 @@
-import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity } from "@minecraft/server"
+import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity, ItemStack } from "@minecraft/server"
 import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 import { blockBKey, SUPP_BREAK, suppressedLocs } from "./light"
-const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM, LIGHT_BLOCK} } = RUNTIME
+import { pickupCooldown } from "../_helper"
+const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { ENABLED, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM, LIGHT_BLOCK } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
+
+let HANGING_ROOTS, DIRT, FARMLAND, GRASS_PATH
+if (ENABLED) system.run(() => {
+    HANGING_ROOTS = new ItemStack('minecraft:hanging_roots', 1)
+    DIRT = BlockPermutation.resolve('minecraft:dirt')
+    FARMLAND = BlockPermutation.resolve('minecraft:farmland')
+    GRASS_PATH = BlockPermutation.resolve('minecraft:grass_path')
+})
 
 const delay = {}
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
@@ -15,6 +24,7 @@ export const light_playerInteractWithBlock = (data) => {
 
     delay[player.id] = system.currentTick + BLOCK_INTERACTION_DELAY
     if (!itemStack || !block) return
+    const dimension = block.dimension
 
     /** @type {Block?} */
     let above
@@ -29,21 +39,43 @@ export const light_playerInteractWithBlock = (data) => {
         system.run(() => {
             let toolUsed = false
             if (itemStack?.hasTag('minecraft:is_shovel')) {
-                if (block.typeId === 'minecraft:grass_path') return
-                block.setPermutation(BlockPermutation.resolve('minecraft:grass_path'))
+                switch (block?.typeId ?? '') {
+                    case 'minecraft:grass_path':
+                    case 'minecraft:farmland':
+                        return
+                    default: break
+                }
+
+                block.setPermutation(GRASS_PATH)
                 toolUsed = true
 
-                player.dimension.playSound(SOUND_SHOVEL_USE.ID, block.center(), {
+                dimension.playSound(SOUND_SHOVEL_USE.ID, block.center(), {
                     volume: checkRandom(SOUND_SHOVEL_USE.VOLUME),
                     pitch: checkRandom(SOUND_SHOVEL_USE.PITCH)
                 })
             }
             if (itemStack?.hasTag('minecraft:is_hoe')) {
-                if (block.typeId === 'minecraft:farmland') return
-                block.setPermutation(BlockPermutation.resolve('minecraft:farmland'))
-                toolUsed = true
+                switch (block?.typeId ?? '') {
+                    case 'minecraft:farmland':
+                    case 'minecraft:podzol':
+                    case 'minecraft:mycelium':
+                        return
 
-                player.dimension.playSound(SOUND_HOE_USE.ID, block.center(), {
+                    case 'minecraft:dirt_with_roots':
+                        const root = dimension.spawnItem(HANGING_ROOTS, block.center())
+                        pickupCooldown(root, 15)
+                        block.setPermutation(DIRT)
+                        break
+                    case 'minecraft:coarse_dirt':
+                        block.setPermutation(DIRT)
+                        break
+                    default:
+                        block.setPermutation(FARMLAND)
+                        break
+                }
+
+                toolUsed = true
+                dimension.playSound(SOUND_HOE_USE.ID, block.center(), {
                     volume: checkRandom(SOUND_HOE_USE.VOLUME),
                     pitch: checkRandom(SOUND_HOE_USE.PITCH)
                 })
@@ -75,11 +107,11 @@ export const light_playerInteractWithBlock = (data) => {
                 const center = block.center()
                 switch (sound) {
                     // make sound config-able
-                    case 'nature': return player.dimension.playSound('place.grass', center, {
+                    case 'nature': return dimension.playSound('place.grass', center, {
                         volume: 0.8,
                         pitch: checkRandom([0.8, 1])
                     })
-                    case 'nether': return player.dimension.playSound('dig.nether_wart', center, {
+                    case 'nether': return dimension.playSound('dig.nether_wart', center, {
                         volume: 0.7,
                         pitch: checkRandom([0.8, 1])
                     })
