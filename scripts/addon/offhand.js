@@ -1,6 +1,6 @@
 import { Block, BlockComponentTypes, BlockPermutation, Difficulty, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
 import { checkRandom, getDistance, getEqu, RUNTIME, setEqu } from "../lib"
-const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT } } = RUNTIME
+const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM } } = RUNTIME
 
 /**
  * @typedef {{ lastSneakTick: number, wasSneaking: boolean }} SneakState
@@ -56,11 +56,15 @@ function hasUnsafeProperties(item) {
     // const durability = item.getComponent(ItemComponentTypes.Durability)
     // if ((durability?.damage ?? 0) > 0) return true
 
-    const dye = item.getComponent(ItemComponentTypes.Dyeable)
-    if (dye) {
-        const { color: c, defaultColor: d } = dye
-        if (c.red !== d.red || c.green !== d.green || c.blue !== d.blue) return true
-    }
+    // const dye = item.getComponent(ItemComponentTypes.Dyeable)
+    // if (dye) {
+    //     const { color: c, defaultColor: d } = dye
+    //     if (c.red !== d.red || c.green !== d.green || c.blue !== d.blue) return true
+    // }
+
+    // edge case
+    const isDisallow = DISALLOWED_ITEM.has(item?.typeId ?? '')
+    if (isDisallow && isDisallow === true) return true
 
     return false
 }
@@ -71,7 +75,8 @@ function swapItem(player) {
     const mainhand = equippable.getEquipment(EquipmentSlot.Mainhand)
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
-    if (hasUnsafeProperties(mainhand) || hasUnsafeProperties(offhand)) return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/color")
+    if (hasUnsafeProperties(mainhand) || hasUnsafeProperties(offhand))
+        return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/nbt")
 
     // const savedEnchants = mainhand?.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments() ?? []
     const durability = mainhand?.getComponent(ItemComponentTypes.Durability)

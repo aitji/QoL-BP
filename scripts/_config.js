@@ -486,6 +486,93 @@ export const SETTINGS = Object.freeze({
             "minecraft:copper_torch": true,
             "minecraft:soul_torch": true
         }),
+
+        DISALLOWED_ITEM: Object.freeze(new Set([
+            // bundle
+            'minecraft:bundle',
+            'minecraft:black_bundle',
+            'minecraft:blue_bundle',
+            'minecraft:brown_bundle',
+            'minecraft:cyan_bundle',
+            'minecraft:gray_bundle',
+            'minecraft:green_bundle',
+            'minecraft:light_blue_bundle',
+            'minecraft:light_gray_bundle',
+            'minecraft:lime_bundle',
+            'minecraft:magenta_bundle',
+            'minecraft:orange_bundle',
+            'minecraft:pink_bundle',
+            'minecraft:red_bundle',
+            'minecraft:purple_bundle',
+            'minecraft:white_bundle',
+            'minecraft:yellow_bundle',
+        
+            // shulker_box
+            'minecraft:undyed_shulker_box',
+            'minecraft:black_shulker_box',
+            'minecraft:blue_shulker_box',
+            'minecraft:brown_shulker_box',
+            'minecraft:cyan_shulker_box',
+            'minecraft:gray_shulker_box',
+            'minecraft:green_shulker_box',
+            'minecraft:light_blue_shulker_box',
+            'minecraft:light_gray_shulker_box',
+            'minecraft:lime_shulker_box',
+            'minecraft:magenta_shulker_box',
+            'minecraft:orange_shulker_box',
+            'minecraft:pink_shulker_box',
+            'minecraft:red_shulker_box',
+            'minecraft:purple_shulker_box',
+            'minecraft:white_shulker_box',
+            'minecraft:yellow_shulker_box',
+        
+            // potions
+            'minecraft:potion',
+            'minecraft:lingering_potion',
+            'minecraft:splash_potion',
+            'minecraft:ominous_bottle',
+        
+            // dyeable leathers
+            'minecraft:leather_horse_armor',
+            'minecraft:leather_helmet',
+            'minecraft:leather_chestplate',
+            'minecraft:leather_leggings',
+            'minecraft:leather_boots',
+            'minecraft:wolf_armor',
+
+            // fish in bucket (size&color))
+            "minecraft:axolotl_bucket",
+            "minecraft:cod_bucket",
+            "minecraft:pufferfish_bucket",
+            "minecraft:salmon_bucket",
+            "minecraft:tadpole_bucket",
+            "minecraft:tropical_fish_bucket",
+
+            // bee
+            "minecraft:bee_nest",
+            "minecraft:beehive",
+
+            // others
+            'minecraft:arrow', // tripped arrow, sadly this inculding the normal arrow too
+            'minecraft:banner',
+            'minecraft:bed',
+            'minecraft:goat_horn',
+            'minecraft:suspicious_stew',
+            'minecraft:bow',
+            'minecraft:crossbow', // will lost arrow if swap
+            // 'minecraft:enchanted_book', // alr have enchant
+            'minecraft:fishing_rod',
+            'minecraft:firework_rocket',
+            'minecraft:firework_star',
+            'minecraft:shield', // banner can be put on a shield
+            "minecraft:filled_map",
+            "minecraft:empty_map", // empty locator map will lost
+
+            // dev
+            "minecraft:command_block",
+            "minecraft:chain_command_block",
+            "minecraft:repeating_command_block",
+        ])),
         LIGHT: 'qof:light_block',
         LIGHT_DEV: 'qof:light_block_dev',
         PLACE_SOUND: Object.freeze({
