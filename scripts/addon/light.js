@@ -46,41 +46,45 @@ const entityLights = new Map() // owner id -> Set<blockKey>
 export const suppressedLocs = new Map() // key: "dim:x:y:z"  val: expireTick ;; no backup DYP just for visual
 export const SUPP_BREAK = 8 // need to be config-able
 
-const bKey = (dim, x, y, z) => `${dim}:${x}:${y}:${z}`
+const bKey = (dim, x, y, z) => `${dim ?? ''}:${x ?? ''}:${y ?? ''}:${z ?? ''}`
 export const blockBKey = (b) => bKey(dimId(b), b.location.x, b.location.y, b.location.z)
 
 function _restoreFromDYP() {
     const ids = world.getDynamicPropertyIds()
     for (let i = 0; i < ids.length; i++) {
         const dy = ids[i]
-        if (dy.startsWith('light:')) {
-            // light:dim:x:y:z:level:isWater:owner
-            const p = dy.split(':')
-            const k = bKey(p[1], p[2], p[3], p[4])
-            const time = world.getDynamicProperty(dy)
-            if (typeof time !== 'number') { world.setDynamicProperty(dy, undefined); continue }
-            lightMap.set(k, { time, level: +p[5], isWater: p[6] === 'true', owner: p[7] })
-            if (p[7] && p[7] !== 'Infinity') {
-                if (!entityLights.has(p[7])) entityLights.set(p[7], new Set())
-                entityLights.get(p[7]).add(k)
-            }
-            world.setDynamicProperty(dy, undefined)
-        } else if (dy.startsWith('frame:')) {
-            const p = dy.split(':')
-            frameSet.add(bKey(p[1], p[2], p[3], p[4]))
-        } else if (dy.startsWith('supp:')) {
-            const p = dy.split(':')
-            const dur = world.getDynamicProperty(dy)
-            if (typeof dur === 'number' && dur > 0)
-                suppressedLocs.set(bKey(p[1], p[2], p[3], p[4]), system.currentTick + dur)
-            world.setDynamicProperty(dy, undefined)
-        } else if (dy.startsWith('chuck_unload:')) {
-            // chuck_unload:light:dim:x:y:z:level:isWater:owner
-            const p = dy.split(':')
-            const k = bKey(p[2], p[3], p[4], p[5])
-            if (!lightMap.has(k))
-                lightMap.set(k, { time: DECAY_LIGHT_TICK, level: +p[6], isWater: p[7] === 'true', owner: p[8] })
-            world.setDynamicProperty(dy, undefined)
+        const p = dy?.split(':')
+        const prefix = p[0]
+        const k = bKey(p[1], p[2], p[3], p[4]) ?? ''
+        switch (prefix) {
+            case "light":
+                // light:dim:x:y:z:level:isWater:owner
+                const time = world.getDynamicProperty(dy)
+                if (typeof time !== 'number') { world.setDynamicProperty(dy, undefined); continue }
+                lightMap.set(k, { time, level: +p[5], isWater: p[6] === 'true', owner: p[7] })
+                if (p[7] && p[7] !== 'Infinity') {
+                    if (!entityLights.has(p[7])) entityLights.set(p[7], new Set())
+                    entityLights.get(p[7]).add(k)
+                }
+                world.setDynamicProperty(dy, undefined)
+                break
+            case "frame":
+                frameSet.add(k)
+                break
+            case "supp":
+                const dur = world.getDynamicProperty(dy)
+                if (typeof dur === 'number' && dur > 0) suppressedLocs.set(k, system.currentTick + dur)
+                world.setDynamicProperty(dy, undefined)
+                break
+
+            // this isn't been use anymore
+            case "chuck_unload": // tech debt ._.
+            case "chunk_unload":
+                // chuck_unload:light:dim:x:y:z:level:isWater:owner
+                if (!lightMap.has(k)) lightMap.set(k, { time: DECAY_LIGHT_TICK, level: +p[6], isWater: p[7] === 'true', owner: p[8] })
+                world.setDynamicProperty(dy, undefined)
+                break
+            default: break
         }
     }
 }
