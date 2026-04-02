@@ -252,6 +252,7 @@ Concrete powder items automatically convert to concrete when they enter water. T
 4. A particle and sound effect play on conversion.
 
 The delay formula is:
+
 $$ \text{DELAY} = BASE + \lfloor \sqrt{item_amount - 1} \cdot MULTIPLIER \rfloor $$
 
 where `BASE` and `MULTIPLIER` are configurable in pack settings.
