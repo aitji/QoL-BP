@@ -205,7 +205,7 @@
       "type": "toggle",
       "text": "§7Disable §fjumping§7 while holding a container? §r",
       "name": "qof:CARRIED_CHEST.PLAYER_JUMP.NO_JUMP_HOLD_CHEST",
-      "default": true
+      "default": false
     },
     {
       "type": "toggle",

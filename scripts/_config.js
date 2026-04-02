@@ -407,10 +407,10 @@ export const SETTINGS = Object.freeze({
         MAX_DISPLAY: 5,
         APPLY_IMPULSE: Object.freeze({ // only apply via player in water *won't effect [creative] gamemode
             ENABLED: true,
-            VECTOR: Object.freeze({ x: 0, y: -0.02, z: 0 }) // if posstive will make player swim up easier
+            VECTOR: Object.freeze({ x: 0, y: -0.008, z: 0 }) // if posstive will make player swim up easier
         }),
         PLAYER_JUMP: Object.freeze({
-            NO_JUMP_HOLD_CHEST: true, // lock player from jumpping when holding chest
+            NO_JUMP_HOLD_CHEST: false, // lock player from jumpping when holding chest
             ALLOW_JUMP_IN_WATER: true,
             ALLOW_JUMP_IN_LAVA: true,
             ALLOW_JUMP_IN_SCAFFOLDING: true,
