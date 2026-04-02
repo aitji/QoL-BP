@@ -35,12 +35,12 @@ const BASE_COUNT = {
     slab: Math.ceil(1.5),
     stick: Math.ceil(2),
     sign: Math.ceil(0.5),
-    slab: Math.ceil(1.5),
     door: Math.ceil(0.5),
     pressure_plate: Math.ceil(0.5),
     trapdoor: Math.ceil(0.5),
     fence_gate: Math.ceil(0.5),
     fence: Math.ceil(0.5),
+    stairs: Math.ceil(1.5)
 }
 
 const PLANK_MULTIPLIER = {
