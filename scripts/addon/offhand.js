@@ -1,5 +1,5 @@
-import { Block, BlockComponentTypes, BlockPermutation, Difficulty, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
-import { checkRandom, getDistance, getEqu, RUNTIME, setEqu } from "../lib"
+import { Block, BlockComponentTypes, BlockPermutation, Difficulty, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, system, world } from "@minecraft/server"
+import { checkRandom, getDistance, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 const { DEBUG, CARRIED_CHEST, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM } } = RUNTIME
 
 /**
@@ -97,17 +97,57 @@ function swapItem(player) {
     } else equippable.setEquipment(EquipmentSlot.Offhand, undefined)
 }
 
+const SUS_STEW = Object.freeze({
+    // night vision
+    "minecraft:poppy": 0,
+    "minecraft:torchflower": 10,
+
+    // jump boost
+    "minecraft:cornflower": 1,
+
+    // weakness
+    "minecraft:orange_tulip": 2,
+    "minecraft:pink_tulip": 2,
+    "minecraft:red_tulip": 2,
+    "minecraft:white_tulip": 2,
+
+    // blindness
+    "minecraft:azure_bluet": 3,
+    "minecraft:open_eyeblossom": 11,
+
+    // poison
+    "minecraft:lily_of_the_valley": 4,
+
+    // saturation
+    "minecraft:golden_dandelion": 5,
+    "minecraft:dandelion": 5,
+    "minecraft:blue_orchid": 6,
+
+    // fire resistance
+    "minecraft:allium": 7,
+
+    // regeneration
+    "minecraft:oxeye_daisy": 8,
+
+    // wither
+    "minecraft:wither_rose": 9,
+
+    // nausea
+    "minecraft:closed_eyeblossom": 12
+})
+
+const susCow = new Map()
+
+/**@param {PlayerInteractWithEntityBeforeEvent} event*/
 export const offhand_playerInteractWithEntity = (event) => {
-    const { player, target } = event
+    const { player, target, itemStack } = event
     const equippable = player.getComponent(EntityComponentTypes.Equippable)
-    const offhandItem = equippable.getEquipment(EquipmentSlot.Offhand)
+    const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
-    const isMilkable = (
-        target.typeId === "minecraft:cow" ||
-        target.typeId === "minecraft:mooshroom"
-    )
-
-    if (isMilkable && offhandItem?.typeId === "minecraft:bucket") {
+    if (
+        (target.typeId === "minecraft:cow" || target.typeId === "minecraft:mooshroom") &&
+        offhand?.typeId === "minecraft:bucket"
+    ) {
         event.cancel = true
         system.run(() => {
             player.runCommand("replaceitem entity @s slot.weapon.offhand 0 milk_bucket")
