@@ -34,7 +34,13 @@
                     }
                 ]
             },
-            "minecraft:movable": { "movement_type": "popped" }
+            "minecraft:movable": { "movement_type": "popped" },
+            "minecraft:placement_filter": {
+                "conditions": [{
+                    "allowed_faces": ["up"],
+                    "block_filter": ["minecraft:air"]
+                }]
+            }
         },
         "permutations": [
             { "condition": "q.block_state('qof:light_level') == 1", "components": { "minecraft:light_emission": 1 } },
