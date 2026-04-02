@@ -62,14 +62,21 @@
 
 ## Installation
 
-1. Download the latest `.mcaddon` from [Releases](https://github.com/aitji/QoF/releases).
-2. Open the file and Minecraft will import it automatically.
-3. Create or open a world, then go to **Behavior Packs**, and activate **QoF**.
-4. Under **Experiments**, enable **Beta APIs**.
-5. Settings are available in the pack settings panel inside the world settings.
+Download the `QoF` addon from one of these sources:
+
+- GitHub: https://github.com/aitji/QoF/releases
+- CurseForge: https://www.curseforge.com/minecraft-bedrock/addons/quality-of-feature
+- MCPEDL: https://mcpedl.com/quality-of-feature
+
+1. Download the latest `.mcaddon` file from the releases page.
+2. Open the file, Minecraft will automatically import the addon.
+3. Open or create a world.
+4. Go to **Behavior Packs** and activate **QoF**.
+5. In **Experiments**, enable **Beta APIs**.
+6. Configure settings in the pack settings panel inside the world settings.
 
 > [!IMPORTANT]
-> Beta APIs **must be enabled** or the pack will not function at all.
+> **Beta APIs must be enabled**, otherwise the pack will not function.
 
 ## Modules
 
