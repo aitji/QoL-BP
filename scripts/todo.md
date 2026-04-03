@@ -17,7 +17,7 @@ this file is only for top priority todo, if something like refactor some code or
   - [x] fix seeds not work on farmlands
   - [x] support edge case for offhand like buckets
 - [x] harvest crop
-- [ ] offhand work with seed
+- [x] offhand work with seed
   - [x] offhand seed work with harvest.js, auto replant from offhand
 - [x] harvest support more things like coco bean cocoa ["direction"=0-3], this might be hard with offhand
 - [x] ongoing problem ; might ship without fix this
@@ -53,7 +53,7 @@ if data still kept grow and grow might need to store data with entity for db `qo
 10 bytes take 259 bytes\
 30 bytes take 739 bytes\
 > this can go on inf
-
+<!-- 
 #### dynamic light
 
 ##### per player
@@ -66,7 +66,9 @@ elytra: peak 7000+ bytes (90+ dyp)\
 elytra+firework (any level): peak 8000+ bytes (150+ dyp)\
 
 > item is -1.83 times of player
-> if everyone have elytra and firework same time it will take 12 player to take dynamic light to limit, it still working even it hit limit but it will run in-memory instant of persistance database rn i'm ok with that tho!
+> if everyone have elytra and firework same time it will take 12 player to take dynamic light to limit, it still working even it hit limit but it will run in-memory instant of persistance database rn i'm ok with that tho! -->
+
+> dynamic light now lived under memory, it won't eat dyp anymore (i mean a little bit but yeah)
 
 ## picker
 - [x] update light level to new version

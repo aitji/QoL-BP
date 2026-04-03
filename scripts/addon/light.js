@@ -18,9 +18,14 @@ const {
         PARTICLE_OFFSET,
         LIGHT_BLOCK,
         SOUND_FAIL,
-        FAIL_SOUND_INTERVAL
+        FAIL_SOUND_INTERVAL,
+        LIGHT_PENDING_BATCH,
+        LIGHT_PLAYER_BATCH
     }
 } = RUNTIME
+
+let _pendingCursor = 0
+let _playerCursor = 0
 
 export const isFrame = (b) =>
     b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
@@ -138,7 +143,7 @@ function put_light(block, level, owner, force = false) {
             : (owner?.id ?? owner?.name ?? owner?.nameTag ?? owner?.typeId ?? String(owner))
 
         lightMap.set(k, { time: DECAY_LIGHT_TICK, level, isWater, owner: ownerId })
- 
+
         if (ownerId !== 'Infinity') {
             if (!entityLights.has(ownerId)) entityLights.set(ownerId, new Set())
             entityLights.get(ownerId).add(k)
@@ -193,11 +198,31 @@ function processEntity(en, isPlayer = false, tick) {
     }
 }
 
+let _pendingKeys = []
+let _pendingKeysSize = 0
+
 export const light_pending = (tick) => {
+    const mapSize = lightMap.size
+    if (mapSize === 0) { _pendingCursor = 0; return }
+
+    if (_pendingKeys.length === 0 || Math.abs(_pendingKeysSize - mapSize) > Math.max(10, mapSize * 0.1)) {
+        _pendingKeys = Array.from(lightMap.keys())
+        _pendingKeysSize = mapSize
+        _pendingCursor = _pendingCursor % (_pendingKeys.length || 1)
+    }
+
+    const total = _pendingKeys.length
+    const budget = Math.min(LIGHT_PENDING_BATCH, total)
     const dead = []
     const tryThaw = (tick % FROZEN_RECHECK) === 0
 
-    for (const [k, v] of lightMap) {
+    for (let i = 0; i < budget; i++) {
+        const idx = (_pendingCursor + i) % total
+        const k = _pendingKeys[idx]
+
+        const v = lightMap.get(k)
+        if (!v) continue
+
         const isFrozen = frozenKeys.has(k)
 
         if (isFrozen && !tryThaw) {
@@ -233,35 +258,86 @@ export const light_pending = (tick) => {
         } catch { }
     }
 
+    _pendingCursor = (_pendingCursor + budget) % total
+
     for (let i = 0; i < dead.length; i++) {
         const k = dead[i]
         const v = lightMap.get(k)
         if (v?.owner && v.owner !== 'Infinity') entityLights.get(v.owner)?.delete(k)
         frozenKeys.delete(k)
         lightMap.delete(k)
+        _pendingKeys.length = 0
     }
+}
+
+const _excludedTypes = new Set([
+    'minecraft:xp_orb', 'minecraft:xp_bottle',
+    'minecraft:command_block_minecart', 'minecraft:hopper_minecart',
+    'minecraft:splash_potion'
+])
+
+let _entityQueue = []
+let _entityTick = -1
+
+function _buildEntityQueue(players, tick) {
+    if (_entityTick === tick) return
+    _entityTick = tick
+
+    const seen = new Set()
+    _entityQueue = []
+
+    for (const pl of players) {
+        const nearby = pl.dimension.getEntities({
+            location: pl.location,
+            maxDistance: LIGHT_RENDER_RADIUS,
+            closest: LIGHT_RENDER_PER_PLAYER,
+        })
+        for (const en of nearby) {
+            if (!en || _excludedTypes.has(en.typeId)) continue
+            if (seen.has(en.id)) continue
+            seen.add(en.id)
+            _entityQueue.push(en)
+        }
+    }
+
+    if (_entityQueue.length > 0)
+        _playerCursor = _playerCursor % _entityQueue.length
+    else
+        _playerCursor = 0
 }
 
 /** @param {Player} pl @param {number} tick */
 export const light_player = (pl, tick) => {
     processEntity(pl, true, tick)
-    pl.dimension.getEntities({
-        location: pl.location,
-        maxDistance: LIGHT_RENDER_RADIUS,
-        closest: LIGHT_RENDER_PER_PLAYER,
-        excludeTypes: ['minecraft:xp_orb', 'minecraft:xp_bottle', 'minecraft:command_block_minecart', 'minecraft:hopper_minecart', 'minecraft:splash_potion']
-    }).forEach(en => {
-        if (!en) return
-        if (en.typeId === 'minecraft:item') return processEntity(en, false, tick)
+
+    const players = [...world.getPlayers()]
+    _buildEntityQueue(players, tick)
+
+    const total = _entityQueue.length
+    if (total === 0) return
+
+    const budget = Math.min(LIGHT_PLAYER_BATCH, total)
+
+    for (let i = 0; i < budget; i++) {
+        const en = _entityQueue[(_playerCursor + i) % total]
+        if (!en) continue
+
+        if (en.typeId === 'minecraft:item') {
+            processEntity(en, false, tick)
+            continue
+        }
 
         let lightLevel = 0
         if (en.getComponent(EntityComponentTypes.OnFire)) lightLevel += LIGHT_FIRE_LEVEL * REDUCE_LIGHT
 
         const glowEntity = LIGHT_ENTITY[en.typeId]
         if (glowEntity) lightLevel = Math.hypot(lightLevel, glowEntity.light * REDUCE_LIGHT)
-        if (lightLevel <= 0) return
+        if (lightLevel <= 0) continue
+
         spreadLight(en.dimension.getBlock(en.location), clamp15(lightLevel), en, 2)
-    })
+    }
+
+    _playerCursor = (_playerCursor + budget) % total
 }
 
 export const light_entityRemove = ({ removedEntityId }) => {
@@ -280,6 +356,7 @@ export const light_entityRemove = ({ removedEntityId }) => {
         }
     }
     entityLights.delete(id)
+    _pendingKeys.length = 0
 }
 
 export const light_playerPlaceBlock = ({ block }) => {

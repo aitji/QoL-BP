@@ -119,7 +119,9 @@ export const SETTINGS = Object.freeze({
             "minecraft:vex": Object.freeze({ light: 10 }),
             "minecraft:blaze": Object.freeze({ light: 12 }),
             "minecraft:warden": Object.freeze({ light: 6 }),
-        })
+        }),
+        LIGHT_PENDING_BATCH: 64,
+        LIGHT_PLAYER_BATCH: 64,
     }),
     REPAIR_ANVIL: Object.freeze({
         ENABLED: true,
