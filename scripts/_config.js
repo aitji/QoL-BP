@@ -490,6 +490,76 @@ export const SETTINGS = Object.freeze({
             "minecraft:soul_torch": true
         }),
 
+        CAN_ALWAYS_USE: Object.freeze(new Set([
+            // misc, idk where to put it
+            "minecraft:wind_charge",
+            "minecraft:snowball",
+            "minecraft:ender_eye",
+            "minecraft:ender_pearl",
+            "minecraft:goat_horn",
+            "minecraft:firework_rocket",
+            "minecraft:armor_stand",
+            "minecraft:turtle_helmet",
+            "minecraft:sugar_cane",
+            "minecraft:empty_map",
+            "minecraft:banner",
+            "minecraft:name_tag",
+        
+            // stew
+            "minecraft:suspicious_stew",
+            "minecraft:mushroom_stew",
+            "minecraft:rabbit_stew",
+            "minecraft:beetroot_soup",
+        
+            // fish bucket
+            "minecraft:axolotl_bucket",
+            "minecraft:cod_bucket",
+            "minecraft:pufferfish_bucket",
+            "minecraft:salmon_bucket",
+            "minecraft:tadpole_bucket",
+            "minecraft:tropical_fish_bucket",
+            "minecraft:water_bucket",
+            "minecraft:lava_bucket",
+            "minecraft:powder_snow_bucket",
+        
+            // potions
+            "minecraft:potion",
+            "minecraft:lingering_potion",
+            "minecraft:splash_potion",
+            "minecraft:ominous_bottle",
+            "minecraft:experience_bottle",
+            "minecraft:honey_bottle",
+            "minecraft:glass_bottle",
+        
+            // egg
+            "minecraft:egg",
+            "minecraft:brown_egg",
+            "minecraft:blue_egg",
+        
+            // weapon
+            "minecraft:bow",
+            "minecraft:crossbow",
+            "minecraft:fishing_rod",
+            "minecraft:carrot_on_a_stick",
+            "minecraft:warped_fungus_on_a_stick",
+            "minecraft:shears",
+        
+            "minecraft:lead",
+            "minecraft:saddle",
+            "minecraft:leather_horse_armor",
+            "minecraft:copper_horse_armor",
+            "minecraft:golden_horse_armor",
+            "minecraft:iron_horse_armor",
+            "minecraft:diamond_horse_armor",
+            "minecraft:netherite_horse_armor",
+            "minecraft:wolf_armor",
+        
+            // redstone
+            "minecraft:repeater",
+            "minecraft:comparator",
+            "minecraft:redstone",
+            "minecraft:redstone_torch",
+        ])),
         DISALLOWED_ITEM: Object.freeze(new Set([
             // bundle
             'minecraft:bundle',

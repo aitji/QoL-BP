@@ -38,9 +38,9 @@ function buildRuntime() {
             LIGHT_RENDER_RADIUS: g("qof:LIGHT.LIGHT_RENDER_RADIUS", L.LIGHT_RENDER_RADIUS),
             LIGHT_RENDER_PER_PLAYER: g("qof:LIGHT.LIGHT_RENDER_PER_PLAYER", L.LIGHT_RENDER_PER_PLAYER),
             LIGHT_FIRE_LEVEL: g("qof:LIGHT.LIGHT_FIRE_LEVEL", L.LIGHT_FIRE_LEVEL),
-            LIGHT_BLOCK: OH.LIGHT, // use from offhand
 
             // static
+            LIGHT_BLOCK: OH.LIGHT, // use from offhand
             LIGHT_WIKI: L.LIGHT_WIKI,
             LIGHT_ENTITY: L.LIGHT_ENTITY,
             FAIL_SOUND_INTERVAL: L.FAIL_SOUND_INTERVAL,
@@ -141,7 +141,8 @@ function buildRuntime() {
             BLOCK_INTERACTION_DELAY: OH.BLOCK_INTERACTION_DELAY,
             ITEMBUTBLOCK: OH.ITEMBUTBLOCK,
             DISALLOWED_ITEM: OH.DISALLOWED_ITEM,
-            FOOD_DATA: OH.FOOD_DATA
+            FOOD_DATA: OH.FOOD_DATA,
+            CAN_ALWAYS_USE: OH.CAN_ALWAYS_USE
         }),
         HARVEST: Object.freeze({
             ENABLED: g("qof:HARVEST.ENABLED", CR.ENABLED),
