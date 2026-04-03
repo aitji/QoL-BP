@@ -11,6 +11,7 @@
   - [Changelog](#changelog)
   - [Installation](#installation)
   - [Modules](#modules)
+    - [Double Door](#double-door)
     - [Dynamic Light](#dynamic-light)
     - [Anvil Repairing](#anvil-repairing)
       - [Full Repairing Loop](#full-repairing-loop)
@@ -36,12 +37,13 @@
 ## Overview
 
 - [x] Dynamic lighting
+- [x] Open adjacent doors automatically with a single interaction
 - [x] Repair damaged anvils
 - [x] Concrete powder hardens when it touches water as an item entity
 - [x] Composter accepts more items
 - [x] Pick up and carry containers while preserving their contents
-- [x] Swap mainhand and offhand with a double sneak and place torches from the offhand
-- [x] Hold harvest crops with automatic seed replanting with Hoe
+- [x] Swap mainhand and offhand with a double sneak, place torches and plant seeds from the offhand
+- [x] Hold harvest crops with automatic seed replanting with Hoe, supports Cocoa Bean and offhand seed priority
 - [x] Extra mob drops
 - [x] Extra crafting and smelting recipes
 - [ ] And many more to come later
@@ -81,13 +83,21 @@ Download the `QoF` addon from one of these sources:
 
 ## Modules
 
+### Double Door
+
+<div align="center">
+  <img src=".github/img/v1.4.0/doubledoor.gif" alt="Double door opening both sides simultaneously" width="1080">
+</div>
+
+Interacting with one door automatically opens or closes the adjacent door at the same time. Works with all door types, keeping paired doors in sync without any extra input.
+
 ### Dynamic Light
 
 <p align="center">
   <img src=".github/img/light.png" alt="Dynamic Light night walk with soul lantern" width="1080">
 </p>
 
-Held and dropped items emit light based on their type. The light smoothly fades after the source moves away or is removed. `burning entities`, `glowing entities` and `item frames` also emit light based on what they contain.
+Held and dropped items emit light based on their type. The light smoothly fades after the source moves away or is removed. `burning entities`, `glowing entities` and `item frames` also emit light based on what they contain. Dynamic lights are processed using a **round-robin batch system** for better overall performance and exist only in memory no dynamic properties are used.
 
 **How It Works:**
 
@@ -353,6 +363,7 @@ These are items added by QoF on top of the vanilla compost table. Vanilla items 
 | cooked_cod             | 65%                                   |
 | cooked_salmon          | 65%                                   |
 | golden_carrot          | 65%                                   |
+| golden_dandelion       | 65%                                   |
 | glistering_melon_slice | 65%                                   |
 |                        | <div align="center"><b>85%</b></div>  |
 | blaze_rod              | 85%                                   |
@@ -453,13 +464,14 @@ Any block with a `minecraft:inventory` component can be picked up. Common exampl
   <img src=".github/img/offhand.png" alt="Offhand swap and torch placement banner" width="1080">
 </p>
 
-Allows players to double-sneak to swap items between their mainhand and offhand. Additionally, torches and other light sources held in the offhand can be placed directly without switching slots.
+Allows players to double-sneak to swap items between their mainhand and offhand. Additionally, torches and other light sources held in the offhand can be placed directly without switching slots. **All seed types** can now be planted directly from the offhand.
 
 **How It Works:**
 
 - Double sneak within a configurable time window to swap mainhand ↔ offhand.
 - The sneak window gap is independently configurable for **Mobile**, **Console**, and **Windows**.
 - Torches placed from the offhand correctly consume the offhand item stack.
+- Seeds held in the offhand can be planted directly this also integrates with the Harvest module for auto-replanting priority.
 
 > [!NOTE]
 > Enchantments and item color cannot be transferred between hands due to API limitations that do not allow editing the offhand cleanly.
@@ -490,12 +502,12 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
   <img src=".github/img/harvesting.gif" alt="Player harvesting wheat field with hoe" width="1080">
 </p>
 
-Allows players to harvest fully grown crops while holding any hoe. Seeds are automatically replanted after harvesting, and the hoe loses durability on each harvest to balance the automation.
+Allows players to harvest fully grown crops while holding any hoe. Seeds are automatically replanted after harvesting, and the hoe loses durability on each harvest to balance the automation. And **Cocoa Beans** are supported harvest them using an axe. Seeds placed in the **offhand** are prioritized for replanting over inventory seeds.
 
 **How It Works:**
 
-- Hold any hoe and interact with a fully grown crop to harvest it.
-- Seeds are automatically replanted in the same location.
+- Hold any hoe and interact with a fully grown crop to harvest it. Use an **axe** for Cocoa Bean pods.
+- Seeds are automatically replanted in the same location. If seeds are in the offhand, they are used first.
 - If seeds drop on the ground and the player has none in inventory, dropped seeds used for replanting are reduced by 1, with a `40 gametick` delay before the player can pick them up.
 - Hoe durability loss follows the vanilla formula:
 
@@ -775,12 +787,12 @@ Copyright (c) 2026 aitji & pickerth-12 Licensed under the MIT License
 Source: github.com/aitji/QoF
 
   README INFO
-Version: v1.3.0
-Last updated: 3 Apr 2026
-Has README Update: False
+Version: v1.4.0
+Last updated: 4 Apr 2026
+Has README Update: True
 
   PACK INFO
-Last Release: v1.3.0
+Last Release: v1.4.0
 Last Pre-Release: v1.3.4
 Last Minecraft Version: 26.12
 Used Dependencies: ^2.7.0-beta.1.26.10-stable
