@@ -477,6 +477,7 @@ export const SETTINGS = Object.freeze({
             'minecraft:lit_smoker': true,
             'minecraft:smithing_table': true,
             'minecraft:noteblock': true,
+            'minecraft:jukebox': true,
             // dev
             'minecraft:command_block': true,
             'minecraft:chain_command_block': true,
@@ -542,7 +543,7 @@ export const SETTINGS = Object.freeze({
             'minecraft:leather_boots',
             'minecraft:wolf_armor',
 
-            // fish in bucket (size&color))
+            // fish in bucket (size&color)
             "minecraft:axolotl_bucket",
             "minecraft:cod_bucket",
             "minecraft:pufferfish_bucket",

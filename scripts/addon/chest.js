@@ -193,8 +193,9 @@ export const chest_playerInteractWithBlock = (data) => {
     try {
       const blockInv = block.getComponent("minecraft:inventory")
       if (!blockInv) return
-      const blockTypeId = block.typeId
+      const blockTypeId = block?.typeId ?? ''
       if (blockTypeId.includes('lit_')) return
+      if (blockTypeId === "minecraft:jukebox") return
       const holdingEntity = spawnInv(player)
       holdingEntity.addTag(`type ${blockTypeId}`)
       block2inv(block, holdingEntity)

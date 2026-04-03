@@ -169,10 +169,102 @@ function canPlaceTorchOn(block) {
     return false
 }
 
+const CAN_ALWAYS_USE = Object.freeze(new Set([
+    "minecraft:wind_charge",
+    "minecraft:snowball",
+    "minecraft:ender_eye",
+    "minecraft:ender_pearl",
+    "minecraft:goat_horn",
+    "minecraft:firework_rocket",
+    "minecraft:armor_stand",
+
+    // stew
+    "minecraft:suspicious_stew",
+    "minecraft:mushroom_stew",
+    "minecraft:rabbit_stew",
+    "minecraft:beetroot_soup",
+
+    // fish bucket
+    "minecraft:axolotl_bucket",
+    "minecraft:cod_bucket",
+    "minecraft:pufferfish_bucket",
+    "minecraft:salmon_bucket",
+    "minecraft:tadpole_bucket",
+    "minecraft:tropical_fish_bucket",
+    "minecraft:water_bucket",
+    "minecraft:lava_bucket",
+
+    // potions
+    "minecraft:potion",
+    "minecraft:lingering_potion",
+    "minecraft:splash_potion",
+    "minecraft:ominous_bottle",
+
+    "minecraft:egg",
+    "minecraft:brown_egg",
+    "minecraft:blue_egg",
+
+    "minecraft:sugar_cane",
+    "minecraft:empty_map",
+
+    // weapon
+    "minecraft:bow",
+    "minecraft:crossbow",
+    "minecraft:fishing_rod",
+    "minecraft:carrot_on_a_stick",
+    "minecraft:warped_fungus_on_a_stick",
+
+    "minecraft:lead",
+    "minecraft:saddle",
+    "minecraft:leather_horse_armor",
+    "minecraft:copper_horse_armor",
+    "minecraft:golden_horse_armor",
+    "minecraft:iron_horse_armor",
+    "minecraft:diamond_horse_armor",
+    "minecraft:netherite_horse_armor",
+    "minecraft:wolf_armor",
+
+    // bundle
+    "minecraft:bundle",
+    "minecraft:black_bundle",
+    "minecraft:blue_bundle",
+    "minecraft:brown_bundle",
+    "minecraft:cyan_bundle",
+    "minecraft:gray_bundle",
+    "minecraft:green_bundle",
+    "minecraft:light_blue_bundle",
+    "minecraft:light_gray_bundle",
+    "minecraft:lime_bundle",
+    "minecraft:magenta_bundle",
+    "minecraft:orange_bundle",
+    "minecraft:pink_bundle",
+    "minecraft:red_bundle",
+    "minecraft:purple_bundle",
+    "minecraft:white_bundle",
+    "minecraft:yellow_bundle",
+
+    // harness
+    "minecraft:black_harness",
+    "minecraft:blue_harness",
+    "minecraft:brown_harness",
+    "minecraft:cyan_harness",
+    "minecraft:gray_harness",
+    "minecraft:green_harness",
+    "minecraft:light_blue_harness",
+    "minecraft:light_gray_harness",
+    "minecraft:lime_harness",
+    "minecraft:magenta_harness",
+    "minecraft:orange_harness",
+    "minecraft:pink_harness",
+    "minecraft:red_harness",
+    "minecraft:purple_harness",
+    "minecraft:white_harness",
+    "minecraft:yellow_harness",
+]))
 const delay = {}
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
 export const offhand_playerInteractWithBlock = (data) => {
-    const { player, isFirstEvent } = data
+    const { player, isFirstEvent, block, blockFace, itemStack } = data
 
     if (!isFirstEvent) {
         const playerDelay = delay[player.id] || 0
@@ -180,7 +272,37 @@ export const offhand_playerInteractWithBlock = (data) => {
     }
     delay[player.id] = system.currentTick + BLOCK_INTERACTION_DELAY
 
-    torchHandle(data)
+    const creative = player.matches({ gameMode: GameMode.Creative })
+    if (itemStack) {
+        const typeId = itemStack?.typeId ?? ''
+        const food = FOOD_DATA[typeId] // vanilla return empty in food component -.-
+        const hunger = player.getComponent(EntityComponentTypes.Hunger)
+
+        // disallow main hand always use item
+        if (typeId) {
+            if (CAN_ALWAYS_USE.has(typeId)) return
+            if (block && block.typeId === 'minecraft:jukebox' && typeId.startsWith('minecraft:music_disc_')) return
+        }
+
+        // ignore foods
+        if (food) {
+            if (
+                creative ||
+                food?.canAlwaysEat ||
+                world.getDifficulty() === Difficulty.Peaceful ||
+                hunger.currentValue < hunger.effectiveMax
+            ) return
+        }
+
+        // shovel/hoe
+        if (
+            block && block?.hasTag('dirt') &&
+            itemStack && (itemStack.hasTag('minecraft:is_shovel') || itemStack.hasTag('minecraft:is_hoe'))
+        ) return
+    }
+
+    // handle offhand
+    torchHandle(data, creative)
     fireHandle(data)
 }
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
@@ -249,29 +371,8 @@ const fireHandle = (data) => {
 }
 
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
-const torchHandle = (data) => {
+const torchHandle = (data, creative) => {
     const { player, block, blockFace, itemStack } = data
-    const creative = player.matches({ gameMode: GameMode.Creative })
-
-    if (itemStack) {
-        const food = FOOD_DATA[itemStack?.typeId ?? ''] // vanilla return empty in food component -.-
-        const hunger = player.getComponent(EntityComponentTypes.Hunger)
-
-        if (food) {
-            if (
-                creative ||
-                food?.canAlwaysEat ||
-                world.getDifficulty() === Difficulty.Peaceful ||
-                hunger.currentValue < hunger.effectiveMax
-            ) return
-        }
-
-        // shovel/hoe
-        if (
-            block && block?.hasTag('dirt') &&
-            itemStack && (itemStack.hasTag('minecraft:is_shovel') || itemStack.hasTag('minecraft:is_hoe'))
-        ) return
-    }
 
     const equ = player.getComponent(EntityComponentTypes.Equippable)
     const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
