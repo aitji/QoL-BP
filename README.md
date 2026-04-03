@@ -48,7 +48,7 @@
 
 ## Changelog
 
-- QoF v1.4.0 `In Development`
+- QoF [v1.4.0](https://github.com/aitji/QoF/releases/tag/v1.4.0)
   - `Pre-Releases` Qof [v1.3.1](https://github.com/aitji/QoF/releases/tag/v1.3.1)
   - `Pre-Releases` Qof [v1.3.2](https://github.com/aitji/QoF/releases/tag/v1.3.2)
   - `Pre-Releases` Qof [v1.3.3](https://github.com/aitji/QoF/releases/tag/v1.3.3)
