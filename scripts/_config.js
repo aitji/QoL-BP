@@ -391,6 +391,7 @@ export const SETTINGS = Object.freeze({
             'minecraft:cooked_salmon': 0.65,
 
             'minecraft:golden_carrot': 0.65,
+            'minecraft:golden_dandelion': 0.65,
             'minecraft:glistering_melon_slice': 0.65,
             'minecraft:popped_chorus_fruit': 0.85,
             'minecraft:mushroom_stew': 0.85,
