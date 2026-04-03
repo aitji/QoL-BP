@@ -1,7 +1,8 @@
-import { Block, BlockComponentTypes, BlockPermutation, Difficulty, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, system, world } from "@minecraft/server"
+import { Block, BlockComponentTypes, BlockPermutation, Difficulty, Direction, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, system, world } from "@minecraft/server"
 import { applyItemDamage, checkRandom, getDistance, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 import { suppressLight } from "./light"
-const { DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR, LIGHT: { FIRE_ITEM, LIGHT_BLOCK }, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM, FOOD_DATA, CAN_ALWAYS_USE} } = RUNTIME
+import { resolveCocoaPermutation } from "./harvest"
+const { DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR, HARVEST: { PLANT_LEVEL, COCOA_VALID_LOGS }, LIGHT: { FIRE_ITEM, LIGHT_BLOCK }, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM, FOOD_DATA, CAN_ALWAYS_USE } } = RUNTIME
 
 /**
  * @typedef {{ lastSneakTick: number, wasSneaking: boolean }} SneakState
@@ -76,7 +77,7 @@ function swapItem(player) {
     const mainhand = equippable.getEquipment(EquipmentSlot.Mainhand)
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
-    if (hasUnsafeProperties(mainhand) || hasUnsafeProperties(offhand))
+    if (hasUnsafeProperties(mainhand))
         return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/nbt")
 
     // const savedEnchants = mainhand?.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments() ?? []
@@ -213,14 +214,71 @@ export const offhand_playerInteractWithBlock = (data) => {
         // shovel/hoe
         if (
             block && block?.hasTag('dirt') &&
-            itemStack && (itemStack.hasTag('minecraft:is_shovel') || itemStack.hasTag('minecraft:is_hoe'))
+            itemStack && (
+                itemStack.hasTag('minecraft:is_shovel') ||
+                itemStack.hasTag('minecraft:is_hoe')
+            )
+
         ) return
+
+        try { return !(itemStack && BlockPermutation.resolve(itemStack?.typeId) !== undefined) }
+        catch { }
     }
 
     // handle offhand
     torchHandle(data, creative)
     fireHandle(data)
+    seedsHandle(data)
 }
+
+/**@param {PlayerInteractWithBlockBeforeEvent} data*/
+const seedsHandle = (data) => {
+    const { player, block, blockFace, itemStack } = data
+
+    const equ = getEqu(player)
+    const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
+    if (!offhandItem) return
+
+    const typeId = offhandItem.typeId
+    const isCocoa = typeId === 'minecraft:cocoa_beans'
+    const plantEntry = Object.entries(PLANT_LEVEL).find(([, v]) => v.seed === typeId)
+
+    if (!plantEntry && !isCocoa) return
+    if (isCocoa) {
+        if (!COCOA_VALID_LOGS.has(block?.typeId)) return
+
+        const target = block[BLOCKFACE_TO_DIR[blockFace]](1)
+        if (!target || !(target.isAir || target.permutation.matches(LIGHT_BLOCK))) return
+
+        data.cancel = true
+        system.run(() => {
+            target.setPermutation(resolveCocoaPermutation(target, 0))
+            const current = equ.getEquipment(EquipmentSlot.Offhand)
+            if (!current) return
+            if (current.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+            else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${current.amount - 1}`)
+        })
+        return
+    }
+    if (blockFace !== Direction.Up) return
+
+    const validSoil = block.typeId === 'minecraft:farmland' || block.typeId === 'minecraft:soul_sand'
+    if (!validSoil) return
+
+    const above = block.above(1)
+    if (!above || !(above.isAir || above.permutation.matches(LIGHT_BLOCK))) return
+
+    const [blockTypeId] = plantEntry
+    data.cancel = true
+    system.run(() => {
+        above.setType(blockTypeId)
+        const current = equ.getEquipment(EquipmentSlot.Offhand)
+        if (!current) return
+        if (current.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+        else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${current.amount - 1}`)
+    })
+}
+
 /**@param {PlayerInteractWithBlockBeforeEvent} data*/
 const fireHandle = (data) => {
     const { player, block, blockFace, itemStack } = data

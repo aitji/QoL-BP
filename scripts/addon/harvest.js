@@ -3,7 +3,7 @@ import { applyItemDamage, reduceItem, RUNTIME, helper } from "../lib"
 const { DEBUG, HARVEST: { LOSS_SEED, PLANT_LEVEL, DURABILITY, COCOA_VALID_LOGS, COCOA_DIRECTIONS } } = RUNTIME
 
 /**@param {Block} block@param {number} originalDir*/
-const resolveCocoaPermutation = (block, originalDir) => {
+export const resolveCocoaPermutation = (block, originalDir) => {
     const { location, dimension } = block
 
     const tryDir = (dir) => {
