@@ -1,0 +1,19 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_shapeless": {
+        "description": {"identifier": "blue_yellow_to_green_dye"},
+        "tags": ["crafting_table"],
+        "ingredients": [
+            {"item": "minecraft:blue_dye"},
+            {"item": "minecraft:yellow_dye"}
+        ],
+        "result": {
+            "item": "minecraft:green_dye",
+            "count": 2
+        },
+        "unlock": [
+            {"item": "minecraft:blue_dye"},
+            {"item": "minecraft:yellow"}
+        ]
+    }
+}

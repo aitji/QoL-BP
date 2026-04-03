@@ -1,0 +1,31 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_shapeless": {
+        "description": {
+            "identifier": "bonemeal_open_eyeblossom"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "ingredients": [
+            {
+                "item": "minecraft:bone_meal"
+            },
+            {
+                "item": "minecraft:open_eyeblossom"
+            }
+        ],
+        "result": {
+            "item": "minecraft:open_eyeblossom",
+            "count": 3
+        },
+        "unlock": [
+            {
+                "item": "minecraft:bone_meal"
+            },
+            {
+                "item": "minecraft:open_eyeblossom"
+            }
+        ]
+    }
+}

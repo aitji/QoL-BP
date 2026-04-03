@@ -1,0 +1,19 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_shapeless": {
+        "description": {"identifier": "black_orange_to_brown_dye"},
+        "tags": ["crafting_table"],
+        "ingredients": [
+            {"item": "minecraft:black_dye"},
+            {"item": "minecraft:orange_dye"}
+        ],
+        "result": {
+            "item": "minecraft:brown_dye",
+            "count": 2
+        },
+        "unlock": [
+            {"item": "minecraft:black_dye"},
+            {"item": "minecraft:orange_dye"}
+        ]
+    }
+}

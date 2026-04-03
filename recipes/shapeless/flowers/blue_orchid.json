@@ -1,0 +1,31 @@
+{
+    "format_version": "1.20.10",
+    "minecraft:recipe_shapeless": {
+        "description": {
+            "identifier": "bonemeal_blue_orchid"
+        },
+        "tags": [
+            "crafting_table"
+        ],
+        "ingredients": [
+            {
+                "item": "minecraft:bone_meal"
+            },
+            {
+                "item": "minecraft:blue_orchid"
+            }
+        ],
+        "result": {
+            "item": "minecraft:blue_orchid",
+            "count": 4
+        },
+        "unlock": [
+            {
+                "item": "minecraft:bone_meal"
+            },
+            {
+                "item": "minecraft:blue_orchid"
+            }
+        ]
+    }
+}
