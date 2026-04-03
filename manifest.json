@@ -143,24 +143,6 @@
       "name": "qof:COMPOSTER.WORK_WITH_HOPPER",
       "default": true
     },
-    {
-      "type": "slider",
-      "text": "§7How often§8(game tick)§7 does the hopper interact with the composter? §r",
-      "name": "qof:COMPOSTER.HOPPER_INTERVAL_TICK",
-      "min": 1,
-      "max": 40,
-      "step": 1,
-      "default": 8
-    },
-    {
-      "type": "slider",
-      "text": "§7How long§8(game tick)§7 before the composter is ready? §r",
-      "name": "qof:COMPOSTER.DELAY_BEFORE_READY",
-      "min": 1,
-      "max": 40,
-      "step": 1,
-      "default": 17
-    },
 
 
 
@@ -176,30 +158,12 @@
     },
     {
       "type": "slider",
-      "text": "§7How many items list will get display inside item lores? §r",
+      "text": "§7How many items should be listed in the item lore? §r",
       "name": "qof:CARRIED_CHEST.MAX_DISPLAY",
       "min": 0,
       "max": 27,
       "step": 1,
       "default": 5
-    },
-    {
-      "type": "slider",
-      "text": "§7When carrying a container, how long§8(game tick)§7 is the slowness duration? §r",
-      "name": "qof:CARRIED_CHEST.SLOWNESS_DURATION",
-      "min": 0,
-      "max": 40,
-      "step": 1,
-      "default": 10
-    },
-    {
-      "type": "slider",
-      "text": "§7When carrying a container, what level of slowness will apply? §r",
-      "name": "qof:CARRIED_CHEST.SLOWNESS_AMPLIFIER",
-      "min": 0,
-      "max": 5,
-      "step": 1,
-      "default": 2
     },
     {
       "type": "toggle",
@@ -243,21 +207,6 @@
       "text": "§7Allow convert concrete powder hardening in water?",
       "name": "qof:WET_POWDER_CONCRETE.ENABLED",
       "default": true
-    },
-    {
-      "type": "toggle",
-      "text": "§7Keep item velocity after conversion?",
-      "name": "qof:WET_POWDER_CONCRETE.KEEP_VELOCITY",
-      "default": true
-    },
-    {
-      "type": "slider",
-      "text": "§7Max items processed per tick",
-      "name": "qof:WET_POWDER_CONCRETE.BATCH_SIZE",
-      "min": 1,
-      "max": 64,
-      "step": 1,
-      "default": 12
     },
     {
       "type": "label",
@@ -336,7 +285,7 @@
     },
     {
       "type": "toggle",
-      "text": "§7Use hoe durability on harvest?",
+      "text": "§7Use hoe/shovel durability on harvest?",
       "name": "qof:HARVEST.DURABILITY",
       "default": true
     },
@@ -355,18 +304,25 @@
 
     {
       "type": "label",
+      "text": "§l§cQ§r§lo§cF§r Double Door §7-----------------------------------------"
+    },
+    {
+      "type": "toggle",
+      "text": "§7Allow double door?",
+      "name": "qof:DOUBLE_DOOR.ENABLED",
+      "default": true
+    },
+
+
+
+    {
+      "type": "label",
       "text": "§l§cQ§r§lo§cF§r's developer settings §7----------------------------------"
     },
     {
       "type": "toggle",
       "text": "§cDebug mode? §7(Show spam logs in chat/console) §r",
       "name": "qof:DEBUG",
-      "default": true
-    },
-    {
-      "type": "toggle",
-      "text": "§cDisabled Command Log? §7(sendCommandFeedback gamerule) §r",
-      "name": "qof:DISABLED_COMMANDFEEDBACK",
       "default": true
     },
     {

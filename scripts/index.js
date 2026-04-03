@@ -10,6 +10,7 @@ import * as composter from "./addon/composter"
 import * as chest from "./addon/chest"
 import * as offhand from "./addon/offhand"
 import * as harvest from "./addon/harvest"
+import * as door from "./addon/door"
 
 // helper (mostly debug) ---
 /** @type {ScoreboardObjective} */
@@ -114,6 +115,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe(data => {
     if (RUNTIME.COMPOSTER.ENABLED) composter.composter_playerInteractWithBlock(data)
     if (RUNTIME.CARRIED_CHEST.ENABLED) chest.chest_playerInteractWithBlock(data)
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithBlock(data)
+    door.door_playerInteractWithBlock(data)
 })
 world.beforeEvents.playerInteractWithEntity.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithEntity(data)

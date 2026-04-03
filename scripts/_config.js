@@ -754,5 +754,8 @@ export const SETTINGS = Object.freeze({
             { x: 0, z: -1, dir: 2 }, // north
             { x: 1, z: 0, dir: 3 },  // east
         ])
+    }),
+    DOUBLE_DOOR: Object.freeze({
+        ENABLED: true,
     })
 })
