@@ -151,6 +151,8 @@ function buildRuntime() {
 
             // static
             PLANT_LEVEL: CR.PLANT_LEVEL,
+            COCOA_VALID_LOGS: CR.COCOA_VALID_LOGS,
+            COCOA_DIRECTIONS: CR.COCOA_DIRECTIONS,
         })
     })
 }

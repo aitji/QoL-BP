@@ -504,13 +504,13 @@ export const SETTINGS = Object.freeze({
             "minecraft:empty_map",
             "minecraft:banner",
             "minecraft:name_tag",
-        
+
             // stew
             "minecraft:suspicious_stew",
             "minecraft:mushroom_stew",
             "minecraft:rabbit_stew",
             "minecraft:beetroot_soup",
-        
+
             // fish bucket
             "minecraft:axolotl_bucket",
             "minecraft:cod_bucket",
@@ -521,7 +521,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:water_bucket",
             "minecraft:lava_bucket",
             "minecraft:powder_snow_bucket",
-        
+
             // potions
             "minecraft:potion",
             "minecraft:lingering_potion",
@@ -530,12 +530,12 @@ export const SETTINGS = Object.freeze({
             "minecraft:experience_bottle",
             "minecraft:honey_bottle",
             "minecraft:glass_bottle",
-        
+
             // egg
             "minecraft:egg",
             "minecraft:brown_egg",
             "minecraft:blue_egg",
-        
+
             // weapon
             "minecraft:bow",
             "minecraft:crossbow",
@@ -543,7 +543,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:carrot_on_a_stick",
             "minecraft:warped_fungus_on_a_stick",
             "minecraft:shears",
-        
+
             "minecraft:lead",
             "minecraft:saddle",
             "minecraft:leather_horse_armor",
@@ -553,7 +553,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:diamond_horse_armor",
             "minecraft:netherite_horse_armor",
             "minecraft:wolf_armor",
-        
+
             // redstone
             "minecraft:repeater",
             "minecraft:comparator",
@@ -740,5 +740,17 @@ export const SETTINGS = Object.freeze({
             "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:beetroot_seeds" }),
             "minecraft:nether_wart": Object.freeze({ level: 3, seed: "minecraft:nether_wart" }),
         }),
+        COCOA_VALID_LOGS: Object.freeze(new Set([
+            'minecraft:jungle_log',
+            'minecraft:stripped_jungle_log',
+            'minecraft:jungle_wood',
+            'minecraft:stripped_jungle_wood',
+        ])),
+        COCOA_DIRECTIONS: Object.freeze([ /** N/S/E/W offsets */
+            { x: 0, z: 1, dir: 0 },  // south
+            { x: -1, z: 0, dir: 1 }, // west
+            { x: 0, z: -1, dir: 2 }, // north
+            { x: 1, z: 0, dir: 3 },  // east
+        ])
     })
 })
