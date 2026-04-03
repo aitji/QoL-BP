@@ -147,8 +147,10 @@ jobs:
             -x "recipes/shaped/gen.js" \
             -x "blocks/light_block_dev.json" \
             -x "recipes/stonecutter/wood/gen.js" \
+            -x "recipes/shapeless/gen.js" \
             -x "README.md" \
             -x "scripts/todo.md" \
+            -x "recipes/furnace/_README.md" \
             -x "node_modules/*"
           echo "BP_PACK=$BP_PACK" >> $GITHUB_ENV
           echo "Created: $BP_PACK"
