@@ -2,6 +2,7 @@ import { Block, BlockComponentTypes, BlockPermutation, Difficulty, Direction, En
 import { applyItemDamage, checkRandom, getDistance, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
 import { suppressLight } from "./light/core"
 import { resolveCocoaPermutation } from "./harvest"
+import * as cache from "../core/cache"
 const { DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR, HARVEST: { PLANT_LEVEL, COCOA_VALID_LOGS }, LIGHT: { FIRE_ITEM, LIGHT_BLOCK }, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM, FOOD_DATA, CAN_ALWAYS_USE } } = RUNTIME
 
 /**
@@ -32,7 +33,8 @@ export function offhand_player(player, now) {
     if (!sneakState.has(id)) _initPlayer(player)
 
     const state = sneakState.get(id)
-    const window = sneakWindow[player.clientSystemInfo.platformType || 'Desktop']
+    const plCache = cache.getPlayer(player)
+    const window = sneakWindow[plCache?.platformType ?? 'Desktop']
 
     const justReleased = state.wasSneaking && !isSneaking
     if (justReleased) {

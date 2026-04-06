@@ -3,6 +3,7 @@ import { RUNTIME } from "./_store"
 import * as lib from "./lib"
 import * as debug from "./core/debug"
 import * as heartbeat from "./core/heartbeat"
+import * as cache from "./core/cache"
 
 import * as light from "./addon/light/core"
 import * as light_patcher from "./addon/light/patcher"
@@ -28,7 +29,8 @@ system.run(() => {
         if (WET_POWDER_CONCRETE.ENABLED) powder.powder_pending()
         if (COMPOSTER.ENABLED && COMPOSTER.WORK_WITH_HOPPER) composter.composter_pending(tick)
 
-        for (const player of world.getAllPlayers()) {
+        const players = world.getAllPlayers()
+        for (const player of players) {
             if (LIGHT.ENABLED) light.light_player(player, tick)
             if (CARRIED_CHEST.ENABLED) chest.chest_player(player)
             offhand.offhand_player(player, tick)
@@ -79,6 +81,13 @@ world.afterEvents.playerSpawn.subscribe(data => {
 })
 world.afterEvents.playerLeave.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerLeave(data)
+})
+world.afterEvents.playerSpawn.subscribe(data => {
+    const { player, initialSpawn } = data
+    if (initialSpawn) cache.player_init_update(player)
+})
+world.afterEvents.playerGameModeChange.subscribe(data => {
+    cache.player_gamemode_update(data)
 })
 
 // core routes
