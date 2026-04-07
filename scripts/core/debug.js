@@ -1,5 +1,5 @@
-import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, DisplaySlotId, MemoryTier, Player, ScoreboardObjective, StartupEvent, system, world } from "@minecraft/server"
-import { RUNTIME } from "../lib"
+import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, DisplaySlotId, EquipmentSlot, MemoryTier, Player, ScoreboardObjective, StartupEvent, system, world } from "@minecraft/server"
+import { dumpMeThatComp, getEqu, RUNTIME } from "../lib"
 import * as cache from "./cache"
 const { DEBUG, DISABLED_COMMANDFEEDBACK } = RUNTIME
 
@@ -63,6 +63,7 @@ export const debug_startup = (event) => {
 
     reg.registerEnum(`${PREFIX}dyp_action`, ['list', 'list-value', 'bulk'])
     reg.registerEnum(`${PREFIX}log`, ['world', 'console'])
+    reg.registerEnum(`${PREFIX}components`, ['item', 'block'])
 
     // dyp
     reg.registerCommand({
@@ -139,6 +140,43 @@ export const debug_startup = (event) => {
                 msg += `§8${index}. §7${player.name} §8${player.id}\n`
                 msg += `§8| §7name=§e${name}§7, platformType=§e${platformType}§7, gameMode=§e${gameMode}\n`
             }
+        }
+
+        logAs(msg, log)
+        return { status: CustomCommandStatus.Success, message: 'yay' }
+    })
+
+    // components
+    reg.registerCommand({
+        name: `${PREFIX}components`,
+        description: `dump the block/item components list`,
+        optionalParameters: [
+            { name: 'type', type: CustomCommandParamType.Enum, enumName: `${PREFIX}components` },
+            { name: 'log', type: CustomCommandParamType.Enum, enumName: `${PREFIX}log` }
+        ],
+        permissionLevel: CommandPermissionLevel.Admin
+    }, (origin, types, log) => {
+        const player = origin.sourceEntity
+        if (player.typeId !== 'minecraft:player') return { status: CustomCommandStatus.Failure, message: "origin not player" }
+
+        let msg = '' // messy, look away
+        switch (types) {
+            case 'block':
+                const target = player.getBlockFromViewDirection({ includeLiquidBlocks: true, includePassableBlocks: true, maxDistance: 12 })
+                if (!target?.block) return { status: CustomCommandStatus.Failure, message: 'cannot find target block in player direction within 12 blocks' }
+                let v = target?.block.getComponents()
+                msg = `There is ${v.length} components type in this block\n§7TypeId: §e${target.block.typeId}\n§7Face: §e${target.face}\n§7FaceLoc: §e${target.faceLocation.x.toFixed(2)}, ${target.faceLocation.y.toFixed(2)}, ${target.faceLocation.z.toFixed(2)}\n\n`
+                msg += v.map((e, i) => `§8${i+1}. §7${e.typeId}`).join('\n')
+                break
+            case 'item':
+            default:
+                const equ = getEqu(player)
+                const item = equ.getEquipment(EquipmentSlot.Mainhand)
+                if (!item) return { status: CustomCommandStatus.Failure, message: 'cannot find item in mainhand' }
+                let v2 = item.getComponents()
+                msg = `There is ${v2.length} components type in this item\n§7TypeId: §e${item.typeId}\n§7NameTag: §e${item?.nameTag ?? '[null]'}\n\n`
+                msg += v2.map((e, i) => `§8${i+1}. §7${e.typeId}`).join('\n')
+                break
         }
 
         logAs(msg, log)
