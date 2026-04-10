@@ -1,5 +1,5 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity, ItemStack } from "@minecraft/server"
-import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu, pickupCooldown } from "../../lib"
+import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu, pickupCooldown, cache } from "../../lib"
 import { suppressLight } from "./core"
 const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { ENABLED, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM, LIGHT_BLOCK } } = RUNTIME
 export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
@@ -86,7 +86,7 @@ export const light_playerInteractWithBlock = (data) => {
                 }
 
                 // all logic
-                if (toolUsed && !player.matches({ gameMode: GameMode.Creative })) {
+                if (toolUsed && cache.getPlayer(player, "gameMode") !== GameMode.Creative) {
                     const { changed, item } = applyItemDamage(player, itemStack)
                     if (changed) {
                         const equ = getEqu(player)
@@ -108,7 +108,7 @@ export const light_playerInteractWithBlock = (data) => {
             const { asBlock, pot, sound } = raw
 
             if (pot === blockType) {
-                const isCreative = player.matches({ gameMode: GameMode.Creative })
+                const isCreative = cache.getPlayer(player, 'gameMode') === GameMode.Creative
                 const playSound = () => {
                     // if (DEBUG) world.sendMessage(`sound=${sound}`)
                     const center = block.center()

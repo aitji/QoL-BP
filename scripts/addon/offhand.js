@@ -184,7 +184,7 @@ export const offhand_playerInteractWithBlock = (data) => {
     }
     delay[player.id] = system.currentTick + BLOCK_INTERACTION_DELAY
 
-    const creative = player.matches({ gameMode: GameMode.Creative })
+    const creative = cache.getPlayer(player, 'gameMode') === GameMode.Creative
     if (itemStack) {
         const typeId = itemStack?.typeId ?? ''
         const food = FOOD_DATA[typeId] // vanilla return empty in food component -.-
@@ -263,7 +263,7 @@ const blockHandle = (data) => { // still demo process
         player.dimension.getBlock(target.location).setPermutation(permutation)
         const current = equ.getEquipment(EquipmentSlot.Offhand)
         if (current.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
-        if (!player.matches({ gameMode: GameMode.Creative })) player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${offhandItem.amount - 1}`)
+        if (!cache.getPlayer(player, 'gameMode') === GameMode.Creative) player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${offhandItem.amount - 1}`)
     })
 }
 

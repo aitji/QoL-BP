@@ -398,8 +398,6 @@ export const light_processFrames = (_tick) => {
 export const light_playerPlaceBlock_before = ({ block }) => suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
 /** @param {PlayerBreakBlockBeforeEvent} data */
 export const light_playerBreakBlock = (data) => {
-    const { player, block } = data
-    if (!player.matches({ gameMode: GameMode.Creative }) && block.permutation.matches(LIGHT_BLOCK))
-        data.cancel = true
+    const { block } = data
     suppressedLocs.set(blockBKey(block), system.currentTick + SUPP_BREAK)
 }

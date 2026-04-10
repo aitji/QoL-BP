@@ -1,5 +1,5 @@
 import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world } from "@minecraft/server"
-import { checkRandom, reduceItem, RUNTIME } from "../lib"
+import { checkRandom, reduceItem, RUNTIME, cache } from "../lib"
 const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = RUNTIME
 
 const delay = {}
@@ -68,7 +68,7 @@ export const anvil_playerInteractWithBlock = (data) => {
                 player.dimension.spawnParticle("minecraft:wind_explosion_emitter", center)
             }
 
-            if (player.matches({ gameMode: GameMode.Creative }))
+            if (cache.getPlayer(player, 'gameMode') === GameMode.Creative)
                 return playSound()
 
             // reduce item

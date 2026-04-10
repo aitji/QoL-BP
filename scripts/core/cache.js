@@ -1,4 +1,8 @@
 import { GameMode, PlatformType, Player, PlayerGameModeChangeAfterEvent, system, world } from "@minecraft/server"
+import { RUNTIME } from '../lib'
+const { DEBUG } = RUNTIME
+
+// "core/cache.js" is [ONLY] for caching globally
 /**
  * @typedef {Object} PlayerData
  * @property {string} name
@@ -22,13 +26,23 @@ system.run(() => {
 
 // external
 /**
- * @param {'player'|'world'} type
- * @param {string} id
+ * @param {Player|string} player string = playerId
+ * @param {'name'|'platformType'|'gameMode'} get
+ * @returns {PlayerData|string|PlatformType|GameMode}
  */
-export const getPlayer = (player) => {
-    let data = playerData.get(player.id)
-    if (!data) data = player_init_update(player)
-    return data
+export const getPlayer = (player, get) => {
+    const id = typeof player === 'string' ? player : player.id
+    let data = playerData.get(id)
+
+    if (!data) {
+        if (typeof player === 'string') {
+            if (DEBUG) console.warn('[cache.js] cannot update player data throw empy string as return')
+            return ''
+        }
+        data = player_init_update(player)
+    }
+
+    return get ? data[get] : data
 }
 
 /**

@@ -1,5 +1,5 @@
 import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent } from "@minecraft/server"
-import { checkRandom, RUNTIME } from "../lib"
+import { checkRandom, RUNTIME, cache } from "../lib"
 const { DEBUG, SLICE_PREFIX, CARRIED_CHEST: { CARRY_TAG, ENTITY_TYPE, CHEST_ID, DOUBLE_CHEST_SIZE, SLOWNESS_DURATION, SLOWNESS_AMPLIFIER, SOUND_PICK_UP, APPLY_IMPULSE, PLAYER_JUMP, CONTAINER_NAMETAG, MAX_DISPLAY } } = RUNTIME
 
 const NEIGH = {
@@ -303,7 +303,7 @@ export const chest_player = (player) => {
   if (player.hasTag(CARRY_TAG)) {
     player.addEffect("slowness", SLOWNESS_DURATION, { showParticles: false, amplifier: SLOWNESS_AMPLIFIER })
 
-    if (player.matches({ gameMode: GameMode.Creative })) {
+    if (cache.getPlayer(player, 'gameMode') === GameMode.Creative) {
       if (!canJump) jumpSet(true)
     } else {
       let allowJump = false

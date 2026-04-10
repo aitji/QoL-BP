@@ -1,5 +1,5 @@
 import { world, system, EquipmentSlot, ItemDurabilityComponent, ItemStack, EntityEquippableComponent, EntityInventoryComponent, Container, BlockPermutation, Block, PlayerBreakBlockBeforeEvent, EntityComponentTypes, Player, GameMode } from "@minecraft/server"
-import { applyItemDamage, reduceItem, RUNTIME, helper } from "../lib"
+import { applyItemDamage, reduceItem, RUNTIME, helper, cache } from "../lib"
 const { DEBUG, HARVEST: { LOSS_SEED, PLANT_LEVEL, DURABILITY, COCOA_VALID_LOGS, COCOA_DIRECTIONS } } = RUNTIME
 
 /**@param {Block} block@param {number} originalDir*/
@@ -34,7 +34,7 @@ const consumeOffhand = (player, seed, equippable) => {
 export const harvest_playerBreakBlock = (data) => {
     const { player, itemStack, block } = data
     if (!itemStack) return
-    if (player.matches({ gameMode: GameMode.Creative })) return
+    if (cache.getPlayer(player, 'gameMode') === GameMode.Creative) return
 
     const isHoe = itemStack.typeId.endsWith("_hoe")
     const isAxe = itemStack.typeId.endsWith("_axe")

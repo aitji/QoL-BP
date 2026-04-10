@@ -2,8 +2,11 @@ import { Block, BlockInventoryComponent, EnchantmentType, Entity, EntityComponen
 // lazy import ---
 import { RUNTIME as E } from "./_store"
 import * as H from "./core/helper"
+import * as C from "./core/cache"
+
 export const RUNTIME = E
 export const helper = H
+export const cache = C
 export const pickupCooldown = H.pickupCooldown
 // ---
 
@@ -142,7 +145,7 @@ export const getInv = (entity) => entity.getComponent(EntityComponentTypes.Inven
  * @returns {Boolean} is success?
  */
 export const setEqu = (entity, itemStack = undefined, slot = EquipmentSlot.Mainhand, ignoreCreative = false) => {
-    if (ignoreCreative && entity instanceof Player && entity.matches({ gameMode: GameMode.Creative })) return
+    if (ignoreCreative && entity instanceof Player && C.getPlayer(entity, 'gameMode') === GameMode.Creative) return
 
     try {
         const equ = getEqu(entity)
