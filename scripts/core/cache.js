@@ -1,5 +1,5 @@
 import { GameMode, PlatformType, Player, PlayerGameModeChangeAfterEvent, system, world } from "@minecraft/server"
-import { RUNTIME } from '../lib'
+import { RUNTIME } from "../_store" // "cache.js" got use in "lib.js" as lazy import, use setting from store directly
 const { DEBUG } = RUNTIME
 
 // "core/cache.js" is [ONLY] for caching globally
@@ -36,7 +36,7 @@ export const getPlayer = (player, get) => {
 
     if (!data) {
         if (typeof player === 'string') {
-            if (DEBUG) console.warn('[cache.js] cannot update player data throw empy string as return')
+            if(DEBUG)console.warn('[cache.js] cannot update player data throw empy string as return')
             return ''
         }
         data = player_init_update(player)

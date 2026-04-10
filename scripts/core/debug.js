@@ -1,7 +1,7 @@
 import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, DisplaySlotId, EquipmentSlot, MemoryTier, Player, ScoreboardObjective, StartupEvent, system, world } from "@minecraft/server"
 import { dumpMeThatComp, getEqu, RUNTIME } from "../lib"
-import * as cache from "./cache"
 const { DEBUG, DISABLED_COMMANDFEEDBACK } = RUNTIME
+import * as cache from "./cache"
 
 // small helper
 /** @type {ScoreboardObjective} */
