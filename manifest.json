@@ -2,10 +2,10 @@
     "format_version": 3,
     "header": {
         "description": "§7Nice little features to make your game much better! Resource Pack Helper",
-        "name": "§fQ§eo§fF §c(rp-1.4.0)",
+        "name": "§fQ§eo§fF §c(rp-1.4.1)",
         "uuid": "d5db87ea-f84d-4c92-b8a4-732c5a0dc569",
         "pack_scope": "world",
-        "version": "1.4.0",
+        "version": "1.4.1",
         "min_engine_version": "1.26.12"
     },
     "modules": [
@@ -13,7 +13,7 @@
             "description": "§7Nice little features to make your game much better! Resource Pack Helper",
             "type": "resources",
             "uuid": "743f6949-53be-44b6-b326-398005028819",
-            "version": "1.4.0"
+            "version": "1.4.1"
         }
     ],
     "capabilities": ["pbr"],
