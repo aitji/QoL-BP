@@ -5,7 +5,7 @@ const isRP = process.argv.includes("--rp")
 const prefix = isRP ? 'qofrp' : 'qof'
 
 if (!isRP) {
-    const configPath = resolve("scripts/_config.ts")
+    const configPath = resolve("src/_config.ts")
     if (!existsSync(configPath)) {
         console.error(`File not found: ${configPath}`)
         process.exit(1)
