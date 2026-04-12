@@ -1,12 +1,11 @@
-import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, DisplaySlotId, EquipmentSlot, MemoryTier, Player, PlayerPlaceBlockAfterEvent, ScoreboardObjective, StartupEvent, system, world } from "@minecraft/server"
-import { clamp, dumpMeThatComp, getEqu, RUNTIME } from "../lib"
+import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, DisplaySlotId, EquipmentSlot, ItemStack, MemoryTier, Player, PlayerPlaceBlockAfterEvent, ScoreboardObjective, StartupEvent, system, world } from "@minecraft/server"
+import { clamp, dumpMeThatComp, getEqu, getInv, RUNTIME } from "../lib"
 const { DEBUG, DISABLED_COMMANDFEEDBACK } = RUNTIME
 import * as cache from "./cache"
 
 // small helper
 let dyp: ScoreboardObjective
 const score = (k: string, v: number) => { try { dyp.setScore(k, v) } catch { dyp.addScore(k, v) } }
-const player_dampening = new Map() as Map<string, number>
 
 system.run(() => {
     if (DISABLED_COMMANDFEEDBACK) world.gameRules.sendCommandFeedback = false
@@ -193,7 +192,13 @@ export const debug_startup = (event: StartupEvent) => {
         const player = origin.sourceEntity as Player
         if (player.typeId !== 'minecraft:player') return { status: CustomCommandStatus.Failure, message: "origin not player" }
 
-        player_dampening.set(player.id, clamp(light_dampening, 0, 15))
+        const inv = getInv(player)!
+        system.run(() => {
+            const item = new ItemStack('qof:light_damp_dev', 1)
+            item.nameTag = `§r§fLight Dampening: ${clamp(light_dampening, 0, 15)}`
+            item.setLore([`§r§7Light Dampening: ${clamp(light_dampening, 0, 15)}`])
+            inv.container?.addItem(item)
+        })
         return { status: CustomCommandStatus.Success, message: 'yay' }
     })
 }
@@ -202,7 +207,11 @@ export const debug_playerPlaceBlock = (data: PlayerPlaceBlockAfterEvent) => {
     const { player, dimension, block } = data
 
     if (block && block.typeId === 'qof:light_damp_dev') {
-        const damp = player_dampening.get(player.id)
+        const equ = getEqu(player)!
+        const item = equ.getEquipment(EquipmentSlot.Mainhand)
+        if (!item) return
+        const lore = item.getLore()[0]
+        const damp = clamp(parseInt(lore.slice("§r§7Light Dampening: ".length)), 0, 15)
         if (!damp) return
 
         const perm = block.permutation
