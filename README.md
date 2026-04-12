@@ -96,27 +96,27 @@ Interacting with one door automatically opens or closes the adjacent door at the
 ### Dynamic Light
 
 <p align="center">
-  <img src=".github/img/light.png" alt="Dynamic Light night walk with soul lantern" width="1080">
+  <img src=".github/img/showcase/light.png" alt="Dynamic Light night walk with soul lantern" width="1080">
 </p>
 
 Held and dropped items emit light based on their type. The light smoothly fades after the source moves away or is removed. `burning entities`, `glowing entities` and `item frames` also emit light based on what they contain. Dynamic lights are processed using a **round-robin batch system** for better overall performance and exist only in memory no dynamic properties are used.
 
 **How It Works:**
 
-<img src=".github/img/light-fade.gif" alt="Player picks up soul lantern in mushroom cave, light fades after drop" width="1080">
+<img src=".github/img/showcase/light-fade.gif" alt="Player picks up soul lantern in mushroom cave, light fades after drop" width="1080">
 
 > **alt-message** In a mushroom cave, a soul lantern sits on the ground emitting light. The player walks in from the right, picks it up, and the room goes dark. And then drops it back in the same spot and walks away.
 >
 > - When a player holds or drops a light-emitting item, a `qof:light_block` is placed at the relevant position each tick.
 > - When the source is gone, the light level decreases linearly each tick until it reaches zero, then the block is restored to air or water.
 
-<img src=".github/img/light-fire.gif" alt="Player shoots flame arrows into targets, picks up arrow, walks away" width="1080">
+<img src=".github/img/showcase/light-fire.gif" alt="Player shoots flame arrows into targets, picks up arrow, walks away" width="1080">
 
 > **alt-message** A flaming arrow is fired into a target block. While the arrow is burning, it emits light. The player walks through the lit area, picks the arrow up, and leaves. Light disappears when the source is gone.
 >
 > - Nearby glowing or burning entities also emit light passively.
 
-<img src=".github/img/light-water.gif" alt="Player holds conduit while swimming in ocean, light visible underwater" width="1080">
+<img src=".github/img/showcase/light-water.gif" alt="Player holds conduit while swimming in ocean, light visible underwater" width="1080">
 
 > **alt-message** In the open ocean, the player rows a boat while holding a lantern, making the water surface glow below. They stop, jump in, switch to a conduit, and swim deeper. The `qof:light_block` is placed inside the water itself, illuminating the seafloor and kelp.
 >
@@ -230,7 +230,7 @@ Held and dropped items emit light based on their type. The light smoothly fades 
 ### Anvil Repairing
 
 <p align="center">
-  <img src=".github/img/anvil-repair.png" alt="Anvil Repair repairing at a chipped anvil in a spruce house" width="1080">
+  <img src=".github/img/showcase/anvil-repair.png" alt="Anvil Repair repairing at a chipped anvil in a spruce house" width="1080">
 </p>
 
 Damaged anvils can be repaired by interacting with them while holding an iron ingot. The anvil steps up one stage per ingot consumed.
@@ -243,7 +243,7 @@ Damaged Anvil  ->  Chipped Anvil  ->  Anvil
 
 #### Full Repairing Loop
 
-<img src="https://github.com/aitji/QoF/blob/behavior_packs/.github/img/repair-anvil.gif?raw=true" alt="Player repairs anvil twice, mines it, places damaged one, and walks out" width="1080">
+<img src="https://github.com/aitji/QoF/blob/behavior_packs/.github/img/showcase/repair-anvil.gif?raw=true" alt="Player repairs anvil twice, mines it, places damaged one, and walks out" width="1080">
 
 > **alt-message** The player walks into a cozy spruce house, repairs a damaged anvil twice to bring it back to full, mines it with an iron pickaxe, places a new damaged anvil, and walks out.
 
@@ -280,7 +280,7 @@ where `BASE` and `MULTIPLIER` are configurable in pack settings.
 
 #### Conversion In Action
 
-<img src=".github/img/powder-result.gif" alt="Top-down view: player throws concrete powder into water pool, allay nearby, powder converts to concrete" width="1080">
+<img src=".github/img/showcase/powder-result.gif" alt="Top-down view: player throws concrete powder into water pool, allay nearby, powder converts to concrete" width="1080">
 
 > **alt-message** Top-down view centered on a water pool with an allay floating nearby emitting soft light. The player walks in from the bottom-center and throws concrete powder into the pool. After a short delay the powder converts, and the player picks up the resulting concrete and walks off.
 
@@ -296,13 +296,13 @@ Expands the composter to accept many more item types not supported in vanilla, i
 
 #### Hopper Integration
 
-<img src=".github/img/composter-work_hopper.gif" alt="Player composts string, places hopper on top, throws rotten flesh in, composter fills automatically" width="1080">
+<img src=".github/img/showcase/composter-work_hopper.gif" alt="Player composts string, places hopper on top, throws rotten flesh in, composter fills automatically" width="1080">
 
 > **alt-message** The player manually composts some string _`(not in the vanilla list)`_, then places a hopper above the composter and throws in rotten flesh _`(also not in the vanilla list)`_. The hopper feeds the composter automatically until it fills and becomes ready.
 
 #### Stew & Soup Bowl Returning
 
-<img src=".github/img/composter-stew.gif" alt="Player composts stew and soup items, receives empty bowls back" width="1080">
+<img src=".github/img/showcase/composter-stew.gif" alt="Player composts stew and soup items, receives empty bowls back" width="1080">
 
 > **alt-message** Stew and soup items are composted one by one. After each is consumed, an empty bowl is returned in player hand matching the vanilla eating behavior.
 
@@ -415,13 +415,13 @@ Allows players to pick up chests and other containers while preserving their con
 
 Full Carry Example
 
-<img src=".github/img/chest-flow.gif" alt="Player puts cod in barrel, picks it up, walks to composter area, places barrel on hopper" width="1080">
+<img src=".github/img/showcase/chest-flow.gif" alt="Player puts cod in barrel, picks it up, walks to composter area, places barrel on hopper" width="1080">
 
 > **alt-message** The player walks in holding a cod, places it inside a barrel, then picks the barrel up. They carry it slowly across the scene, with slowness visible, and place it on top of a hopper. The barrel lands with its contents intact.
 
 #### Slowness and Double Chest
 
-<img src=".github/img/chest-slownessdouble.gif" alt="Player picks up chest near sheep, walks slowly, places it into double chest formation" width="1080">
+<img src=".github/img/showcase/chest-slownessdouble.gif" alt="Player picks up chest near sheep, walks slowly, places it into double chest formation" width="1080">
 
 > **alt-message** The player runs in, picks up a chest next to a black sheep, then visibly slows down while carrying it. They walk to a second chest and place theirs beside it, forming a double chest. Contents from both halves are preserved.
 
@@ -463,7 +463,7 @@ Any block with a `minecraft:inventory` component can be picked up. Common exampl
 ### Offhand
 
 <p align="center">
-  <img src=".github/img/offhand.png" alt="Offhand swap and torch placement banner" width="1080">
+  <img src=".github/img/showcase/offhand.png" alt="Offhand swap and torch placement banner" width="1080">
 </p>
 
 Allows players to double-sneak to swap items between their mainhand and offhand. Additionally, torches and other light sources held in the offhand can be placed directly without switching slots. **All seed types** can now be planted directly from the offhand.
@@ -480,7 +480,7 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 
 #### Swap and Torch Placement
 
-<img src=".github/img/offhand-swap.gif" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="1080">
+<img src=".github/img/showcase/offhand-swap.gif" alt="Player double sneaks to swap sword and torch, places torch from offhand" width="1080">
 
 > **alt-message** First-person view. The player is holding a `Trident` in the main hand and a `Soul Torch` in the offhand. They double-sneak, causing the `Trident` and `Soul Torch` to swap places, while another player walks across the screen.
 
@@ -501,7 +501,7 @@ Allows players to double-sneak to swap items between their mainhand and offhand.
 ### Harvest
 
 <p align="center">
-  <img src=".github/img/harvesting.gif" alt="Player harvesting wheat field with hoe" width="1080">
+  <img src=".github/img/showcase/harvesting.gif" alt="Player harvesting wheat field with hoe" width="1080">
 </p>
 
 Allows players to harvest fully grown crops while holding any hoe. Seeds are automatically replanted after harvesting, and the hoe loses durability on each harvest to balance the automation. And **Cocoa Beans** are supported harvest them using an axe. Seeds placed in the **offhand** are prioritized for replanting over inventory seeds.
@@ -523,7 +523,7 @@ where `level` is the hoe's `Unbreaking` enchantment level.
 ### Mob Loot+
 
 <p align="center">
-  <img src=".github/img/mobloot.gif" alt="Mob Loot+ showcase banner" width="1080">
+  <img src=".github/img/showcase/mobloot.gif" alt="Mob Loot+ showcase banner" width="1080">
 </p>
 
 Adds drops to previously mobs without loot, making them more rewarding to farm.
@@ -580,14 +580,14 @@ $$ P(\text{Drop}) \in \langle 0,\ 1 \rangle $$
 ### Recipe+
 
 <p align="center">
-  <img src=".github/img/recipe.png" alt="Recipe+ banner showing various crafting and smelting screens" width="1080">
+  <img src=".github/img/showcase/recipe.png" alt="Recipe+ banner showing various crafting and smelting screens" width="1080">
 </p>
 
 Adds new crafting, smelting, and stonecutter recipes for a more accessible way to obtain items.
 
 #### Recipe Showcase
 
-<img src=".github/img/recipe.gif" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="1080">
+<img src=".github/img/showcase/recipe.gif" alt="Player demonstrates several new recipes at furnace, blast furnace and crafting table" width="1080">
 
 <details>
   <summary><strong>Full Recipe List</strong></summary>
@@ -740,7 +740,7 @@ All settings are accessible through the pack settings panel in-game. No manual f
 
 <details>
   <summary><strong>Full Settings Table</strong></summary>
-  <img src="./.github/img/settings.png" alt="full settings of manifest.json">
+  <img src="./.github/img/showcase/settings.png" alt="full settings of manifest.json">
 </details>
 
 ## Known Limitations & Notes
