@@ -29,7 +29,6 @@ recipes/**/gen.js
 
 # repo
 *.md
-!README.md
 !_notes.md
 .github
 src/

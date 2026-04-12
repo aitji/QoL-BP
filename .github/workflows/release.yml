@@ -147,14 +147,16 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: |
           BP_PACK="QoF_v${{ steps.resolve.outputs.version_string }}_behavior_packs.mcpack"
-          grep -v '^\s*#' build.gitignore \
-            | grep -v '^\s*$' \
-            | grep -v '^!' \
-            | sed 's|/*$||' \
-            | awk '{print $0; print $0 "/*"}' \
-            > /tmp/bp_exclude.txt
 
-          zip -r "$BP_PACK" . -x@/tmp/bp_exclude.txt
+          {
+            grep -v '^\s*#' build.gitignore | grep -v '^\s*$' | grep '^\!' | sed 's/^!/+ /'
+            grep -v '^\s*#' build.gitignore | grep -v '^\s*$' | grep -v '^\!' | sed 's|/*$||' | sed 's/^/- /'
+          } > /tmp/bp_filter.txt
+
+          mkdir -p /tmp/bp_build
+          rsync -a --filter='merge /tmp/bp_filter.txt' . /tmp/bp_build/
+          cd /tmp/bp_build && zip -r "$OLDPWD/$BP_PACK" .
+
           echo "BP_PACK=$BP_PACK" >> $GITHUB_ENV
           echo "Created: $BP_PACK"
 
@@ -183,14 +185,16 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: |
           RP_PACK="QoF_v${{ steps.rp_version.outputs.rp_version }}_resource_packs.mcpack"
-          grep -v '^\s*#' build.gitignore \
-            | grep -v '^\s*$' \
-            | grep -v '^!' \
-            | sed 's|/*$||' \
-            | awk '{print $0; print $0 "/*"}' \
-            > /tmp/rp_exclude.txt
 
-          cd _rp && zip -r "../$RP_PACK" . -x@/tmp/rp_exclude.txt
+          {
+            grep -v '^\s*#' build.gitignore | grep -v '^\s*$' | grep '^\!' | sed 's/^!/+ /'
+            grep -v '^\s*#' build.gitignore | grep -v '^\s*$' | grep -v '^\!' | sed 's|/*$||' | sed 's/^/- /'
+          } > /tmp/rp_filter.txt
+
+          mkdir -p /tmp/rp_build
+          rsync -a --filter='merge /tmp/rp_filter.txt' _rp/ /tmp/rp_build/
+          cd /tmp/rp_build && zip -r "$OLDPWD/$RP_PACK" .
+
           echo "RP_PACK=$RP_PACK" >> $GITHUB_ENV
           echo "Created: $RP_PACK"
 
