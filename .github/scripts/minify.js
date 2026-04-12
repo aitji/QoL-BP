@@ -6,7 +6,7 @@ const IS_RP = process.argv.includes('--rp')
 const ROOT = IS_RP ? '_rp' : '.'
 
 const MINIFY_JSON = Object.freeze(new Set(['.json', '.jsonc']))
-const MINIFY_JS = Object.freeze(new Set(['.js']))
+const MINIFY_JS = Object.freeze(new Set(['.js', '.ts']))
 
 const SKIP = Object.freeze(new Set([
     'node_modules',
