@@ -97,6 +97,9 @@ world.afterEvents.playerSpawn.subscribe(data => {
 world.afterEvents.playerGameModeChange.subscribe(data => {
     cache.player_gamemode_update(data)
 })
+world.afterEvents.pistonActivate.subscribe(data => {
+    if (RUNTIME.COMPOSTER.ENABLED && RUNTIME.COMPOSTER.WORK_WITH_HOPPER) composter.composter_pistonActivate(data)
+})
 
 // core routes
 world.beforeEvents.entityItemPickup.subscribe(data => { lib.helper.helper_entityItemPickup(data) }, { entityFilter: { type: "minecraft:player" } })

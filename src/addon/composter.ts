@@ -181,7 +181,7 @@ export const composter_pending = (tick: number) => {
     let changed = false
     const applyEarly = () => { if (changed) world.setDynamicProperty(DATA_COMPOSTER_LOCATION, JSON.stringify([...composterSet])) }
 
-    for (const v of [...composterSet]) {
+    outer: for (const v of [...composterSet]) {
         const [dim, xs, ys, zs] = v.split(':')
         const x = +xs, y = +ys, z = +zs
         const dimension = world.getDimension(dim)
@@ -222,7 +222,7 @@ export const composter_pending = (tick: number) => {
             }
 
             const com = item.getComponent(ItemComponentTypes.Compostable)
-            if (com?.compostingChance) return applyEarly() // i'm bail
+            if (com?.compostingChance) continue outer // skip this composter
 
             if (firstChanceItem === -1) {
                 const isStew = item.typeId.endsWith('_stew') || item.typeId.endsWith('_soup')
@@ -239,7 +239,7 @@ export const composter_pending = (tick: number) => {
             if (bowlSlot === -1 && item.typeId === 'minecraft:bowl' && item.amount < 64) bowlSlot = i
         }
 
-        if (firstChanceItem === -1) return applyEarly()
+        if (firstChanceItem === -1) continue // no custom item
 
         const item = container.getItem(firstChanceItem)!
         const itemID = item.typeId
