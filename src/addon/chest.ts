@@ -1,4 +1,4 @@
-import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent, Block } from "@minecraft/server"
+import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent, Block, RawText } from "@minecraft/server"
 import { checkRandom, RUNTIME, cache, reName, getInv, getEqu, playSound } from "../lib"
 const {
   DEBUG, SLICE_PREFIX,
@@ -76,8 +76,9 @@ const buildCarryItem = (blockTypeId: string, player: Player, container: Containe
     it.setLore([`§r§7${player.name}§r§7's Carried Container`])
   } else {
     const list: Record<string, {
+      localization: string,
       typeId: string
-      nameTag?: string
+      nameTag?: string,
       amount: number
     }> = {}
     let total = 0
@@ -89,6 +90,7 @@ const buildCarryItem = (blockTypeId: string, player: Player, container: Containe
 
       if (!list[item.typeId]) {
         list[item.typeId] = {
+          localization: item.localizationKey,
           typeId: item.typeId,
           nameTag: item.nameTag ?? undefined,
           amount: item.amount
@@ -102,13 +104,19 @@ const buildCarryItem = (blockTypeId: string, player: Player, container: Containe
     const invText = entries
       .slice(0, MAX_DISPLAY)
       .map(i => {
-        const name = i.nameTag || reName(i.typeId) || i.typeId
+        const name =
+          i.nameTag ?? (
+            i.localization?.endsWith('.name')
+              ? reName(i.typeId)
+              : i.localization ?? ''
+          )
         const amount = i.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        return `§r§7${name} x${amount}`
+        const builder: RawText = { rawtext: [{ text: '§r§7' }, { translate: name }, { text: ' §r§7x' }, { text: amount }] };
+        return builder
       })
 
-    if (invText.length === 0) invText.push(`§r§7(empty container)`)
-    if (uniqueTotal > MAX_DISPLAY) invText.push(`§r§7and ${uniqueTotal - MAX_DISPLAY} more...`)
+    if (invText.length === 0) invText.push({ rawtext: [{ text: `§r§7(empty container)` }] })
+    if (uniqueTotal > MAX_DISPLAY) invText.push({ rawtext: [{ text: `§r§7and ${uniqueTotal - MAX_DISPLAY} more...` }] })
     it.setLore(invText)
   }
 
