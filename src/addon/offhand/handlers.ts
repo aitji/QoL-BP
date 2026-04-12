@@ -235,6 +235,44 @@ export const blockHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: 
     )
     if (isInteractiveBlock && !player.isSneaking) return
 
+    if (typeId.endsWith('_slab') && !typeId.endsWith('double_slab')) {
+        const useTarget = block.typeId === typeId
+        const slabBlock = useTarget
+            ? block
+            : block[BLOCKFACE_TO_DIR[blockFace]](1)
+
+        if (slabBlock?.typeId === typeId) {
+            const half = slabBlock.permutation.getState('minecraft:vertical_half') as string | undefined
+
+            let wouldBeHalf =
+                blockFace === Direction.Up ? 'top' :
+                    blockFace === Direction.Down ? 'bottom' :
+                        faceLocation.y > 0.5 ? 'bottom' : 'top'
+
+            if (useTarget) // flip
+                wouldBeHalf = wouldBeHalf === 'top' ? 'bottom' : 'top'
+
+            if (half && half === wouldBeHalf) {
+                const doubleId = typeId.replace('_slab', '_double_slab')
+                data.cancel = true
+                system.run(() => {
+                    try {
+                        const targetBlock = player.dimension.getBlock(slabBlock.location)
+                        if (!targetBlock || targetBlock.typeId !== typeId) return
+                        targetBlock.setType(doubleId)
+                        const current = equ.getEquipment(EquipmentSlot.Offhand)
+                        if (!current) return
+                        if (!creative) {
+                            if (current.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+                            else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${current.amount - 1}`)
+                        }
+                    } catch (e) { if (DEBUG) world.sendMessage(`[offhand] slabMerge ${e}`) }
+                })
+                return
+            }
+        }
+    }
+
     const target = block[BLOCKFACE_TO_DIR[blockFace]](1)
     if (!target) return
     if (!isReplaceableTarget(target)) return
