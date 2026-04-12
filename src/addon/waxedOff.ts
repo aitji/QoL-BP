@@ -46,7 +46,7 @@ export const waxedOff_playerInteractWithBlock = (data: PlayerInteractWithBlockBe
 
             sign.setWaxed(false)
             playSound(dim, center, { ID: "copper.wax.off", VOLUME: 1.0, PITCH: [0.8, 1.2] })
-            dim.spawnParticle("minecraft:wind_explosion_emitter", center)
+            // dim.spawnParticle("minecraft:wind_explosion_emitter", center)
         })
     }
 }
