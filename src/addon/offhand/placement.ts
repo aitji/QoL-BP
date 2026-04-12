@@ -88,7 +88,7 @@ type SupportFn = (support: Block) => boolean
 const SUPPORT_RULES = new Map<string, SupportFn>()
     ; (function _buildSupport() {
         const add = (ids: string[], fn: SupportFn) => ids.forEach(id => SUPPORT_RULES.set(id, fn))
-        const hasDirt = (b: Block) => b.hasTag('minecraft:dirt')
+        const hasDirt = (b: Block) => b.hasTag('dirt')
         const hasMoss = (b: Block) => b.typeId === 'minecraft:moss_block'
         const hasSand = (b: Block) => b.hasTag('sand')
         const hasClayOrMoss = (b: Block) => b.typeId === 'minecraft:clay' || hasMoss(b)
@@ -201,20 +201,28 @@ export function getSpecialPermutation(
 
     // bamboo
     if (typeId === 'minecraft:bamboo' || typeId === 'minecraft:bamboo_sapling') {
-        if (blockFace !== Direction.Up) return undefined
-        if (block.typeId === 'minecraft:bamboo') {
-            const belowThick = block.permutation.getState('bamboo_stalk_thickness') as string ?? 'thin'
+        const allowList = Object.freeze(new Set(['minecraft:bamboo', 'minecraft:bamboo_sapling']))
+
+        const below = target.below(1)!
+        if (!(below && below.hasTag('dirt') || allowList.has(below.typeId))) return undefined
+
+        if (block.typeId === 'minecraft:bamboo' || block.typeId === 'minecraft:bamboo_sapling') {
+            if (!(block.location.x === below.location.x && block.location.z === below.location.z)) 
+                if (below.hasTag('dirt'))
+                    return BlockPermutation.resolve('minecraft:bamboo_sapling')
+
+            const belowThick = below.permutation.getState('bamboo_stalk_thickness') as string ?? 'thin'
             let thick = belowThick
             if (thick === 'thin') {
                 let count = 0, cur: Block | undefined = block
-                while (cur?.typeId === 'minecraft:bamboo' && count < 4) { count++; cur = cur.below() }
-                if (count >= 4) thick = 'thick'
+                while (cur?.typeId === 'minecraft:bamboo' && count < 3) { count++; cur = cur.below() }
+                if (count >= 3) thick = 'thick'
             }
 
             if (thick === 'thick' && belowThick === 'thin') {
                 // propagate thickness downward
                 system.run(() => {
-                    let cur: Block | undefined = block
+                    let cur: Block | undefined = below
                     let index = 0
                     while (cur?.typeId === 'minecraft:bamboo') {
                         index++
@@ -227,11 +235,11 @@ export function getSpecialPermutation(
             }
 
             return BlockPermutation.resolve('minecraft:bamboo')
-                .withState('bamboo_leaf_size', 'small_leaves')
+                .withState('bamboo_leaf_size', thick === 'thick' ? 'large_leaves' : 'small_leaves')
                 .withState('bamboo_stalk_thickness', thick)
         }
 
-        if (block.hasTag('minecraft:dirt'))
+        if (block.hasTag('dirt'))
             return BlockPermutation.resolve('minecraft:bamboo_sapling')
         return undefined
     }

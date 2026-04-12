@@ -258,7 +258,7 @@ export const blockHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: 
     const { y: yaw } = player.getRotation()
 
     const special = getSpecialPermutation(typeId, blockFace, faceLocation, block, target, yaw)
-    if (special === undefined) return
+    if (special === undefined) return world.sendMessage('no')
     const permutation = special ?? resolveOrientedPermutation(typeId, blockFace, yaw)
 
     data.cancel = true
