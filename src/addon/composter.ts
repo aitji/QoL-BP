@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, Dimension, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PistonActivateAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, Vector3, world } from "@minecraft/server"
-import { cache, checkRandom, clamp, getEqu, playSound, RUNTIME } from "../lib"
+import { cache, checkRandom, clamp, getEqu, getInv, playSound, RUNTIME } from "../lib"
 const {
     DEBUG, SLICE_PREFIX,
     COMPOSTER: {
@@ -204,7 +204,7 @@ export const composter_pending = (tick: number) => {
         const perm = hopper.permutation
         if (perm.getState("powered_bit") || perm.getState("facing_direction") !== 0) continue
 
-        const container = hopper.getComponent(BlockComponentTypes.Inventory)?.container
+        const container = getInv(hopper)?.container
         if (!container) continue
 
         let foundBowl = { slot: -1, amount: 0 }

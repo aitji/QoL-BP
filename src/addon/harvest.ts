@@ -1,5 +1,5 @@
 import { world, system, EquipmentSlot, ItemDurabilityComponent, ItemStack, EntityEquippableComponent, EntityInventoryComponent, Container, BlockPermutation, Block, PlayerBreakBlockBeforeEvent, EntityComponentTypes, Player, GameMode, Direction } from "@minecraft/server"
-import { applyItemDamage, reduceItem, RUNTIME, helper, cache, getEqu } from "../lib"
+import { applyItemDamage, reduceItem, RUNTIME, helper, cache, getEqu, getInv } from "../lib"
 const { DEBUG, HARVEST: { LOSS_SEED, PLANT_LEVEL, DURABILITY, COCOA_VALID_LOGS, COCOA_DIRECTIONS } } = RUNTIME
 
 export const resolveCocoaPermutation = (block: Block, originalDir: number) => {
@@ -76,7 +76,7 @@ export const harvest_playerBreakBlock = (data: PlayerBreakBlockBeforeEvent) => {
                     if (!LOSS_SEED) return apply()
                     if (consumeOffhand(player, plantSeed, equippable)) return apply()
 
-                    const container = player.getComponent(EntityComponentTypes.Inventory)!.container
+                    const container = getInv(player)?.container!
                     const slot = container.find(new ItemStack(plantSeed, 1))
                     if (slot !== undefined) {
                         const currItem = container.getItem(slot)!

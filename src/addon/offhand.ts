@@ -82,7 +82,7 @@ function hasUnsafeProperties(item: ItemStack) {
 }
 
 function swapItem(player: Player) {
-    const equippable = player.getComponent(EntityComponentTypes.Equippable)!
+    const equippable = getEqu(player)!
     const mainhand = equippable.getEquipment(EquipmentSlot.Mainhand)
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
@@ -151,7 +151,7 @@ const susCow = new Map()
 
 export const offhand_playerInteractWithEntity = (event: PlayerInteractWithEntityBeforeEvent) => {
     const { player, target, itemStack } = event
-    const equippable = player.getComponent(EntityComponentTypes.Equippable)!
+    const equippable = getEqu(player)!
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
     if (
