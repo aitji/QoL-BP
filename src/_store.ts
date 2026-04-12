@@ -21,6 +21,7 @@ function buildRuntime() {
     const OH = S.OFFHAND
     const CR = S.HARVEST
     const DD = S.DOUBLE_DOOR
+    const WF = S.WAXED_OF
 
     return Object.freeze({
         DEBUG: g("qof:DEBUG", S.DEBUG),
@@ -158,6 +159,9 @@ function buildRuntime() {
         }),
         DOUBLE_DOOR: Object.freeze({
             ENABLED: g("qof:DOUBLE_DOOR.ENABLED", DD.ENABLED),
+        }),
+        WAXED_OF: Object.freeze({
+            ENABLED: g("qof:WAXED_OF.ENABLED", WF.ENABLED),
         })
     })
 }

@@ -18,6 +18,7 @@ import * as chest from "./addon/chest"
 import * as offhand from "./addon/offhand"
 import * as harvest from "./addon/harvest"
 import * as door from "./addon/door"
+import * as waxedOff from "./addon/waxedOff"
 
 // tick
 system.run(() => {
@@ -73,6 +74,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe(data => {
     if (RUNTIME.CARRIED_CHEST.ENABLED) chest.chest_playerInteractWithBlock(data)
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithBlock(data)
     if (RUNTIME.DOUBLE_DOOR.ENABLED) door.door_playerInteractWithBlock(data)
+    if (RUNTIME.WAXED_OF.ENABLED) waxedOff.waxedOff_playerInteractWithBlock(data)
 })
 world.beforeEvents.playerInteractWithEntity.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithEntity(data)

@@ -782,5 +782,8 @@ export const SETTINGS = Object.freeze({
     }),
     DOUBLE_DOOR: Object.freeze({
         ENABLED: true,
+    }),
+    WAXED_OF: Object.freeze({
+        ENABLED: true,
     })
 })
