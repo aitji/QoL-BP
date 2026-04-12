@@ -117,19 +117,27 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: node .github/scripts/set-debug.js
 
-      - name: Cache terser
+      - name: Cache dependencies
         if: steps.resolve.outputs.changed == 'true'
-        id: cache-terser
+        id: cache-deps
         uses: actions/cache@v4
         with:
-          path: .github/scripts/node_modules
-          key: terser-${{ runner.os }}-${{ hashFiles('.github/scripts/minify.js') }}
+          path: |
+            node_modules
+            .github/scripts/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('package.json', '.github/scripts/minify.js') }}
           restore-keys: |
-            terser-${{ runner.os }}-
+            deps-${{ runner.os }}-
 
-      - name: Install terser (if not cached)
-        if: steps.resolve.outputs.changed == 'true' && steps.cache-terser.outputs.cache-hit != 'true'
-        run: npm install --prefix .github/scripts terser
+      - name: Install dependencies (if not cached)
+        if: steps.resolve.outputs.changed == 'true' && steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          npm install --no-save typescript
+          npm install --prefix .github/scripts terser
+
+      - name: Build TypeScript (behavior_packs)
+        if: steps.resolve.outputs.changed == 'true'
+        run: npm run build
 
       - name: Minify JSON & JS (behavior_packs)
         if: steps.resolve.outputs.changed == 'true'
@@ -139,19 +147,13 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: |
           BP_PACK="QoF_v${{ steps.resolve.outputs.version_string }}_behavior_packs.mcpack"
-          zip -r "$BP_PACK" . \
-            -x "*.git*" \
-            -x ".github/*" \
-            -x ".gitattributes" \
-            -x ".gitignore" \
-            -x "recipes/shaped/gen.js" \
-            -x "blocks/light_block_dev.json" \
-            -x "recipes/stonecutter/wood/gen.js" \
-            -x "recipes/shapeless/gen.js" \
-            -x "README.md" \
-            -x "scripts/todo.md" \
-            -x "recipes/furnace/_README.md" \
-            -x "node_modules/*"
+          grep -v '^\s*#' build.gitignore \
+            | grep -v '^\s*$' \
+            | grep -v '^!' \
+            | sed 's|/$||' \
+            > /tmp/bp_exclude.txt
+
+          zip -r "$BP_PACK" . -x@/tmp/bp_exclude.txt
           echo "BP_PACK=$BP_PACK" >> $GITHUB_ENV
           echo "Created: $BP_PACK"
 
@@ -180,11 +182,13 @@ jobs:
         if: steps.resolve.outputs.changed == 'true'
         run: |
           RP_PACK="QoF_v${{ steps.rp_version.outputs.rp_version }}_resource_packs.mcpack"
-          cd _rp && zip -r "../$RP_PACK" . \
-            -x "*/.git*" \
-            -x "*/.gitattributes" \
-            -x "*/.gitignore" \
-            -x "*/*.md"
+          grep -v '^\s*#' build.gitignore \
+            | grep -v '^\s*$' \
+            | grep -v '^!' \
+            | sed 's|/$||' \
+            > /tmp/rp_exclude.txt
+
+          cd _rp && zip -r "../$RP_PACK" . -x@/tmp/rp_exclude.txt
           echo "RP_PACK=$RP_PACK" >> $GITHUB_ENV
           echo "Created: $RP_PACK"
 

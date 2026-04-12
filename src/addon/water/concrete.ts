@@ -1,9 +1,9 @@
-import { EntityComponentTypes, Player, world, ItemStack, system } from "@minecraft/server"
-import { checkRandom, RUNTIME } from "../lib"
+import { EntityComponentTypes, Player, world, ItemStack, system, EntitySpawnAfterEvent, EntityRemoveAfterEvent } from "@minecraft/server"
+import { checkRandom, playSound, RUNTIME } from "../../lib"
 const {
     DEBUG,
     SLICE_PREFIX,
-    WET_POWDER_CONCRETE: {
+    WATER_CONCRETE: {
         TYPEID_ENDSWITH, ITEM_PREFIX,
         KEEP_VELOCITY, BATCH_SIZE, PROCESS_DELAY,
         DONE_PARTICLE, DONE_SOUND, SLOW_BASE, SLOW_MULTIPLIER
@@ -11,14 +11,13 @@ const {
 } = RUNTIME
 const queue = new Map() // Map<id, { readyAt, color, amount, dimensionId, location, velocity }>
 
-const wetDelay = (amount) => SLOW_BASE + Math.floor(Math.sqrt(amount - 1) * SLOW_MULTIPLIER)
-export const powder_entityRemove = ({ removedEntityId }) => {
-    queue.delete(removedEntityId)
-}
-
-export const powder_entitySpawn = ({ entity }) => {
+const wetDelay = (amount: number) => SLOW_BASE + Math.floor(Math.sqrt(amount - 1) * SLOW_MULTIPLIER)
+export const powder_entityRemove = ({ removedEntityId }: EntityRemoveAfterEvent) => queue.delete(removedEntityId)
+export const powder_entitySpawn = ({ entity }: EntitySpawnAfterEvent) => {
     if (entity?.typeId !== "minecraft:item") return
     if (!entity?.isValid) return
+    if (entity.dimension.id === "minecraft:nether") return
+
     const component = entity?.getComponent(EntityComponentTypes.Item)
     const itemStack = component?.itemStack
     if (!itemStack) return
@@ -88,10 +87,7 @@ export const powder_pending = () => {
             )
 
             dimension.spawnParticle(DONE_PARTICLE, concrete.location)
-            dimension.playSound(DONE_SOUND.ID, concrete.location, {
-                pitch: checkRandom(DONE_SOUND.PITCH),
-                volume: checkRandom(DONE_SOUND.VOLUME)
-            })
+            playSound(dimension, concrete.location, DONE_SOUND)
 
             if (KEEP_VELOCITY) concrete.applyImpulse({ x: velocity.x, y: velocity.y, z: velocity.z })
             try { entity.remove() }

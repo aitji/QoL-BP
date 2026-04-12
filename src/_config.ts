@@ -1,3 +1,13 @@
+import { Block, Direction, Vector3 } from "@minecraft/server"
+
+type BlockDirFn =
+    | 'above'
+    | 'below'
+    | 'north'
+    | 'south'
+    | 'east'
+    | 'west'
+
 export const SETTINGS = Object.freeze({
     DEBUG: true,
     DISABLED_COMMANDFEEDBACK: false,
@@ -11,7 +21,7 @@ export const SETTINGS = Object.freeze({
         South: 'south',
         East: 'east',
         West: 'west',
-    }),
+    }) as Readonly<Record<Direction, BlockDirFn>>,
 
     LIGHT: Object.freeze({
         ENABLED: true,
@@ -26,7 +36,7 @@ export const SETTINGS = Object.freeze({
         SOUND_FAIL: Object.freeze({
             ID: "cauldron_drip.water.pointed_dripstone",
             VOLUME: 1,
-            PITCH: Object.freeze([0.8, 1.0])
+            PITCH: [0.8, 1.0]
         }),
         PARTICLE_OFFSET: Object.freeze({ x: -.5, y: 0, z: -.5 }),
 
@@ -38,8 +48,11 @@ export const SETTINGS = Object.freeze({
             'minecraft:potato': Object.freeze({ asBlock: 'minecraft:potatoes', pot: 'minecraft:farmland', sound: 'nature' }),
             'minecraft:beetroot_seeds': Object.freeze({ asBlock: 'minecraft:beetroot', pot: 'minecraft:farmland', sound: 'nature' }),
             'minecraft:nether_wart': Object.freeze({ asBlock: 'minecraft:nether_wart', pot: 'minecraft:soul_sand', sound: 'nether' }),
-        }),
-        FARMLAND_BLOCK: Object.freeze({ 'minecraft:farmland': true, 'minecraft:soul_sand': true }),
+        }) as Readonly<Record<string, { asBlock: string, pot: string, sound: 'nature' | 'nether' }>>,
+        FARMLAND_BLOCK: Object.freeze({
+            'minecraft:farmland': true,
+            'minecraft:soul_sand': true
+        } as Record<string, boolean>),
         SOUND_SHOVEL_USE: Object.freeze({
             ID: "use.grass",
             VOLUME: 1.0,
@@ -63,7 +76,7 @@ export const SETTINGS = Object.freeze({
                 PITCH: 1.0,
                 REDUCE_ITEM: true
             }),
-        }),
+        }) as Record<string, { ID: string, VOLUME: number, PITCH: number | number[], REDUCE_ITEM?: boolean }>,
         // ---
         LIGHT_WIKI: Object.freeze({
             // light 15
@@ -112,14 +125,14 @@ export const SETTINGS = Object.freeze({
             "calibrated_sculk_sensor": Object.freeze({ light: 1 }), "dragon_egg": Object.freeze({ light: 1 }),
             "end_portal_frame": Object.freeze({ light: 1 }), "sculk_sensor": Object.freeze({ light: 1 }),
             "small_amethyst_bud": Object.freeze({ light: 1 }),
-        }),
+        }) as Readonly<Record<string, { light: number, inLiquid?: boolean }>>,
         LIGHT_ENTITY: Object.freeze({
             "minecraft:glow_squid": Object.freeze({ light: 10 }),
             "minecraft:allay": Object.freeze({ light: 10 }),
             "minecraft:vex": Object.freeze({ light: 10 }),
             "minecraft:blaze": Object.freeze({ light: 12 }),
             "minecraft:warden": Object.freeze({ light: 6 }),
-        }),
+        }) as Readonly<Record<string, { light: number, inLiquid?: boolean }>>,
         LIGHT_PENDING_BATCH: 64,
         LIGHT_PLAYER_BATCH: 64,
     }),
@@ -131,14 +144,14 @@ export const SETTINGS = Object.freeze({
             'minecraft:damaged_anvil': 'minecraft:chipped_anvil',
             'minecraft:chipped_anvil': 'minecraft:anvil',
             'minecraft:anvil': null
-        }), // last index will be unFixable
+        }) as Readonly<Record<string, string | null>>, // last index will be unFixable
         REPAIR_SOUND: Object.freeze({
             ID: 'smithing_table.use',
             VOLUME: 1.0,
             PITCH: 1.0
         })
     }),
-    WET_POWDER_CONCRETE: Object.freeze({
+    WATER_CONCRETE: Object.freeze({
         ENABLED: true,
         ITEM_PREFIX: "minecraft:",
         PROCESS_DELAY: 4, // how long before item vanish (tick)
@@ -149,11 +162,14 @@ export const SETTINGS = Object.freeze({
         DONE_PARTICLE: "minecraft:water_evaporation_bucket_emitter",
         DONE_SOUND: Object.freeze({
             ID: "mob.happy_ghast.harness_unequip",
-            PITCH: Object.freeze([1.6, 1.8]),
+            PITCH: [1.6, 1.8],
             VOLUME: 0.8
         }),
         MAX_PROCESS: 12,
         BATCH_SIZE: 12 // max entity that will get process
+    }),
+    WATER_CAULDRON: Object.freeze({
+
     }),
     COMPOSTER: Object.freeze({
         ENABLED: true,
@@ -173,7 +189,7 @@ export const SETTINGS = Object.freeze({
         SOUND_FILL_BONEMEAL: Object.freeze({
             ID: "item.bone_meal.use",
             VOLUME: 2.0,
-            PITCH: Object.freeze([0.9, 1.1])
+            PITCH: [0.9, 1.1]
         }),
         SOUND_READY: Object.freeze({
             ID: "block.composter.ready",
@@ -403,7 +419,7 @@ export const SETTINGS = Object.freeze({
             'minecraft:enchanted_golden_apple': 1,
             'minecraft:rabbit_stew': 1,
             'minecraft:nether_star': 1,
-        })
+        }) as Readonly<Record<string, 0.3 | 0.5 | 0.65 | 0.85 | 1.0>>
     }),
     CARRIED_CHEST: Object.freeze({
         ENABLED: true,
@@ -419,7 +435,7 @@ export const SETTINGS = Object.freeze({
             ALLOW_JUMP_IN_LAVA: true,
             ALLOW_JUMP_IN_SCAFFOLDING: true,
             ALLOW_JUMP_IN_LADDER: true
-        }),
+        }) as Readonly<Record<string, boolean>>,
         ENTITY_TYPE: "qof:chest",
         CHEST_ID: "minecraft:chest",
         CONTAINER_NAMETAG: "§r§fCarried Container",
@@ -444,15 +460,15 @@ export const SETTINGS = Object.freeze({
             South: 'north',
             East: 'west',
             West: 'east',
-        }),
+        }) as Readonly<Record<string, string>>,
         FACE_TO_NEIGHBOUR: Object.freeze({
-            Up: (b) => b.above(),
-            Down: (b) => b.below(),
-            North: (b) => b.north(),
-            South: (b) => b.south(),
-            East: (b) => b.east(),
-            West: (b) => b.west(),
-        }),
+            Up: (b: Block) => b.above(),
+            Down: (b: Block) => b.below(),
+            North: (b: Block) => b.north(),
+            South: (b: Block) => b.south(),
+            East: (b: Block) => b.east(),
+            West: (b: Block) => b.west()
+        }) as Readonly<Record<'Up' | 'Down' | 'North' | 'South' | 'East' | 'West', (b: Block) => Block>>,
         ALLOW_REPLACE: Object.freeze({
             'minecraft:short_grass': true,
             'minecraft:short_dry_grass': true,
@@ -466,7 +482,7 @@ export const SETTINGS = Object.freeze({
             // 2 block tall need neig check
             'minecraft:tall_grass': false,
             'minecraft:large_fern': false,
-        }),
+        }) as Readonly<Record<string, boolean>>,
         NEED_SNEAK: Object.freeze({ // o(1) search
             'minecraft:crafting_table': true,
             'minecraft:crafter': true,
@@ -484,13 +500,13 @@ export const SETTINGS = Object.freeze({
             'minecraft:command_block': true,
             'minecraft:chain_command_block': true,
             'minecraft:repeating_command_block': true,
-        }),
+        }) as Readonly<Record<string, boolean>>,
         TORCH_ID: Object.freeze({
             "minecraft:torch": true,
             "minecraft:redstone_torch": true,
             "minecraft:copper_torch": true,
             "minecraft:soul_torch": true
-        }),
+        }) as Readonly<Record<string, boolean>>,
 
         CAN_ALWAYS_USE: Object.freeze(new Set([
             // misc, idk where to put it
@@ -557,12 +573,20 @@ export const SETTINGS = Object.freeze({
             "minecraft:netherite_horse_armor",
             "minecraft:wolf_armor",
 
+            "minecraft:woode_spear",
+            "minecraft:stone_spear",
+            "minecraft:copper_spear",
+            "minecraft:golden_spear",
+            "minecraft:iron_spear",
+            "minecraft:diamond_spear",
+            "minecraft:netherite_spear",
+
             // redstone
             "minecraft:repeater",
             "minecraft:comparator",
             "minecraft:redstone",
             "minecraft:redstone_torch",
-        ])),
+        ])) as Readonly<Set<string>>,
         DISALLOWED_ITEM: Object.freeze(new Set([
             // bundle
             'minecraft:bundle',
@@ -648,7 +672,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:command_block",
             "minecraft:chain_command_block",
             "minecraft:repeating_command_block",
-        ])),
+        ])) as Readonly<Set<string>>,
         LIGHT: 'qof:light_block',
         LIGHT_DEV: 'qof:light_block_dev',
         PLACE_SOUND: Object.freeze({
@@ -671,7 +695,7 @@ export const SETTINGS = Object.freeze({
 
             "minecraft:redstone": true,
             "minecraft:redstone_torch": true,
-        }),
+        }) as Readonly<Record<string, boolean>>,
         FOOD_DATA: Object.freeze({
             // fruit & vegetable
             "minecraft:apple": Object.freeze({ nutrition: 4, saturation: 2.4, canAlwaysEat: true }),
@@ -729,7 +753,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:honey_bottle": Object.freeze({ nutrition: 6, saturation: 1.2, canAlwaysEat: true }), // clears poison
             "minecraft:rotten_flesh": Object.freeze({ nutrition: 4, saturation: 0.8, canAlwaysEat: false }), // 80% hunger (30s)
             "minecraft:spider_eye": Object.freeze({ nutrition: 2, saturation: 3.2, canAlwaysEat: false }), // poison (5s)
-        })
+        }) as Readonly<Record<string, { nutrition: number, saturation: number, canAlwaysEat: boolean }>>
     }),
     HARVEST: Object.freeze({
         ENABLED: true,
@@ -742,21 +766,24 @@ export const SETTINGS = Object.freeze({
             "minecraft:potatoes": Object.freeze({ level: 7, seed: "minecraft:potato" }),
             "minecraft:beetroot": Object.freeze({ level: 7, seed: "minecraft:beetroot_seeds" }),
             "minecraft:nether_wart": Object.freeze({ level: 3, seed: "minecraft:nether_wart" }),
-        }),
+        }) as Readonly<Record<string, { level: number, seed: string }>>,
         COCOA_VALID_LOGS: Object.freeze(new Set([
             'minecraft:jungle_log',
             'minecraft:stripped_jungle_log',
             'minecraft:jungle_wood',
             'minecraft:stripped_jungle_wood',
-        ])),
-        COCOA_DIRECTIONS: Object.freeze([ /** N/S/E/W offsets */
+        ])) as Readonly<Set<string>>,
+        COCOA_DIRECTIONS: [ /** N/S/E/W offsets */
             { x: 0, z: 1, dir: 0 },  // south
             { x: -1, z: 0, dir: 1 }, // west
             { x: 0, z: -1, dir: 2 }, // north
             { x: 1, z: 0, dir: 3 },  // east
-        ])
+        ] as const
     }),
     DOUBLE_DOOR: Object.freeze({
+        ENABLED: true,
+    }),
+    WAXED_OF: Object.freeze({
         ENABLED: true,
     })
 })

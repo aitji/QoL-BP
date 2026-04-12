@@ -1,1 +1,18 @@
-{ "dependencies": { "@minecraft/server": "^2.7.0-beta.1.26.10-stable" } }
+{
+    "name": "qof",
+    "author": {
+        "name": "aitji, pickerth-12",
+        "email": "aitji@duck.com",
+        "url": "https://github.com/aitji/QoF"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@minecraft/server": "^2.7.0-beta.1.26.14-stable",
+        "typescript": "^6.0.2"
+    },
+    "scripts": {
+        "dev": "tsc -w",
+        "build": "tsc -p tsconfig.build.json",
+        "clean": "node -e \"require('fs').rmSync('scripts', { recursive: true, force: true })\""
+    }
+}

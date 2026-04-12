@@ -1,33 +1,38 @@
-import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world } from "@minecraft/server"
-import { checkRandom, reduceItem, RUNTIME } from "../lib"
+import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world, Direction } from "@minecraft/server"
+import { checkRandom, reduceItem, RUNTIME, cache, getEqu, playSound } from "../lib"
 const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = RUNTIME
 
-const delay = {}
-const permCache = new Map() // key: typeId -> Map(direction -> BlockPermutation)
-
+const delay: Record<string, number> = {}
+const permCache = new Map<
+    string,
+    Map<Direction, BlockPermutation | null>
+>()
 // helper
-function getCache(typeId, direction) {
+function getCache(
+    typeId: string,
+    direction: Direction
+): BlockPermutation | null {
     let inner = permCache.get(typeId)
     if (!inner) {
-        inner = new Map()
+        inner = new Map<Direction, BlockPermutation | null>()
         permCache.set(typeId, inner)
     }
 
     let perm = inner.get(direction)
-    if (!perm) {
+    if (perm === undefined) {
         try { perm = BlockPermutation.resolve(typeId).withState('minecraft:cardinal_direction', direction) }
         catch (e) {
             if (DEBUG) console.warn('[ANVIL] failed to resolve permutation for', typeId, e)
             perm = null
-            // at this point i ask myself, why not hardcode anvil and i answer back 'why not'
         }
+
         inner.set(direction, perm)
     }
+
     return perm
 }
 
-/**@param {PlayerInteractWithBlockBeforeEvent} data */
-export const anvil_playerInteractWithBlock = (data) => {
+export const anvil_playerInteractWithBlock = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, itemStack, isFirstEvent, block } = data
     if (
         block &&
@@ -49,7 +54,7 @@ export const anvil_playerInteractWithBlock = (data) => {
 
         data.cancel = true
 
-        const state = block.permutation.getState('minecraft:cardinal_direction')
+        const state = block.permutation.getState('minecraft:cardinal_direction') as Direction
         if (!state) return
 
         const slot = player.selectedSlotIndex
@@ -59,20 +64,19 @@ export const anvil_playerInteractWithBlock = (data) => {
             if (!anvilPerm) return
             block.setPermutation(anvilPerm)
 
-            const playSound = () => {
+            const _playSound = () => {
                 const center = block.center()
-                player.dimension.playSound(REPAIR_SOUND.ID, center, {
-                    volume: checkRandom(REPAIR_SOUND.VOLUME),
-                    pitch: checkRandom(REPAIR_SOUND.PITCH)
-                })
-                player.dimension.spawnParticle("minecraft:wind_explosion_emitter", center)
+                const dim = player.dimension
+
+                playSound(dim, center, REPAIR_SOUND)
+                dim.spawnParticle("minecraft:wind_explosion_emitter", center)
             }
 
-            if (player.matches({ gameMode: GameMode.Creative }))
-                return playSound()
+            if (cache.getPlayer(player, 'gameMode') === GameMode.Creative)
+                return _playSound()
 
             // reduce item
-            const equ = player.getComponent(EntityComponentTypes.Equippable)
+            const equ = getEqu(player)!
             if (player.selectedSlotIndex !== slot) player.selectedSlotIndex = slot
             const currItem = equ.getEquipment(EquipmentSlot.Mainhand)
 
@@ -86,14 +90,14 @@ export const anvil_playerInteractWithBlock = (data) => {
                     // revert anvil
                     const oldPerm = getCache(currType, state)
                     if (oldPerm) block.setPermutation(oldPerm)
-                } else playSound()
+                } else _playSound()
                 return
             }
 
             // NOW: selectedSlotIndex === slot & currItem == itemStack
             try {
                 equ.setEquipment(EquipmentSlot.Mainhand, reduceItem(itemStack))
-                playSound()
+                _playSound()
             } catch (e) { if (DEBUG) console.warn('[ANVIL] unknown case:', e) }
         })
     }

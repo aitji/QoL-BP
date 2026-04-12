@@ -44,10 +44,10 @@ const minifyJSFile = async file => {
         const result = await minifyJS(src, {
             compress: {
                 passes: 2,
-                drop_console: false, // kept console.log
-                unsafe: false
+                drop_console: true, // kept console.log
+                unsafe: true
             },
-            mangle: { toplevel: false },
+            mangle: { toplevel: true, keep_fnames: true },
             format: { comments: false }
         })
         const saved = src.length - result.code.length

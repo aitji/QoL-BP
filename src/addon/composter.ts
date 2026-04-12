@@ -1,18 +1,26 @@
-import { BlockComponentTypes, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PistonActivateAfterEvent, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
-import { checkRandom, clamp, RUNTIME } from "../lib"
-const { DEBUG, SLICE_PREFIX, COMPOSTER: { BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS, SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY, HOPPER_TYPEID, HOPPER_INTERVAL_TICK, DATA_LOSS_DYP, PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL } } = RUNTIME
+import { Block, BlockComponentTypes, BlockPermutation, Dimension, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PistonActivateAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, Vector3, world } from "@minecraft/server"
+import { cache, checkRandom, clamp, getEqu, getInv, playSound, RUNTIME } from "../lib"
+const {
+    DEBUG, SLICE_PREFIX,
+    COMPOSTER: {
+        BLOCK_TYPEID, ITEMS, SOUND_FILL_SUCCESS,
+        SOUND_FILL, SOUND_READY, DELAY_BEFORE_READY,
+        HOPPER_TYPEID, HOPPER_INTERVAL_TICK, DATA_LOSS_DYP,
+        PARTICLE_FILL_SUCCESS, DATA_COMPOSTER_LOCATION, SOUND_FILL_BONEMEAL
+    }
+} = RUNTIME
 
-const clamp8 = (n) => clamp(n, 0, 8)
-let composterSet = new Set()
+const clamp8 = (n: number) => clamp(n, 0, 8)
+let composterSet = new Set() as Set<string>
 system.run(() => {
     if (!RUNTIME.COMPOSTER.ENABLED || !RUNTIME.COMPOSTER.WORK_WITH_HOPPER) return
-    const raw = world.getDynamicProperty(DATA_COMPOSTER_LOCATION)
+    const raw = world.getDynamicProperty(DATA_COMPOSTER_LOCATION) as string | undefined
     if (raw) {
         composterSet.clear()
         composterSet = new Set(JSON.parse(raw))
     }
 
-    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) as string ?? '{}')
     for (const key of Object.keys(data)) {
         const [dim, sx, sy, sz] = key.split(':')
         const x = +sx
@@ -20,48 +28,46 @@ system.run(() => {
         const z = +sz
         const loc = { x, y, z }
         const dimension = world.getDimension(dim)
-        const block = dimension.getBlock(loc)
-        if (block.typeId === BLOCK_TYPEID && block.permutation.getState('composter_fill_level') === 7) {
+        const block = dimension.getBlock(loc)!
+        if (block && block.typeId === BLOCK_TYPEID && block.permutation.getState('composter_fill_level') === 7) {
             const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
             block.setPermutation(p)
-            playSound(dimension, SOUND_READY, loc)
+            playSound(dimension, loc, SOUND_READY)
         }
 
         // ---
-        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) as string ?? '{}')
         delete d[key]
         world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(d))
         // ---
     }
 })
 // helper
-const playSound = (dim, sound, loc) => dim.playSound(sound.ID, loc, { volume: checkRandom(sound.VOLUME), pitch: checkRandom(sound.PITCH) })
-const setLevel = (block, level) => block.setPermutation(BlockPermutation.resolve(block.typeId).withState("composter_fill_level", clamp8(level)))
-const maybeFinish = (block, playerOrDim, loc) => {
+const setLevel = (block: Block, level: number) => block.setPermutation(BlockPermutation.resolve(block.typeId).withState("composter_fill_level", clamp8(level)))
+const maybeFinish = (block: Block, dim: Dimension, loc: Vector3) => {
     // ---
-    const key = `${playerOrDim.id.slice(10)}:${block.x}:${block.y}:${block.z}`
-    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+    const key = `${dim.id.slice(10)}:${block.x}:${block.y}:${block.z}`
+    const data = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) as string ?? '{}')
     data[key] = 1
     world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(data))
     // ---
 
     system.runTimeout(() => {
-        const curr = block.dimension.getBlock(loc)
+        const curr = block.dimension.getBlock(loc)!
         if (curr.typeId === BLOCK_TYPEID && curr.permutation.getState('composter_fill_level') === 7) {
             const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
             block.setPermutation(p)
-            playSound(playerOrDim, SOUND_READY, loc)
+            playSound(dim, loc, SOUND_READY)
         }
 
         // ---
-        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) ?? '{}')
+        const d = JSON.parse(world.getDynamicProperty(DATA_LOSS_DYP) as string ?? '{}')
         delete d[key]
         world.setDynamicProperty(DATA_LOSS_DYP, JSON.stringify(d))
         // ---
     }, DELAY_BEFORE_READY)
 }
-/** @param {PlayerInteractWithBlockBeforeEvent} data */
-export const composter_playerInteractWithBlock = (data) => {
+export const composter_playerInteractWithBlock = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, block, itemStack } = data
     if (player.isSneaking || !itemStack || block.typeId !== BLOCK_TYPEID) return
 
@@ -77,24 +83,24 @@ export const composter_playerInteractWithBlock = (data) => {
 
     if (!chance) return
 
-    const state = block.permutation.getState('composter_fill_level')
+    const state = block.permutation.getState('composter_fill_level')!
     if (state >= 7) return
 
     system.run(() => {
         const success = Math.random() <= chance
         const loc = block.center()
 
-        playSound(player.dimension, SOUND_FILL_BONEMEAL, loc)
+        playSound(player.dimension, loc, SOUND_FILL_BONEMEAL)
         if (success) {
-            playSound(player.dimension, SOUND_FILL_SUCCESS, loc)
+            playSound(player.dimension, loc, SOUND_FILL_SUCCESS)
             setLevel(block, state + 1)
             player.dimension.spawnParticle(PARTICLE_FILL_SUCCESS, loc)
             if (state === 6) maybeFinish(block, player.dimension, loc)
-        } else playSound(player.dimension, SOUND_FILL, loc)
+        } else playSound(player.dimension, loc, SOUND_FILL)
 
-        if (player.matches({ gameMode: GameMode.Creative })) return
+        if (cache.getPlayer(player, 'gameMode') === GameMode.Creative) return
 
-        const equ = player.getComponent(EntityComponentTypes.Equippable)
+        const equ = getEqu(player)!
         const slot = player.selectedSlotIndex
         if (player.selectedSlotIndex !== slot) player.selectedSlotIndex = slot
         const currItem = equ.getEquipment(EquipmentSlot.Mainhand)
@@ -121,7 +127,7 @@ export const composter_playerInteractWithBlock = (data) => {
     })
 }
 
-export const composter_playerPlaceBlock = (data) => {
+export const composter_playerPlaceBlock = (data: PlayerPlaceBlockAfterEvent) => {
     const { block, dimension } = data
     if (!block || block.typeId !== BLOCK_TYPEID) return
     const value = `${dimension.id.substring(SLICE_PREFIX)}:${block.x}:${block.y}:${block.z}`
@@ -137,11 +143,12 @@ const directionMap = Object.freeze({
     4: { x: -1, y: 0, z: 0 },
     5: { x: 1, y: 0, z: 0 },
 })
+type DirectionKey = keyof typeof directionMap
 
-/** @param {PistonActivateAfterEvent} data */
-export const composter_pistonActivate = (data) => {
+// todo: this is so cringe, need better way to handle this
+export const composter_pistonActivate = (data: PistonActivateAfterEvent) => {
     const { block, dimension, piston, isExpanding } = data
-    const facing_direction = block.permutation.getState("facing_direction")
+    const facing_direction = block.permutation.getState("facing_direction")! as DirectionKey
     const locations = piston.getAttachedBlocksLocations()
 
     const dir = directionMap[facing_direction]
@@ -153,7 +160,7 @@ export const composter_pistonActivate = (data) => {
     }))
 
     system.run(() => { // this is might be still lossy track tho, but who move composter?
-        const raw = world.getDynamicProperty(DATA_COMPOSTER_LOCATION)
+        const raw = world.getDynamicProperty(DATA_COMPOSTER_LOCATION) as string
         if (!raw) return
 
         composterSet.clear()
@@ -168,7 +175,7 @@ export const composter_pistonActivate = (data) => {
 }
 
 let trackTick = system.currentTick + HOPPER_INTERVAL_TICK
-export const composter_pending = (tick) => {
+export const composter_pending = (tick: number) => {
     if (trackTick > tick) return
     trackTick = tick + HOPPER_INTERVAL_TICK
     let changed = false
@@ -187,17 +194,17 @@ export const composter_pending = (tick) => {
             continue
         }
 
-        const state = block.permutation.getState('composter_fill_level')
+        const state = block.permutation.getState('composter_fill_level')!
         if (state >= 7) continue
 
-        const hopper = block.above(1)
+        const hopper = block.above(1)!
         if (!hopper || !hopper.isValid || hopper.isAir || hopper.typeId !== HOPPER_TYPEID) continue
 
-        if (hopper.getRedstonePower() > 0) continue
+        if (hopper.getRedstonePower()! > 0) continue
         const perm = hopper.permutation
         if (perm.getState("powered_bit") || perm.getState("facing_direction") !== 0) continue
 
-        const container = hopper.getComponent(BlockComponentTypes.Inventory)?.container
+        const container = getInv(hopper)?.container
         if (!container) continue
 
         let foundBowl = { slot: -1, amount: 0 }
@@ -234,7 +241,7 @@ export const composter_pending = (tick) => {
 
         if (firstChanceItem === -1) return applyEarly()
 
-        const item = container.getItem(firstChanceItem)
+        const item = container.getItem(firstChanceItem)!
         const itemID = item.typeId
         const chance = ITEMS[itemID]
         const success = Math.random() <= chance
@@ -257,12 +264,12 @@ export const composter_pending = (tick) => {
             }
         }
 
-        playSound(dimension, SOUND_FILL_BONEMEAL, loc)
+        playSound(dimension, loc, SOUND_FILL_BONEMEAL)
         if (success) {
-            playSound(dimension, SOUND_FILL_SUCCESS, loc)
+            playSound(dimension, loc, SOUND_FILL_SUCCESS)
             setLevel(block, state + 1)
             if (state === 6) maybeFinish(block, dimension, loc)
-        } else playSound(dimension, SOUND_FILL, loc)
+        } else playSound(dimension, loc, SOUND_FILL)
     }
 
     applyEarly()

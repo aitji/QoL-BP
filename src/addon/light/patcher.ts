@@ -1,11 +1,13 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity, ItemStack } from "@minecraft/server"
-import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
-import { suppressLight } from "./light"
-import { pickupCooldown } from "../_helper"
+import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu, pickupCooldown, cache, playSound } from "../../lib"
+import { suppressLight } from "./core"
 const { DEBUG, BLOCKFACE_TO_DIR, LIGHT: { ENABLED, SEEDTOBLOCK, FARMLAND_BLOCK, SOUND_SHOVEL_USE, SOUND_HOE_USE, BLOCK_INTERACTION_DELAY, FIRE_ITEM, LIGHT_BLOCK } } = RUNTIME
-export const isFrame = (b) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
+export const isFrame = (b: Block) => b.permutation.matches('minecraft:frame') || b.permutation.matches('minecraft:glow_frame')
 
-let HANGING_ROOTS, DIRT, FARMLAND, GRASS_PATH
+let HANGING_ROOTS: ItemStack
+let DIRT: BlockPermutation
+let FARMLAND: BlockPermutation
+let GRASS_PATH: BlockPermutation
 if (ENABLED) system.run(() => {
     HANGING_ROOTS = new ItemStack('minecraft:hanging_roots', 1)
     DIRT = BlockPermutation.resolve('minecraft:dirt')
@@ -13,9 +15,8 @@ if (ENABLED) system.run(() => {
     GRASS_PATH = BlockPermutation.resolve('minecraft:grass_path')
 })
 
-const delay = {}
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
-export const light_playerInteractWithBlock = (data) => {
+const delay: Record<string, number> = {}
+export const light_playerInteractWithBlock = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, block, blockFace, itemStack, isFirstEvent } = data
     let tick = system.currentTick
 
@@ -28,9 +29,8 @@ export const light_playerInteractWithBlock = (data) => {
     if (!itemStack || !block) return
     const dimension = block.dimension
 
-    /** @type {Block?} */
-    let above // cache above block
-    const isLight = (b) => b.permutation?.matches(LIGHT_BLOCK) ?? false
+    let above: Block | undefined // cache above block
+    const isLight = (b: Block | undefined) => b?.permutation?.matches(LIGHT_BLOCK) ?? false
     const isAboveLight = () => { // don't perm check if unnesscery
         above = block.above(1)
         return isLight(above)
@@ -50,14 +50,11 @@ export const light_playerInteractWithBlock = (data) => {
                         default: break
                     }
 
-                    suppressLight(above, false, true, false, tick)
+                    suppressLight(above!, false, true, false, tick)
                     block.setPermutation(GRASS_PATH)
                     toolUsed = true
 
-                    dimension.playSound(SOUND_SHOVEL_USE.ID, block.center(), {
-                        volume: checkRandom(SOUND_SHOVEL_USE.VOLUME),
-                        pitch: checkRandom(SOUND_SHOVEL_USE.PITCH)
-                    })
+                    playSound(dimension, block.center(), SOUND_SHOVEL_USE)
                 }
                 if (itemStack?.hasTag('minecraft:is_hoe')) {
                     switch (block?.typeId ?? '') {
@@ -80,17 +77,14 @@ export const light_playerInteractWithBlock = (data) => {
                     }
 
                     toolUsed = true
-                    dimension.playSound(SOUND_HOE_USE.ID, block.center(), {
-                        volume: checkRandom(SOUND_HOE_USE.VOLUME),
-                        pitch: checkRandom(SOUND_HOE_USE.PITCH)
-                    })
+                    playSound(dimension, block.center(), SOUND_HOE_USE)
                 }
 
                 // all logic
-                if (toolUsed && !player.matches({ gameMode: GameMode.Creative })) {
+                if (toolUsed && cache.getPlayer(player, "gameMode") !== GameMode.Creative) {
                     const { changed, item } = applyItemDamage(player, itemStack)
                     if (changed) {
-                        const equ = getEqu(player)
+                        const equ = getEqu(player)!
                         equ.setEquipment(EquipmentSlot.Mainhand, item)
                     }
                 }
@@ -109,37 +103,30 @@ export const light_playerInteractWithBlock = (data) => {
             const { asBlock, pot, sound } = raw
 
             if (pot === blockType) {
-                const isCreative = player.matches({ gameMode: GameMode.Creative })
-                const playSound = () => {
+                const isCreative = cache.getPlayer(player, 'gameMode') === GameMode.Creative
+                const _playSound = () => {
                     // if (DEBUG) world.sendMessage(`sound=${sound}`)
                     const center = block.center()
                     switch (sound) {
-                        // make sound config-able
-                        case 'nature': return dimension.playSound('place.grass', center, {
-                            volume: 0.8,
-                            pitch: checkRandom([0.8, 1])
-                        })
-                        case 'nether': return dimension.playSound('dig.nether_wart', center, {
-                            volume: 0.7,
-                            pitch: checkRandom([0.8, 1])
-                        })
+                        case 'nature': return playSound(dimension, center, { ID: "place.grass", VOLUME: 0.8, PITCH: [0.8, 1] })
+                        case 'nether': return playSound(dimension, center, { ID: "dig.nether_wart", VOLUME: 0.7, PITCH: [0.8, 1] })
                         default:
                             if (DEBUG) world.sendMessage(`${sound} is invaild`)
                             return
                     }
-
                 }
 
-                let scam = false
+                let scam = false as boolean
                 system.run(() => {
+                    if (!above) return
                     try {
                         above.setType(asBlock)
-                        playSound()
+                        _playSound()
                         if (!isCreative) scam = setEqu(player, reduceItem(itemStack))
                     } catch {
                         try {
                             above.setPermutation(BlockPermutation.resolve(asBlock))
-                            playSound()
+                            _playSound()
                             if (!isCreative) scam = setEqu(player, reduceItem(itemStack))
                         } catch {
                             const command = above.dimension.runCommand(`setblock ${above.x} ${above.y} ${above.z} ${asBlock}`)
@@ -157,11 +144,9 @@ export const light_playerInteractWithBlock = (data) => {
         const itemType = itemStack.typeId
         const fireSound = FIRE_ITEM[itemType]
         if (fireSound) {
-            /** @type {Block} */
-            const cache = block[BLOCKFACE_TO_DIR[blockFace]](1)
+            const cache = block[BLOCKFACE_TO_DIR[blockFace]](1)!
             if (isLight(cache)) {
                 suppressLight(cache, false, false, false, tick)
-                const equ = getEqu(player)
                 const slot = player.selectedSlotIndex
                 system.run(() => {
                     if (player.selectedSlotIndex !== slot) {
@@ -173,19 +158,16 @@ export const light_playerInteractWithBlock = (data) => {
                         // minecraft alr handle damage
                         // const { item, changed } = applyItemDamage(player, equ)
                         // if (changed) setEqu(player, item, "Mainhand", true)
-                        dim.playSound(fireSound.ID, cache.center(), {
-                            pitch: checkRandom(fireSound.PITCH),
-                            volume: checkRandom(fireSound.VOLUME)
-                        })
+                        playSound(dim, cache.center(), fireSound)
                         if (fireSound.REDUCE_ITEM) {
-                            const equ = getEqu(player)
-                            const currItem = equ.getEquipment(EquipmentSlot.Mainhand)
+                            const equ = getEqu(player)!
+                            const currItem = equ.getEquipment(EquipmentSlot.Mainhand)!
                             const newItem = reduceItem(currItem, 1)
                             equ.setEquipment(EquipmentSlot.Mainhand, newItem)
                         }
                     }
                     try {
-                        const below = cache.below(1)
+                        const below = cache.below(1)!
                         if (
                             below.isSolid &&
                             (cache.permutation.matches('minecraft:air') || cache.permutation.matches(LIGHT_BLOCK))
@@ -193,7 +175,7 @@ export const light_playerInteractWithBlock = (data) => {
                             cache.setType('minecraft:fire')
                             done()
                         }
-                    } catch (e) { if (DEBUG) world.sendMessage(`[offhand.js] fire ${e}`) }
+                    } catch (e) { if (DEBUG) world.sendMessage(`[offhand] fire ${e}`) }
                 })
             }
         }

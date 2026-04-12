@@ -3,24 +3,25 @@ import { SETTINGS } from "./_config"
 
 function buildRuntime() {
     const S = SETTINGS
-    let ps = {}
+    let ps = {} as Record<string, boolean | number | string>
     try { ps = world.getPackSettings() }
     catch (e) { if (S.DEBUG) world.sendMessage(`§cpack setting unable to load, using fallback: ${e}`) }
 
-    const g = (name, def) => {
+    const r1 = (name: string, def: number) => Math.round(g(name, def) * 10) / 10
+    const g = <T>(name: string, def: T): T => {
         const v = ps[name]
-        return (v !== undefined && typeof v === typeof def) ? v : def
+        return (v !== undefined && typeof v === typeof def) ? v as T : def
     }
-    const r1 = (name, def) => Math.round(g(name, def) * 10) / 10
 
     const L = S.LIGHT
     const A = S.REPAIR_ANVIL
-    const W = S.WET_POWDER_CONCRETE
+    const W = S.WATER_CONCRETE
     const C = S.COMPOSTER
     const CH = S.CARRIED_CHEST
     const OH = S.OFFHAND
     const CR = S.HARVEST
     const DD = S.DOUBLE_DOOR
+    const WF = S.WAXED_OF
 
     return Object.freeze({
         DEBUG: g("qof:DEBUG", S.DEBUG),
@@ -54,7 +55,6 @@ function buildRuntime() {
             SOUND_HOE_USE: L.SOUND_HOE_USE,
             BLOCK_INTERACTION_DELAY: L.BLOCK_INTERACTION_DELAY,
             FIRE_ITEM: L.FIRE_ITEM,
-            SOUND_FIRE_IGNITE: L.SOUND_FIRE_IGNITE,
             LIGHT_PENDING_BATCH: L.LIGHT_PENDING_BATCH,
             LIGHT_PLAYER_BATCH: L.LIGHT_PLAYER_BATCH,
         }),
@@ -69,11 +69,11 @@ function buildRuntime() {
             REPAIR_SOUND: A.REPAIR_SOUND,
         }),
 
-        WET_POWDER_CONCRETE: Object.freeze({
-            ENABLED: g("qof:WET_POWDER_CONCRETE.ENABLED", W.ENABLED),
-            MAX_PROCESS: g("qof:WET_POWDER_CONCRETE.MAX_PROCESS", W.MAX_PROCESS),
-            SLOW_BASE: g("qof:WET_POWDER_CONCRETE.SLOW_BASE", W.SLOW_BASE),
-            SLOW_MULTIPLIER: g("qof:WET_POWDER_CONCRETE.SLOW_MULTIPLIER", W.SLOW_MULTIPLIER),
+        WATER_CONCRETE: Object.freeze({
+            ENABLED: g("qof:WATER_CONCRETE.ENABLED", W.ENABLED),
+            MAX_PROCESS: g("qof:WATER_CONCRETE.MAX_PROCESS", W.MAX_PROCESS),
+            SLOW_BASE: g("qof:WATER_CONCRETE.SLOW_BASE", W.SLOW_BASE),
+            SLOW_MULTIPLIER: g("qof:WATER_CONCRETE.SLOW_MULTIPLIER", W.SLOW_MULTIPLIER),
 
             // static
             KEEP_VELOCITY: W.KEEP_VELOCITY,
@@ -159,6 +159,9 @@ function buildRuntime() {
         }),
         DOUBLE_DOOR: Object.freeze({
             ENABLED: g("qof:DOUBLE_DOOR.ENABLED", DD.ENABLED),
+        }),
+        WAXED_OF: Object.freeze({
+            ENABLED: g("qof:WAXED_OF.ENABLED", WF.ENABLED),
         })
     })
 }

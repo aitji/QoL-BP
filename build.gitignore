@@ -3,26 +3,39 @@ node_modules/
 
 # build output
 dist/
-scripts/
 out/
 *.js.map
-# ^ if you want [map] run tsc
 
 # typescript cache
 *.tsbuildinfo
 
 # minecraft
-*.mc*
-*.zip
+# *.mc*
+# *.zip
 
 # dev
 npm-debug.log*
-.DS_Store
-Thumbs.db
 .env
 .env.*
 * copy*
 *test*
+light_damping.json
+light_block_dev.json
+
+# builder
+recipes/**/gen.js
+
+# repo
+*.md
+!README.md
+!_notes.md
+.github
+src/
+.gitattributes
+.gitignore
+build.gitignore
+*.git
+
 
 .vscode/
 .idea/

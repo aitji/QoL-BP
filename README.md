@@ -50,15 +50,17 @@
 
 ## Changelog
 
+- QoF v1.5.0 `in development`
+  - `Pre-Releases` Qof [v1.4.1](https://github.com/aitji/QoF/releases/tag/v1.4.1)
 - QoF [v1.4.0](https://github.com/aitji/QoF/releases/tag/v1.4.0)
-  - `Pre-Releases` Qof [v1.3.1](https://github.com/aitji/QoF/releases/tag/v1.3.1)
-  - `Pre-Releases` Qof [v1.3.2](https://github.com/aitji/QoF/releases/tag/v1.3.2)
-  - `Pre-Releases` Qof [v1.3.3](https://github.com/aitji/QoF/releases/tag/v1.3.3)
   - `Pre-Releases` Qof [v1.3.4](https://github.com/aitji/QoF/releases/tag/v1.3.4)
+  - `Pre-Releases` Qof [v1.3.3](https://github.com/aitji/QoF/releases/tag/v1.3.3)
+  - `Pre-Releases` Qof [v1.3.2](https://github.com/aitji/QoF/releases/tag/v1.3.2)
+  - `Pre-Releases` Qof [v1.3.1](https://github.com/aitji/QoF/releases/tag/v1.3.1)
 - QoF [v1.3.0](https://github.com/aitji/QoF/releases/tag/v1.3.0)
-  - `Pre-Releases` QoF [v1.2.1](https://github.com/aitji/QoF/releases/tag/v1.2.1)
-  - `Pre-Releases` QoF [v1.2.2](https://github.com/aitji/QoF/releases/tag/v1.2.2)
   - `Pre-Releases` QoF [v1.2.3](https://github.com/aitji/QoF/releases/tag/v1.2.3)
+  - `Pre-Releases` QoF [v1.2.2](https://github.com/aitji/QoF/releases/tag/v1.2.2)
+  - `Pre-Releases` QoF [v1.2.1](https://github.com/aitji/QoF/releases/tag/v1.2.1)
 - QoF [v1.2.0](https://github.com/aitji/QoF/releases/tag/v1.2.0)
   - `Pre-Releases` QoF [v1.1.1](https://github.com/aitji/QoF/releases/tag/v1.1.1)
 - QoF [v1.1.0](https://github.com/aitji/QoF/releases/tag/v1.1.0)
@@ -793,7 +795,7 @@ Has README Update: True
 
   PACK INFO
 Last Release: v1.4.0
-Last Pre-Release: v1.3.4
+Last Pre-Release: v1.4.1
 Last Minecraft Version: 26.12
-Used Dependencies: ^2.7.0-beta.1.26.10-stable
+Used Dependencies: ^2.7.0-beta.1.26.14-stable
 ```

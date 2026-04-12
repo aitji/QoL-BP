@@ -18,7 +18,7 @@ this file is only for top priority todo, if something like refactor some code or
   - [x] support edge case for offhand like buckets
 - [x] harvest crop
 - [x] offhand work with seed
-  - [x] offhand seed work with harvest.js, auto replant from offhand
+  - [x] offhand seed work with [harvest], auto replant from offhand
 - [x] harvest support more things like coco bean cocoa ["direction"=0-3], this might be hard with offhand
 - [x] ongoing problem ; might ship without fix this
   - [ ] composter bug with hopper again -.-
@@ -31,6 +31,7 @@ this file is only for top priority todo, if something like refactor some code or
   - [x] player break block are showing light block particle ; after block become air it got replace to light block and minecraft decide to render it
 - [x] add changelog/*.md and github action bot pull file and update it
 - [x] picker is on vacation ; make everything config-able tmr(28 Mar 2026)
+- [ ] add more thing for wet concrete powders, e.g. cauldron?
 
 ### request/sugg
   - [ ] hit chest to store item -MondayHP
@@ -85,10 +86,10 @@ elytra+firework (any level): peak 8000+ bytes (150+ dyp)\
     - [ ] syntax error: blocks/light_block.json | Unexpected version for the loaded data
   - [x] add more config in manifest pack (i add/update it for you but don't know about gramma tho --aitji)
     - [x] offhand's settings
-      - [x] update _config.js
-      - [x] update _store.js
+      - [x] update _config
+      - [x] update _store
       - [x] update manifest.json
-    - [x] crop.js
-      - [x] update _config.js
-      - [x] update _store.js
+    - [x] crop
+      - [x] update _config
+      - [x] update _store
       - [x] update manifest.json

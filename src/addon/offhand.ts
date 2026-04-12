@@ -1,40 +1,50 @@
-import { Block, BlockComponentTypes, BlockPermutation, Difficulty, Direction, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, system, world } from "@minecraft/server"
-import { applyItemDamage, checkRandom, getDistance, getEqu, reduceItem, RUNTIME, setEqu } from "../lib"
-import { suppressLight } from "./light"
+import { Block, BlockComponentTypes, BlockPermutation, Difficulty, Dimension, Direction, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, PlatformType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, system, world } from "@minecraft/server"
+import { applyItemDamage, checkRandom, getDistance, getEqu, playSound, RUNTIME, sumLoc } from "../lib"
+import { suppressLight } from "./light/core"
 import { resolveCocoaPermutation } from "./harvest"
-const { DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR, HARVEST: { PLANT_LEVEL, COCOA_VALID_LOGS }, LIGHT: { FIRE_ITEM, LIGHT_BLOCK }, OFFHAND: { ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR, FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY, ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE, DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM, FOOD_DATA, CAN_ALWAYS_USE } } = RUNTIME
+import * as cache from "../core/cache"
+const {
+    DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR,
+    HARVEST: { PLANT_LEVEL, COCOA_VALID_LOGS },
+    LIGHT: { FIRE_ITEM, LIGHT_BLOCK, SEEDTOBLOCK },
+    OFFHAND: {
+        ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR,
+        FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY,
+        ITEMBUTBLOCK, DOUBLE_SNEAK_WINDOW_MOBILE, DOUBLE_SNEAK_WINDOW_CONSOLE,
+        DOUBLE_SNEAK_WINDOW_DEFAULT, DISALLOWED_ITEM, FOOD_DATA, CAN_ALWAYS_USE
+    }
+} = RUNTIME
 
-/**
- * @typedef {{ lastSneakTick: number, wasSneaking: boolean }} SneakState
- * @type {Map<string, SneakState>}
- */
-const sneakState = new Map()
-export const offhand_playerSpawn = (data) => data.initialSpawn && _initPlayer(data.player)
-export const offhand_playerLeave = (data) => sneakState.delete(data.playerId)
+type SneakState = { lastSneakTick: number, wasSneaking: boolean }
+
+const sneakState = new Map() as Map<string, SneakState>
+export const offhand_playerSpawn = (data: PlayerSpawnAfterEvent) => data.initialSpawn && _initPlayer(data.player)
+export const offhand_playerLeave = (data: PlayerLeaveAfterEvent) => sneakState.delete(data.playerId)
 system.run(() => { for (const player of world.getAllPlayers()) _initPlayer(player) })
 
-/**@param {Player} player*/
-function _initPlayer(player) {
+function _initPlayer(player: Player) {
     const { id } = player
     if (sneakState.has(id)) return
     sneakState.set(id, { lastSneakTick: -999, wasSneaking: false })
 }
 
-const sneakWindow = Object.freeze({
-    Mobile: DOUBLE_SNEAK_WINDOW_MOBILE,
-    Console: DOUBLE_SNEAK_WINDOW_CONSOLE,
-    Desktop: DOUBLE_SNEAK_WINDOW_DEFAULT
-})
+const sneakWindow = {
+    [PlatformType.Mobile]: DOUBLE_SNEAK_WINDOW_MOBILE as number,
+    [PlatformType.Console]: DOUBLE_SNEAK_WINDOW_CONSOLE as number,
+    [PlatformType.Desktop]: DOUBLE_SNEAK_WINDOW_DEFAULT as number
+} as const
 
-/**@param {Player} player@param {number} now*/
-export function offhand_player(player, now) {
+export function offhand_player(player: Player, now: number) {
     const { id, isSneaking } = player
     if (!sneakState.has(id)) _initPlayer(player)
 
-    const state = sneakState.get(id)
-    const window = sneakWindow[player.clientSystemInfo.platformType || 'Desktop']
+    const state = sneakState.get(id)!
 
-    const justReleased = state.wasSneaking && !isSneaking
+    const plCache = cache.getPlayer(player)
+    const platform = (plCache as cache.PlayerData).platformType
+    const window = sneakWindow[platform]
+
+    const justReleased = state?.wasSneaking && !isSneaking
     if (justReleased) {
         const gap = now - state.lastSneakTick
         if (gap <= window) {
@@ -46,14 +56,13 @@ export function offhand_player(player, now) {
     state.wasSneaking = isSneaking
 }
 
-/** @param {ItemStack | undefined} item @returns {boolean} */
-function hasUnsafeProperties(item) {
+function hasUnsafeProperties(item: ItemStack) {
     if (!item) return false
     if (item.nameTag) return true
     if (item.getLore().length > 0) return true
 
     const enchants = item.getComponent(ItemComponentTypes.Enchantable)
-    if (enchants?.getEnchantments().length > 0) return true
+    if (enchants && enchants.getEnchantments().length > 0) return true
 
     // nvm i found the way!
     // const durability = item.getComponent(ItemComponentTypes.Durability)
@@ -72,13 +81,12 @@ function hasUnsafeProperties(item) {
     return false
 }
 
-/** @param {Player} player */
-function swapItem(player) {
-    const equippable = player.getComponent(EntityComponentTypes.Equippable)
+function swapItem(player: Player) {
+    const equippable = getEqu(player)!
     const mainhand = equippable.getEquipment(EquipmentSlot.Mainhand)
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
-    if (hasUnsafeProperties(mainhand))
+    if (mainhand && hasUnsafeProperties(mainhand))
         return player.sendMessage("§7Couldn't transfer item with nametag/enchantment/nbt")
 
     // const savedEnchants = mainhand?.getComponent(ItemComponentTypes.Enchantable)?.getEnchantments() ?? []
@@ -141,10 +149,9 @@ const SUS_STEW = Object.freeze({
 
 const susCow = new Map()
 
-/**@param {PlayerInteractWithEntityBeforeEvent} event*/
-export const offhand_playerInteractWithEntity = (event) => {
+export const offhand_playerInteractWithEntity = (event: PlayerInteractWithEntityBeforeEvent) => {
     const { player, target, itemStack } = event
-    const equippable = player.getComponent(EntityComponentTypes.Equippable)
+    const equippable = getEqu(player)!
     const offhand = equippable.getEquipment(EquipmentSlot.Offhand)
 
     if (
@@ -154,14 +161,14 @@ export const offhand_playerInteractWithEntity = (event) => {
         event.cancel = true
         system.run(() => {
             player.runCommand("replaceitem entity @s slot.weapon.offhand 0 milk_bucket")
-            player.playSound("mob.cow.milk", { volume: 0.5, location: player.location })
+            playSound(player.dimension, player.location, { VOLUME: 0.5, PITCH: 1, ID: "mob.cow.milk" })
         })
         return
     }
     // maybe later -aitji
 }
 
-function canPlaceTorchOn(block) {
+function canPlaceTorchOn(block: Block) {
     if (block.isAir) return true
     // if (block.isLiquid) return false // block is alr NOT liquid
     if (block.permutation.matches(LIGHT)) return true
@@ -171,9 +178,8 @@ function canPlaceTorchOn(block) {
     return false
 }
 
-const delay = {}
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
-export const offhand_playerInteractWithBlock = (data) => {
+const delay: Record<string, number> = {}
+export const offhand_playerInteractWithBlock = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, isFirstEvent, block, blockFace, itemStack } = data
 
     if (!isFirstEvent) {
@@ -182,11 +188,11 @@ export const offhand_playerInteractWithBlock = (data) => {
     }
     delay[player.id] = system.currentTick + BLOCK_INTERACTION_DELAY
 
-    const creative = player.matches({ gameMode: GameMode.Creative })
+    const creative = cache.getPlayer(player, 'gameMode') === GameMode.Creative
     if (itemStack) {
         const typeId = itemStack?.typeId ?? ''
         const food = FOOD_DATA[typeId] // vanilla return empty in food component -.-
-        const hunger = player.getComponent(EntityComponentTypes.Hunger)
+        const hunger = player.getComponent(EntityComponentTypes.Hunger)!
 
         // disallow main hand always use item
         if (typeId) {
@@ -225,6 +231,7 @@ export const offhand_playerInteractWithBlock = (data) => {
             )
         ) return
 
+        if (ITEMBUTBLOCK[typeId] === true) return
         try { return !(itemStack && BlockPermutation.resolve(itemStack?.typeId) !== undefined) }
         catch { }
     }
@@ -233,13 +240,43 @@ export const offhand_playerInteractWithBlock = (data) => {
     torchHandle(data, creative)
     fireHandle(data)
     seedsHandle(data)
+    blockHandle(data)
 }
 
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
-const seedsHandle = (data) => {
+const blockHandle = (data: PlayerInteractWithBlockBeforeEvent) => { // still demo process
+    const { player, block, blockFace, itemStack } = data
+    const dimension = player.dimension as any
+    const equ = getEqu(player)!
+    const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
+    if (!offhandItem) return
+
+    const typeId = offhandItem?.typeId
+    if (SEEDTOBLOCK[typeId]) return // seeds
+    if (TORCH_ID[typeId]) return // torchHandle
+    let pass = false, permutation: BlockPermutation
+    try {
+        permutation = BlockPermutation.resolve(typeId)
+        pass = permutation !== undefined
+    } catch { pass = false }
+    if (!pass) return
+
+    const target = block[BLOCKFACE_TO_DIR[blockFace]](1)!
+    const distance = getDistance(sumLoc(target.location, { x: 0.5, y: 0, z: 0.5 }), player.location)
+
+    if (distance <= 0.62) return
+    system.run(() => {
+        dimension.getBlock(target.location).setPermutation(permutation)
+        const current = equ.getEquipment(EquipmentSlot.Offhand)
+        if (!current) return
+        if (current.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+        if (cache.getPlayer(player, 'gameMode') !== GameMode.Creative) player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${typeId} ${offhandItem.amount - 1}`)
+    })
+}
+
+const seedsHandle = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, block, blockFace, itemStack } = data
 
-    const equ = getEqu(player)
+    const equ = getEqu(player)!
     const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
     if (!offhandItem) return
 
@@ -276,7 +313,7 @@ const seedsHandle = (data) => {
     const above = block.above(1)
     if (!above || !(above.isAir || above.permutation.matches(LIGHT_BLOCK))) return
 
-    const [blockTypeId] = plantEntry
+    const [blockTypeId] = plantEntry!
     data.cancel = true
     system.run(() => {
         above.setType(blockTypeId)
@@ -287,21 +324,19 @@ const seedsHandle = (data) => {
     })
 }
 
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
-const fireHandle = (data) => {
+const fireHandle = (data: PlayerInteractWithBlockBeforeEvent) => {
     const { player, block, blockFace, itemStack } = data
     const tick = system.currentTick
 
-    /** @type {Block?} */
-    let above // cache above block
-    const isLight = (b) => b.permutation?.matches(LIGHT_BLOCK) ?? false
+    let above: Block | undefined // cache above block
+    const isLight = (b?: Block) => b?.permutation?.matches(LIGHT_BLOCK) ?? false
     const isAboveLight = () => { // don't perm check if unnesscery
         above = block.above(1)
         return isLight(above)
     }
 
-    const equ = getEqu(player)
-    const cache = block[BLOCKFACE_TO_DIR[blockFace]](1)
+    const equ = getEqu(player)!
+    const cache = block[BLOCKFACE_TO_DIR[blockFace]](1)!
 
     // fix vanilla consumed wired durability
     if (
@@ -332,14 +367,11 @@ const fireHandle = (data) => {
                         const dmg = offhandItem.getComponent(ItemComponentTypes.Durability)?.damage
                         player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount} ${dmg ?? 0}`)
                     }
-                    dim.playSound(fireSound.ID, cache.center(), {
-                        pitch: checkRandom(fireSound.PITCH),
-                        volume: checkRandom(fireSound.VOLUME)
-                    })
+                    playSound(dim, cache.center(), fireSound)
                 }
             }
             try {
-                const below = cache.below(1)
+                const below = cache.below(1)!
                 if (
                     below.isSolid &&
                     (cache.permutation.matches('minecraft:air') || cache.permutation.matches(LIGHT_BLOCK))
@@ -347,83 +379,91 @@ const fireHandle = (data) => {
                     cache.setType('minecraft:fire')
                     done()
                 }
-            } catch (e) { if (DEBUG) world.sendMessage(`[offhand.js] fire ${e}`) }
+            } catch (e) { if (DEBUG) world.sendMessage(`[offhand] fire ${e}`) }
         })
     }
 }
 
-/**@param {PlayerInteractWithBlockBeforeEvent} data*/
-const torchHandle = (data, creative) => {
+const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean) => {
     const { player, block, blockFace, itemStack } = data
 
-    const equ = player.getComponent(EntityComponentTypes.Equippable)
+    const equ = getEqu(player)!
     const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
-    const mainhandItem = equ.getEquipment(EquipmentSlot.Mainhand)
+
+    if (!offhandItem) return
 
     const reduceItem = () => {
         try {
-            player.dimension.playSound(PLACE_SOUND.ID, block.center(), {
-                volume: checkRandom(PLACE_SOUND.VOLUME),
-                pitch: checkRandom(PLACE_SOUND.PITCH)
-            })
+            playSound(player.dimension, block.center(), PLACE_SOUND)
 
             if (creative) return
-            if (offhandItem.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
+            if (offhandItem && offhandItem.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)
             else player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount - 1}`)
         } catch (e) { if (DEBUG) console.warn('[OFFHAND] unknown case:', e) }
     }
 
-    const cache = FACE_TO_NEIGHBOUR[blockFace]
-    let blockId = TORCH_ID[offhandItem?.typeId]
+    let blockId = TORCH_ID[offhandItem.typeId] as Boolean | string
     if (!blockId) return
-    if (blockId === true) blockId = offhandItem.typeId
+    if (blockId === true) blockId = offhandItem.typeId! as string
 
-    const mainhandIsBlock = (() => {
-        const typeId = mainhandItem?.typeId ?? ''
-        if (ITEMBUTBLOCK[typeId] === true) return true
-        // TOO MANY edge case too handle, and mostly doesn't look great for ux
-        // const distance = getDistance(block.center(), player.location)
-        // if (distance < 1) return false
-
-        try { return mainhandItem && BlockPermutation.resolve(typeId) !== undefined }
-        catch { return false }
-    })()
-    if (block && cache.typeId !== block.typeId && mainhandIsBlock) return
     if (block.isLiquid) return
 
     const isLightBlock = block.permutation.matches(LIGHT)
-    const isSolidOrLight = (block.isSolid || isLightBlock) && !isLightBlock
-    if (isSolidOrLight && NEED_SNEAK[block.typeId] && !player.isSneaking) return
+    const isSolid = block.isSolid && !isLightBlock
+
+    const isInteractive = isSolid && (
+        NEED_SNEAK[block.typeId] ||
+        block.typeId.endsWith('_door') ||
+        block.typeId.endsWith('_trapdoor') ||
+        block.typeId.endsWith('_fence_gate')
+    )
+    if (isInteractive && !player.isSneaking) return
 
     if (isLightBlock) {
         data.cancel = true
         return system.run(() => {
             reduceItem()
-            block.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', 'top'))
+            block.setPermutation(BlockPermutation.resolve(blockId as string).withState('torch_facing_direction', 'top'))
         })
     }
 
-    if (isSolidOrLight) {
-        if (CARRIED_CHEST.ENABLED && NEED_SNEAK[block.typeId] && player.isSneaking && block.getComponent("minecraft:inventory")?.container) return
-        data.cancel = true
-        const getNeighbour = cache
+    if (isSolid) {
+        if (
+            CARRIED_CHEST.ENABLED &&
+            NEED_SNEAK[block.typeId] &&
+            player.isSneaking &&
+            block.getComponent("minecraft:inventory")?.container
+        ) return
+
+        const getNeighbour = FACE_TO_NEIGHBOUR[blockFace]
         if (!getNeighbour) return
+
         const torchDir = FACE_TO_TORCH_DIR[blockFace] ?? 'top'
 
-        return system.run(() => {
-            const target = getNeighbour(block)
-            if (!target || !canPlaceTorchOn(target)) return
+        const target = getNeighbour(block)
+        if (!target || !canPlaceTorchOn(target)) return
+
+        data.cancel = true
+        system.run(() => {
             reduceItem()
-            target.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', torchDir))
+            target.setPermutation(
+                BlockPermutation
+                    .resolve(blockId as string)
+                    .withState('torch_facing_direction', torchDir)
+            )
         })
+        return
     }
 
+    // replaceable blocks
     const replace = ALLOW_REPLACE[block.typeId]
     if (replace === undefined) return
 
+    data.cancel = true
     system.run(() => {
         if (replace === false && !(block.below()?.isSolid)) return
-        if (canPlaceTorchOn(block)) block.setPermutation(BlockPermutation.resolve(blockId).withState('torch_facing_direction', 'top'))
+        if (!canPlaceTorchOn(block)) return
+        block.setPermutation(BlockPermutation.resolve(blockId as string).withState('torch_facing_direction', 'top'))
         reduceItem()
     })
 }
