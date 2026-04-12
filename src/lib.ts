@@ -1,4 +1,4 @@
-import { Block, BlockInventoryComponent, EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, EquipmentSlot, GameMode, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, Vector3, world } from "@minecraft/server"
+import { Block, BlockInventoryComponent, Dimension, EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, EquipmentSlot, GameMode, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, Vector3, world } from "@minecraft/server"
 // lazy import ---
 import { RUNTIME as E } from "./_store"
 import * as H from "./core/helper"
@@ -137,6 +137,15 @@ export const setEqu = (entity: Player | Entity, itemStack: ItemStack | undefined
         if (DEBUG) world.sendMessage(`entity=${typeof entity}, itemStack=${typeof itemStack}, slot=${typeof slot}`)
         return false
     }
+}
+export const playSound = (dimension: Dimension, location: Vector3, sounds: { ID: string, VOLUME: number | number[], PITCH: number | number[] }) => {
+    const tryPlay = () => dimension.playSound(sounds.ID, location, {
+        volume: checkRandom(sounds.VOLUME),
+        pitch: checkRandom(sounds.PITCH)
+    })
+
+    try { tryPlay() }
+    catch { system.run(() => tryPlay()) }
 }
 
 // debug tool lib

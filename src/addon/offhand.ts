@@ -6,7 +6,7 @@ import * as cache from "../core/cache"
 const {
     DEBUG, CARRIED_CHEST, BLOCKFACE_TO_DIR,
     HARVEST: { PLANT_LEVEL, COCOA_VALID_LOGS },
-    LIGHT: { FIRE_ITEM, LIGHT_BLOCK },
+    LIGHT: { FIRE_ITEM, LIGHT_BLOCK, SEEDTOBLOCK },
     OFFHAND: {
         ENABLED, ALLOW_REPLACE, NEED_SNEAK, FACE_TO_TORCH_DIR,
         FACE_TO_NEIGHBOUR, TORCH_ID, LIGHT, PLACE_SOUND, BLOCK_INTERACTION_DELAY,
@@ -251,6 +251,8 @@ const blockHandle = (data: PlayerInteractWithBlockBeforeEvent) => { // still dem
     if (!offhandItem) return
 
     const typeId = offhandItem?.typeId
+    if (SEEDTOBLOCK[typeId]) return // seeds
+    if (TORCH_ID[typeId]) return // torchHandle
     let pass = false, permutation: BlockPermutation
     try {
         permutation = BlockPermutation.resolve(typeId)
@@ -390,7 +392,6 @@ const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean
 
     const equ = getEqu(player)!
     const offhandItem = equ.getEquipment(EquipmentSlot.Offhand)
-    const mainhandItem = equ.getEquipment(EquipmentSlot.Mainhand)
 
     if (!offhandItem) return
 
@@ -407,18 +408,22 @@ const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean
         } catch (e) { if (DEBUG) console.warn('[OFFHAND] unknown case:', e) }
     }
 
-    const cache = FACE_TO_NEIGHBOUR[blockFace](block)
-
     let blockId = TORCH_ID[offhandItem.typeId] as Boolean | string
     if (!blockId) return
     if (blockId === true) blockId = offhandItem.typeId! as string
 
-    if (block && cache.typeId !== block.typeId) return
     if (block.isLiquid) return
 
     const isLightBlock = block.permutation.matches(LIGHT)
-    const isSolidOrLight = (block.isSolid || isLightBlock) && !isLightBlock
-    if (isSolidOrLight && NEED_SNEAK[block.typeId] && !player.isSneaking) return
+    const isSolid = block.isSolid && !isLightBlock
+
+    const isInteractive = isSolid && (
+        NEED_SNEAK[block.typeId] ||
+        block.typeId.endsWith('_door') ||
+        block.typeId.endsWith('_trapdoor') ||
+        block.typeId.endsWith('_fence_gate')
+    )
+    if (isInteractive && !player.isSneaking) return
 
     if (isLightBlock) {
         data.cancel = true
@@ -428,7 +433,7 @@ const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean
         })
     }
 
-    if (isSolidOrLight) {
+    if (isSolid) {
         if (
             CARRIED_CHEST.ENABLED &&
             NEED_SNEAK[block.typeId] &&
@@ -436,33 +441,35 @@ const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean
             block.getComponent("minecraft:inventory")?.container
         ) return
 
-        data.cancel = true
-
         const getNeighbour = FACE_TO_NEIGHBOUR[blockFace]
         if (!getNeighbour) return
 
         const torchDir = FACE_TO_TORCH_DIR[blockFace] ?? 'top'
 
+        const target = getNeighbour(block)
+        if (!target || !canPlaceTorchOn(target)) return
+
+        data.cancel = true
         system.run(() => {
-            const target = getNeighbour(block)
-            if (!target || !canPlaceTorchOn(target)) return
-
             reduceItem()
-
             target.setPermutation(
                 BlockPermutation
                     .resolve(blockId as string)
                     .withState('torch_facing_direction', torchDir)
             )
         })
+        return
     }
 
+    // replaceable blocks
     const replace = ALLOW_REPLACE[block.typeId]
     if (replace === undefined) return
 
+    data.cancel = true
     system.run(() => {
         if (replace === false && !(block.below()?.isSolid)) return
-        if (canPlaceTorchOn(block)) block.setPermutation(BlockPermutation.resolve(blockId as string).withState('torch_facing_direction', 'top'))
+        if (!canPlaceTorchOn(block)) return
+        block.setPermutation(BlockPermutation.resolve(blockId as string).withState('torch_facing_direction', 'top'))
         reduceItem()
     })
 }
