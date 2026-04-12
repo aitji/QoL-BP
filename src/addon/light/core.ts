@@ -1,5 +1,5 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, EntityComponentTypes, Player, PlayerInteractWithBlockBeforeEvent, ItemComponentTypes, EntityEquippableComponent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity, ItemStack, EntityRemoveAfterEvent, PlayerPlaceBlockAfterEvent } from "@minecraft/server"
-import { applyItemDamage, checkRandom, clamp, getEqu, reduceItem, roundLoc, RUNTIME, setEqu, sumLoc } from "../../lib"
+import { applyItemDamage, checkRandom, clamp, getEqu, playSound, reduceItem, roundLoc, RUNTIME, setEqu, sumLoc } from "../../lib"
 
 const {
     DEBUG,
@@ -60,7 +60,7 @@ const getItemLight = (id: string | undefined, en: Player | Entity, tick: number)
         if (!found.inLiquid && tick % FAIL_SOUND_INTERVAL === 0) {
             const { location: loc, dimension: dim } = en
             dim.spawnParticle(FAIL_PARTICLE, sumLoc(loc, PARTICLE_OFFSET))
-            dim.playSound(SOUND_FAIL.ID, loc, { pitch: checkRandom(SOUND_FAIL.PITCH), volume: checkRandom(SOUND_FAIL.VOLUME) })
+            playSound(dim, loc, SOUND_FAIL)
         }
         return 0
     }

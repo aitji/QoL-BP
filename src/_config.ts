@@ -189,7 +189,7 @@ export const SETTINGS = Object.freeze({
         SOUND_FILL_BONEMEAL: Object.freeze({
             ID: "item.bone_meal.use",
             VOLUME: 2.0,
-            PITCH: Object.freeze([0.9, 1.1])
+            PITCH: [0.9, 1.1]
         }),
         SOUND_READY: Object.freeze({
             ID: "block.composter.ready",

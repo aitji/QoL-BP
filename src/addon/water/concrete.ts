@@ -1,5 +1,5 @@
 import { EntityComponentTypes, Player, world, ItemStack, system, EntitySpawnAfterEvent, EntityRemoveAfterEvent } from "@minecraft/server"
-import { checkRandom, RUNTIME } from "../../lib"
+import { checkRandom, playSound, RUNTIME } from "../../lib"
 const {
     DEBUG,
     SLICE_PREFIX,
@@ -87,10 +87,7 @@ export const powder_pending = () => {
             )
 
             dimension.spawnParticle(DONE_PARTICLE, concrete.location)
-            dimension.playSound(DONE_SOUND.ID, concrete.location, {
-                pitch: checkRandom(DONE_SOUND.PITCH),
-                volume: checkRandom(DONE_SOUND.VOLUME)
-            })
+            playSound(dimension, concrete.location, DONE_SOUND)
 
             if (KEEP_VELOCITY) concrete.applyImpulse({ x: velocity.x, y: velocity.y, z: velocity.z })
             try { entity.remove() }

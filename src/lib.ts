@@ -44,7 +44,7 @@ export const applyItemDamage = (player: Player, item: ItemStack) => { // only fo
     const newDurability = dur.damage + 1
     if (newDurability >= dur.maxDurability) {
         item = new ItemStack('minecraft:air', 1)
-        player.dimension.playSound('random.break', player.location, { pitch: 0.9 })
+        playSound(player.dimension, player.location, { ID: "random.break", VOLUME: 1, PITCH: 0.9 })
         changed = true
     } else {
         dur.damage = newDurability

@@ -1,5 +1,5 @@
 import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent, Block } from "@minecraft/server"
-import { checkRandom, RUNTIME, cache, reName, getInv, getEqu } from "../lib"
+import { checkRandom, RUNTIME, cache, reName, getInv, getEqu, playSound } from "../lib"
 const {
   DEBUG, SLICE_PREFIX,
   CARRIED_CHEST: {
@@ -214,7 +214,7 @@ export const chest_playerInteractWithBlock = (data: PlayerInteractWithBlockBefor
       player.setDynamicProperty('qof:chest.storage', JSON.stringify({ selectedSlotIndex: (player.selectedSlotIndex ?? 0), blockTypeId }))
       player.addTag(CARRY_TAG)
       setJump(player, false)
-      player.dimension.playSound(SOUND_PICK_UP.ID, player.location, { volume: checkRandom(SOUND_PICK_UP.VOLUME), pitch: checkRandom(SOUND_PICK_UP.PITCH) })
+      playSound(player.dimension, player.location, SOUND_PICK_UP)
       block.setType("minecraft:air")
 
       if (!findInv(player)) {

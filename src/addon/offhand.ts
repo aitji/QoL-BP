@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, Difficulty, Dimension, Direction, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, LiquidType, PlatformType, Player, PlayerInteractWithBlockBeforeEvent, PlayerInteractWithEntityBeforeEvent, PlayerLeaveAfterEvent, PlayerSpawnAfterEvent, system, world } from "@minecraft/server"
-import { applyItemDamage, checkRandom, getDistance, getEqu, RUNTIME, sumLoc } from "../lib"
+import { applyItemDamage, checkRandom, getDistance, getEqu, playSound, RUNTIME, sumLoc } from "../lib"
 import { suppressLight } from "./light/core"
 import { resolveCocoaPermutation } from "./harvest"
 import * as cache from "../core/cache"
@@ -161,7 +161,7 @@ export const offhand_playerInteractWithEntity = (event: PlayerInteractWithEntity
         event.cancel = true
         system.run(() => {
             player.runCommand("replaceitem entity @s slot.weapon.offhand 0 milk_bucket")
-            player.playSound("mob.cow.milk", { volume: 0.5, location: player.location })
+            playSound(player.dimension, player.location, { VOLUME: 0.5, PITCH: 1, ID: "mob.cow.milk" })
         })
         return
     }
@@ -367,10 +367,7 @@ const fireHandle = (data: PlayerInteractWithBlockBeforeEvent) => {
                         const dmg = offhandItem.getComponent(ItemComponentTypes.Durability)?.damage
                         player.runCommand(`replaceitem entity @s slot.weapon.offhand 0 ${offhandItem.typeId} ${offhandItem.amount} ${dmg ?? 0}`)
                     }
-                    dim.playSound(fireSound.ID, cache.center(), {
-                        pitch: checkRandom(fireSound.PITCH),
-                        volume: checkRandom(fireSound.VOLUME)
-                    })
+                    playSound(dim, cache.center(), fireSound)
                 }
             }
             try {
@@ -397,10 +394,7 @@ const torchHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: boolean
 
     const reduceItem = () => {
         try {
-            player.dimension.playSound(PLACE_SOUND.ID, block.center(), {
-                volume: checkRandom(PLACE_SOUND.VOLUME),
-                pitch: checkRandom(PLACE_SOUND.PITCH)
-            })
+            playSound(player.dimension, block.center(), PLACE_SOUND)
 
             if (creative) return
             if (offhandItem && offhandItem.amount <= 1) equ.setEquipment(EquipmentSlot.Offhand, undefined)

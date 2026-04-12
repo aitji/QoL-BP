@@ -1,5 +1,5 @@
 import { system, BlockPermutation, EntityComponentTypes, EquipmentSlot, GameMode, PlayerInteractWithBlockBeforeEvent, world, Direction } from "@minecraft/server"
-import { checkRandom, reduceItem, RUNTIME, cache, getEqu } from "../lib"
+import { checkRandom, reduceItem, RUNTIME, cache, getEqu, playSound } from "../lib"
 const { DEBUG, REPAIR_ANVIL: { ITEM_TYPEID, REPAIRABLE_ANVIL, REPAIR_SOUND, REPAIR_HELD_DELAY } } = RUNTIME
 
 const delay: Record<string, number> = {}
@@ -64,17 +64,16 @@ export const anvil_playerInteractWithBlock = (data: PlayerInteractWithBlockBefor
             if (!anvilPerm) return
             block.setPermutation(anvilPerm)
 
-            const playSound = () => {
+            const _playSound = () => {
                 const center = block.center()
-                player.dimension.playSound(REPAIR_SOUND.ID, center, {
-                    volume: checkRandom(REPAIR_SOUND.VOLUME),
-                    pitch: checkRandom(REPAIR_SOUND.PITCH)
-                })
-                player.dimension.spawnParticle("minecraft:wind_explosion_emitter", center)
+                const dim = player.dimension
+
+                playSound(dim, center, REPAIR_SOUND)
+                dim.spawnParticle("minecraft:wind_explosion_emitter", center)
             }
 
             if (cache.getPlayer(player, 'gameMode') === GameMode.Creative)
-                return playSound()
+                return _playSound()
 
             // reduce item
             const equ = getEqu(player)!
@@ -91,14 +90,14 @@ export const anvil_playerInteractWithBlock = (data: PlayerInteractWithBlockBefor
                     // revert anvil
                     const oldPerm = getCache(currType, state)
                     if (oldPerm) block.setPermutation(oldPerm)
-                } else playSound()
+                } else _playSound()
                 return
             }
 
             // NOW: selectedSlotIndex === slot & currItem == itemStack
             try {
                 equ.setEquipment(EquipmentSlot.Mainhand, reduceItem(itemStack))
-                playSound()
+                _playSound()
             } catch (e) { if (DEBUG) console.warn('[ANVIL] unknown case:', e) }
         })
     }

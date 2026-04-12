@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockPermutation, Dimension, EntityComponentTypes, EquipmentSlot, GameMode, ItemComponentTypes, ItemStack, PistonActivateAfterEvent, PlayerInteractWithBlockBeforeEvent, PlayerPlaceBlockAfterEvent, system, Vector3, world } from "@minecraft/server"
-import { cache, checkRandom, clamp, getEqu, RUNTIME } from "../lib"
+import { cache, checkRandom, clamp, getEqu, playSound, RUNTIME } from "../lib"
 const {
     DEBUG, SLICE_PREFIX,
     COMPOSTER: {
@@ -32,7 +32,7 @@ system.run(() => {
         if (block && block.typeId === BLOCK_TYPEID && block.permutation.getState('composter_fill_level') === 7) {
             const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
             block.setPermutation(p)
-            playSound(dimension, SOUND_READY, loc)
+            playSound(dimension, loc, SOUND_READY)
         }
 
         // ---
@@ -43,7 +43,6 @@ system.run(() => {
     }
 })
 // helper
-const playSound = (dim: Dimension, sound: any, loc: Vector3) => dim.playSound(sound.ID, loc, { volume: checkRandom(sound.VOLUME), pitch: checkRandom(sound.PITCH) })
 const setLevel = (block: Block, level: number) => block.setPermutation(BlockPermutation.resolve(block.typeId).withState("composter_fill_level", clamp8(level)))
 const maybeFinish = (block: Block, dim: Dimension, loc: Vector3) => {
     // ---
@@ -58,7 +57,7 @@ const maybeFinish = (block: Block, dim: Dimension, loc: Vector3) => {
         if (curr.typeId === BLOCK_TYPEID && curr.permutation.getState('composter_fill_level') === 7) {
             const p = BlockPermutation.resolve(BLOCK_TYPEID).withState("composter_fill_level", 8)
             block.setPermutation(p)
-            playSound(dim, SOUND_READY, loc)
+            playSound(dim, loc, SOUND_READY)
         }
 
         // ---
@@ -91,13 +90,13 @@ export const composter_playerInteractWithBlock = (data: PlayerInteractWithBlockB
         const success = Math.random() <= chance
         const loc = block.center()
 
-        playSound(player.dimension, SOUND_FILL_BONEMEAL, loc)
+        playSound(player.dimension, loc, SOUND_FILL_BONEMEAL)
         if (success) {
-            playSound(player.dimension, SOUND_FILL_SUCCESS, loc)
+            playSound(player.dimension, loc, SOUND_FILL_SUCCESS)
             setLevel(block, state + 1)
             player.dimension.spawnParticle(PARTICLE_FILL_SUCCESS, loc)
             if (state === 6) maybeFinish(block, player.dimension, loc)
-        } else playSound(player.dimension, SOUND_FILL, loc)
+        } else playSound(player.dimension, loc, SOUND_FILL)
 
         if (cache.getPlayer(player, 'gameMode') === GameMode.Creative) return
 
@@ -265,12 +264,12 @@ export const composter_pending = (tick: number) => {
             }
         }
 
-        playSound(dimension, SOUND_FILL_BONEMEAL, loc)
+        playSound(dimension, loc, SOUND_FILL_BONEMEAL)
         if (success) {
-            playSound(dimension, SOUND_FILL_SUCCESS, loc)
+            playSound(dimension, loc, SOUND_FILL_SUCCESS)
             setLevel(block, state + 1)
             if (state === 6) maybeFinish(block, dimension, loc)
-        } else playSound(dimension, SOUND_FILL, loc)
+        } else playSound(dimension, loc, SOUND_FILL)
     }
 
     applyEarly()
