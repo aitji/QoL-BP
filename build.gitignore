@@ -6,8 +6,10 @@ dist/
 out/
 *.js.map
 
-# typescript cache
+# typescript
 *.tsbuildinfo
+tsconfig.json
+tsconfig.build.json
 
 # minecraft
 # *.mc*
