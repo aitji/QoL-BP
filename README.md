@@ -88,7 +88,7 @@ Download the `QoF` addon from one of these sources:
 ### Double Door
 
 <div align="center">
-  <img src=".github/img/v1.4.0/doubledoor.gif" alt="Double door opening both sides simultaneously" width="1080">
+  <img src=".github/img/showcase/doubledoor.gif" alt="Double door opening both sides simultaneously" width="1080">
 </div>
 
 Interacting with one door automatically opens or closes the adjacent door at the same time. Works with all door types, keeping paired doors in sync without any extra input.
