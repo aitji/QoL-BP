@@ -19,6 +19,8 @@ npm-debug.log*
 .env.*
 * copy*
 *test*
+light_damping.json
+light_block_dev.json
 
 # builder
 recipes/**/gen.js
