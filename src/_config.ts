@@ -170,7 +170,7 @@ export const SETTINGS = Object.freeze({
         BATCH_SIZE: 12 // max entity that will get process
     }),
     WATER_CAULDRON: Object.freeze({
-
+        ENABLED: false,
     }),
     COMPOSTER: Object.freeze({
         ENABLED: true,

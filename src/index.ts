@@ -77,6 +77,7 @@ world.beforeEvents.playerInteractWithBlock.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithBlock(data)
     if (RUNTIME.DOUBLE_DOOR.ENABLED) door.door_playerInteractWithBlock(data)
     if (RUNTIME.WAXED_OF.ENABLED) waxedOff.waxedOff_playerInteractWithBlock(data)
+    if (RUNTIME.WATER_CAULDRON.ENABLED) cauldron.cauldron_playerInteractWithBlock(data)
 })
 world.beforeEvents.playerInteractWithEntity.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerInteractWithEntity(data)

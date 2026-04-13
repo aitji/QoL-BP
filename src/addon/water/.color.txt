@@ -1,0 +1,51 @@
+[Scripting][inform]-{item typeId}
+[Scripting][inform]-{LiqType}: {LiqLvl} RGBA={Red},{Green},{Blue},{Alpha}
+
+
+[Scripting][inform]-minecraft:white_dye
+[Scripting][inform]-Water: 6 RGBA=0.9411765336990356,0.9411765336990356,0.9411765336990356,1
+
+[Scripting][inform]-minecraft:light_gray_dye
+[Scripting][inform]-Water: 6 RGBA=0.615686297416687,0.615686297416687,0.5921568870544434,1
+
+[Scripting][inform]-minecraft:gray_dye
+[Scripting][inform]-Water: 6 RGBA=0.27843138575553894,0.30980393290519714,0.32156863808631897,1
+
+[Scripting][inform]-minecraft:black_dye
+[Scripting][inform]-Water: 6 RGBA=0.11372549831867218,0.11372549831867218,0.12941177189350128,1
+
+[Scripting][inform]-minecraft:brown_dye
+[Scripting][inform]-Water: 6 RGBA=0.5137255191802979,0.3294117748737335,0.19607844948768616,1
+
+[Scripting][inform]-minecraft:red_dye
+[Scripting][inform]-Water: 6 RGBA=0.6901960968971252,0.18039216101169586,0.14901961386203766,1
+
+[Scripting][inform]-minecraft:orange_dye
+[Scripting][inform]-Water: 6 RGBA=0.9764706492424011,0.501960813999176,0.11372549831867218,1
+
+[Scripting][inform]-minecraft:yellow_dye
+[Scripting][inform]-Water: 6 RGBA=0.9960784912109375,0.847058892250061,0.2392157018184662,1
+
+[Scripting][inform]-minecraft:lime_dye
+[Scripting][inform]-Water: 6 RGBA=0.501960813999176,0.7803922295570374,0.12156863510608673,1
+
+[Scripting][inform]-minecraft:green_dye
+[Scripting][inform]-Water: 6 RGBA=0.3686274588108063,0.4862745404243469,0.08627451211214066,1
+
+[Scripting][inform]-minecraft:cyan_dye
+[Scripting][inform]-Water: 6 RGBA=0.08627451211214066,0.6117647290229797,0.6117647290229797,1
+
+[Scripting][inform]-minecraft:light_blue_dye
+[Scripting][inform]-Water: 6 RGBA=0.22745099663734436,0.7019608020782471,0.8549020290374756,1
+
+[Scripting][inform]-minecraft:blue_dye
+[Scripting][inform]-Water: 6 RGBA=0.2352941334247589,0.2666666805744171,0.6666666865348816,1
+
+[Scripting][inform]-minecraft:pink_dye
+[Scripting][inform]-Water: 6 RGBA=0.9529412388801575,0.545098066329956,0.6666666865348816,1
+
+[Scripting][inform]-minecraft:purple_dye
+[Scripting][inform]-Water: 6 RGBA=0.5372549295425415,0.19607844948768616,0.7215686440467834,1
+
+[Scripting][inform]-minecraft:magenta_dye
+[Scripting][inform]-Water: 6 RGBA=0.7803922295570374,0.30588236451148987,0.7411764860153198,1

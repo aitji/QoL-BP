@@ -17,6 +17,7 @@ function buildRuntime() {
     const A = S.REPAIR_ANVIL
     const W = S.WATER_CONCRETE
     const C = S.COMPOSTER
+    const WC = S.WATER_CAULDRON
     const CH = S.CARRIED_CHEST
     const OH = S.OFFHAND
     const CR = S.HARVEST
@@ -103,6 +104,10 @@ function buildRuntime() {
             HOPPER_INTERVAL_TICK: C.HOPPER_INTERVAL_TICK,
             // VANILA_COMPOSTE: C.VANILA_COMPOSTE, // didn't use anymore
             ITEMS: C.ITEMS,
+        }),
+
+        WATER_CAULDRON: Object.freeze({
+            ENABLED: g("qof:WATER_CAULDRON.ENABLED", WC.ENABLED),
         }),
 
         CARRIED_CHEST: Object.freeze({
