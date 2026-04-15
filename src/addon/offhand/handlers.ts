@@ -289,11 +289,11 @@ export const blockHandle = (data: PlayerInteractWithBlockBeforeEvent, creative: 
 
         // vanilla: can't place inside own hitbox
         if (getDistance(sumLoc(target.location, { x: 0.5, y: 0, z: 0.5 }), player.location) <= 0.62) return
-        if (DEBUG) {
+        /*if (DEBUG) {
             world.sendMessage(`${target.location.x.toFixed(2)} [${upOn(target.location.x)}] === ${player.location.x.toFixed(2)} [${upOn(player.location.x)}]`)
             world.sendMessage(`${target.location.y.toFixed(2)} [${upOn(target.location.y)}] === ${(player.location.y + 1).toFixed(2)} [${upOn(player.location.y + 1)}]`)
             world.sendMessage(`${target.location.z.toFixed(2)} [${upOn(target.location.z)}] === ${player.location.z.toFixed(2)} [${upOn(player.location.z)}]`)
-        }
+        }*/
         if (
             upOn(target.location.x) === upOn(player.location.x) &&
             target.location.y === player.location.y + 1 &&

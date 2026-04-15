@@ -22,9 +22,10 @@ import * as waxedOff from "./addon/waxedOff"
 
 // tick
 system.run(() => {
-    const { LIGHT, WATER_CONCRETE, CARRIED_CHEST, COMPOSTER } = RUNTIME
+    const { LIGHT, WATER_CONCRETE, CARRIED_CHEST, COMPOSTER, DEBUG } = RUNTIME
     system.runInterval(() => {
         const tick = system.currentTick
+        const players = cache.getCachedPlayers()
 
         if (LIGHT.ENABLED) {
             light.light_pending(tick)
@@ -34,14 +35,13 @@ system.run(() => {
         if (WATER_CONCRETE.ENABLED) concrete.powder_pending()
         if (COMPOSTER.ENABLED && COMPOSTER.WORK_WITH_HOPPER) composter.composter_pending(tick)
 
-        const players = world.getAllPlayers()
         for (const player of players) {
             if (LIGHT.ENABLED) light.light_player(player, tick)
             if (CARRIED_CHEST.ENABLED) chest.chest_player(player)
             offhand.offhand_player(player, tick)
         }
 
-        if (RUNTIME.DEBUG) debug.debug_pending()
+        if (DEBUG) debug.debug_pending()
     }, RUNTIME.INTERVAL_DELAY)
 })
 
@@ -87,9 +87,11 @@ world.afterEvents.entitySpawn.subscribe(data => {
 })
 world.afterEvents.playerSpawn.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerSpawn(data)
+    cache.player_track_start(data)
 })
 world.afterEvents.playerLeave.subscribe(data => {
     if (RUNTIME.OFFHAND.ENABLED) offhand.offhand_playerLeave(data)
+    cache.player_track_stop(data)
 })
 world.afterEvents.playerSpawn.subscribe(data => {
     const { player, initialSpawn } = data

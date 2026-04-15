@@ -49,15 +49,15 @@ const dimId = (b: Player | Entity | Block) => b.dimension.id.split(':')[1]
 const isLightable = (b: Block, liq: boolean) => b.isAir || (liq && b.isLiquid) || b.permutation.matches(LIGHT_BLOCK)
 const getItemLight = (id: string | undefined, en: Player | Entity, tick: number) => {
     if (!id) return 0
-    const found = light[id.split(':')[1]?.toLowerCase()]
-    if (!found) return 0
+    const lightData = light[id.split(':')[1]?.toLowerCase()]
+    if (!lightData) return 0
 
-    if (found.inLiquid !== undefined) {
+    if (lightData.inLiquid !== undefined) {
         const block = en.dimension.getBlock(roundLoc(en.location, 'floor'))?.above(1)
         const inLiquid = en.isSwimming ? en.isInWater : (block?.isLiquid || block?.isWaterlogged)
-        if (found.inLiquid === inLiquid) return found.light ?? 0
+        if (lightData.inLiquid === inLiquid) return lightData.light ?? 0
 
-        if (!found.inLiquid && tick % FAIL_SOUND_INTERVAL === 0) {
+        if (!lightData.inLiquid && tick % FAIL_SOUND_INTERVAL === 0) {
             const { location: loc, dimension: dim } = en
             dim.spawnParticle(FAIL_PARTICLE, sumLoc(loc, PARTICLE_OFFSET))
             playSound(dim, loc, SOUND_FAIL)
@@ -65,7 +65,7 @@ const getItemLight = (id: string | undefined, en: Player | Entity, tick: number)
         return 0
     }
 
-    return found.light ?? 0
+    return lightData.light ?? 0
 }
 
 type BlockKey = string

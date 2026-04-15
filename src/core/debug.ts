@@ -4,8 +4,16 @@ const { DEBUG, DISABLED_COMMANDFEEDBACK } = RUNTIME
 import * as cache from "./cache"
 
 // small helper
-let dyp: ScoreboardObjective
-const score = (k: string, v: number) => { try { dyp.setScore(k, v) } catch { dyp.addScore(k, v) } }
+let dyp: ScoreboardObjective | null = null
+const getDypObjective = () => {
+    if (dyp) return dyp
+    dyp = world.scoreboard.getObjective("dyp") || world.scoreboard.addObjective("dyp", "Dynamic Props")
+    return dyp
+}
+const score = (k: string, v: number) => {
+    const obj = getDypObjective()
+    try { obj.setScore(k, v) } catch { obj.addScore(k, v) }
+}
 
 type Players = {
     id: string
@@ -32,9 +40,9 @@ system.run(() => {
 })
 
 export const debug_pending = () => {
-    world.scoreboard.removeObjective("dyp")
-    dyp = world.scoreboard.addObjective("dyp", "Dynamic Props")
-    world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, { objective: dyp })
+    const obj = getDypObjective()
+    try { world.scoreboard.setObjectiveAtDisplaySlot(DisplaySlotId.Sidebar, { objective: obj }) }
+    catch { }
 
     const ids = world.getDynamicPropertyIds()
     const bytes = world.getDynamicPropertyTotalByteCount()

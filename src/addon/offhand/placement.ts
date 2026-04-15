@@ -7,6 +7,7 @@ const {
 
 const VANILLA_REPLACEABLE = new Set([
     'minecraft:tallgrass', 'minecraft:short_grass', 'minecraft:fern',
+    'minecraft:short_dry_grass', 'minecraft:tall_dry_grass',
     'minecraft:dead_bush', 'minecraft:snow_layer', 'minecraft:fire',
     'minecraft:soul_fire', 'minecraft:vine', 'minecraft:nether_sprouts',
     'minecraft:crimson_roots', 'minecraft:warped_roots', 'minecraft:seagrass',
