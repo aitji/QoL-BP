@@ -72,7 +72,7 @@ export const cauldron_playerInteractWithBlock = (data: PlayerInteractWithBlockBe
         const dye = getNearestDye(red, green, blue)
         if (DEBUG) console.log(`nearest dye: ${dye.color} §8~${dye.distance.toFixed(6)} §r§7(RGBA=${red.toFixed(2)},${green.toFixed(2)},${blue.toFixed(2)},${fluid.fluidColor.alpha})`)
 
-        bannerHandle(fluid, isWater, dye.color, player, block, itemStack, equ)
+        glassHandle(fluid, isWater, dye.color, player, block, itemStack, equ)
     })
 }
 
@@ -80,17 +80,30 @@ const reduceWaterState = (block: Block, fluid: BlockFluidContainerComponent) => 
     const { fillLevel } = fluid
     if (fillLevel <= 0) return
     block.setPermutation(BlockPermutation.resolve(block.typeId).withState('fill_level', fillLevel - 1))
-    playSound(block.dimension, block.center(), { ID: "cauldron.dyearmor", VOLUME: 0.1, PITCH: 1.0 })
+    playSound(block.dimension, block.center(), { ID: "cauldron.dyearmor", VOLUME: 1.0, PITCH: 1.0 })
 }
 
-const bannerHandle = (
+const glassHandle = (
     fluid: BlockFluidContainerComponent, isWater: boolean, nearDye: string,
     player: Player, block: Block, itemStack?: ItemStack, equ?: EntityEquippableComponent
 ) => {
-    if (!itemStack) return
-    if (itemStack.typeId !== 'minecraft:banner') return
-    if (isWater) return // vanilla: alr wash-able
-    return // idk yet, minecraft seem to handle it pretty good
+    if (!itemStack || !itemStack.typeId.includes('glass')) return
+
+    const id = itemStack.typeId
+    const isPane = id.includes('pane')
+    let resultId: string | null = null
+
+    if (isWater) {
+        const clean = isPane ? 'minecraft:glass_pane' : 'minecraft:glass'
+        if (id !== clean) resultId = clean
+    } else resultId = `minecraft:${nearDye}_stained_glass${isPane ? '_pane' : ''}`
+
+    if (resultId) equ?.setEquipment(
+        EquipmentSlot.Mainhand,
+        new ItemStack(resultId, itemStack.amount)
+    )
 
     reduceWaterState(block, fluid)
 }
+
+// todo: shulkers, banners?
