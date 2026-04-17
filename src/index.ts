@@ -9,7 +9,7 @@ import * as cache from "./core/cache"
 import * as light from "./addon/light/core"
 import * as light_patcher from "./addon/light/patcher"
 // water
-import * as concrete from "./addon/water/concrete"
+import * as concrete from "./addon/water/entity"
 import * as cauldron from "./addon/water/cauldron"
 
 import * as anvil from "./addon/anvil"
