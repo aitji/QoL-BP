@@ -28,3 +28,7 @@ Thumbs.db
 .vscode/
 .idea/
 node_modules/
+
+# python stuff
+.venv
+input/
