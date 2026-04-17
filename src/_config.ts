@@ -581,7 +581,7 @@ export const SETTINGS = Object.freeze({
             "minecraft:netherite_horse_armor",
             "minecraft:wolf_armor",
 
-            "minecraft:woode_spear",
+            "minecraft:wooden_spear",
             "minecraft:stone_spear",
             "minecraft:copper_spear",
             "minecraft:golden_spear",
