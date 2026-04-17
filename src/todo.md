@@ -1,5 +1,5 @@
 ## info
-this file is only for top priority todo, if something like refactor some code or simple todo put it in the file
+this file is only for top priority todo, if something like refactor some code or simple todo put it inline
 
 ## aitji
 - [x] (light-weight) dynamic light
@@ -24,17 +24,18 @@ this file is only for top priority todo, if something like refactor some code or
   - [ ] composter bug with hopper again -.-
   - [x] composter not work with piston
   - [x] (24-Mar-2026) piston is change state to air when extract it will del piston
-        ; (25-Mar-2026) still doesn't idea how to fix "cleanly" tho\
-        ; (26-Mar-2026) found problem! vanilla light block is pushable by piston (???) idk why they not [pop] it\
-        ; (27-Mar-2026) i found workaround, how? i create `qof:light_block` that have all vanilla components but it popped on piston moving\
-          \ trade off: it show error that it missing geometry because i use invaild geometry so it doesn't have a block but will inculde the resoure pack to fix that, if didn't install error just pop up once IF player enabled console gui log, great deal i take that
+        ; (25-Mar-2026) still no clue how to fix "cleanly" tho\
+        ; (25-Mar-2026) found problem! vanilla light block is pushable by piston (???) idk why they not [pop] it\
+        ; (26-Mar-2026) i found workaround, by create `qof:light_block` that have all vanilla components but make it popped on piston moving\
+          \ trade off: it show warning that it missing geometry because i use invaild geometry so it doesn't have a block textures but i will ship the resoure pack to fix that, if users didn't install pack and have warning GUIs enabled, warning will show once on world init
   - [x] player break block are showing light block particle ; after block become air it got replace to light block and minecraft decide to render it
 - [x] add changelog/*.md and github action bot pull file and update it
 - [x] picker is on vacation ; make everything config-able tmr(28 Mar 2026)
-- [ ] add more thing for wet concrete powders, e.g. cauldron?
+- [x] add more thing for wet concrete powders, e.g. cauldron?
+- [ ] add more config for new modules
 
 ### request/sugg
-  - [ ] hit chest to store item -MondayHP
+  - [rejected, good ux but bad vanilla feel] hit chest to store item -MondayHP
 
 ### concern about dyp
 
