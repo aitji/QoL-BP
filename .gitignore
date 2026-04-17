@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+scripts/
+out/
+*.js.map
+# ^ if you want [map] run tsc
+
+# typescript cache
+*.tsbuildinfo
+
+# minecraft
+*.mcpack
+*.mcaddon
+*.zip
+
+# dev
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.env
+.env.*
+* copy*
+*test*
+
+.vscode/
+.idea/
+node_modules/
