@@ -11,17 +11,19 @@
   - [Changelog](#changelog)
   - [Installation](#installation)
   - [Modules](#modules)
-    - [Double Door](#double-door)
     - [Dynamic Light](#dynamic-light)
     - [Anvil Repairing](#anvil-repairing)
       - [Full Repairing Loop](#full-repairing-loop)
+    - [Double Door](#double-door)
     - [Wet Concrete Powder](#wet-concrete-powder)
       - [Conversion In Action](#conversion-in-action)
+    - [Cauldron+](#cauldron)
     - [Composter+](#composter)
       - [Hopper Integration](#hopper-integration)
       - [Stew \& Soup Bowl Returning](#stew--soup-bowl-returning)
     - [Carrying Container](#carrying-container)
       - [Slowness and Double Chest](#slowness-and-double-chest)
+    - [Unwaxed Sign](#unwaxed-sign)
     - [Offhand](#offhand)
       - [Swap and Torch Placement](#swap-and-torch-placement)
     - [Harvest](#harvest)
@@ -50,7 +52,7 @@
 
 ## Changelog
 
-- QoF v1.5.0 `in development`
+- QoF [v1.5.0](https://github.com/aitji/QoF/releases/tag/v1.5.0)
   - `Pre-Releases` Qof [v1.4.1](https://github.com/aitji/QoF/releases/tag/v1.4.1)
 - QoF [v1.4.0](https://github.com/aitji/QoF/releases/tag/v1.4.0)
   - `Pre-Releases` Qof [v1.3.4](https://github.com/aitji/QoF/releases/tag/v1.3.4)
@@ -84,14 +86,6 @@ Download the `QoF` addon from one of these sources:
 > **Beta APIs must be enabled**, otherwise the pack will not function.
 
 ## Modules
-
-### Double Door
-
-<div align="center">
-  <img src=".github/img/showcase/doubledoor.gif" alt="Double door opening both sides simultaneously" width="1080">
-</div>
-
-Interacting with one door automatically opens or closes the adjacent door at the same time. Works with all door types, keeping paired doors in sync without any extra input.
 
 ### Dynamic Light
 
@@ -216,13 +210,14 @@ Held and dropped items emit light based on their type. The light smoothly fades 
   <summary><strong>Entities That Emit The Light</strong></summary>
   <div align="center">
 
-| Entity     | Light Level |
-| ---------- | ----------- |
-| Glow Squid | 10          |
-| Allay      | 10          |
-| Vex        | 10          |
-| Blaze      | 12          |
-| Warden     | 6           |
+| Entity      | Light Level |
+| ----------- | ----------- |
+| Blaze       | 12          |
+| Glow Squid  | 10          |
+| Allay       | 10          |
+| Vex         | 10          |
+| Magma Cubes | 9           |
+| Warden      | 6           |
 
 </div>
 </details>
@@ -261,6 +256,14 @@ Damaged Anvil  ->  Chipped Anvil  ->  Anvil
 
 </details>
 
+### Double Door
+
+<div align="center">
+  <img src=".github/img/showcase/doubledoor.gif" alt="Double door opening both sides simultaneously" width="1080">
+</div>
+
+Interacting with one door automatically opens or closes the adjacent door at the same time. Works with all door types, keeping paired doors in sync without any extra input.
+
 ### Wet Concrete Powder
 
 Concrete powder items automatically convert to concrete when they enter water. The conversion happens after a short delay that scales with the stack size, and the resulting concrete item inherits the original velocity.
@@ -283,6 +286,29 @@ where `BASE` and `MULTIPLIER` are configurable in pack settings.
 <img src=".github/img/showcase/powder-result.gif" alt="Top-down view: player throws concrete powder into water pool, allay nearby, powder converts to concrete" width="1080">
 
 > **alt-message** Top-down view centered on a water pool with an allay floating nearby emitting soft light. The player walks in from the bottom-center and throws concrete powder into the pool. After a short delay the powder converts, and the player picks up the resulting concrete and walks off.
+
+### Cauldron+
+
+> [!NOTE]
+> Sorry we didn't have a GIFs to show (yet)
+
+Cauldrons in Bedrock Edition now have expanded functionality with QoF (Quality of Feature)
+
+| Item                  | Dye                    | Clean                   |
+| --------------------- | ---------------------- | ----------------------- |
+| Carpet                | `#` Carpet             | White Carpet            |
+| Wool                  | `#` Wool               | White Wool              |
+| Concrete              | `#` Concrete           | White Concrete          |
+| Concrete Powder       | `#` Concrete Powder    | White Concrete Powder   |
+| Glass                 | `#` Stained Glass      | Glass                   |
+| Glass Pane            | `#` Stained Glass Pane | Glass Pane              |
+| Hardened Clay         | `#` Terracotta         | Hardened Clay           |
+| `#` Terracotta        | `#` Terracotta         | Hardened Clay           |
+| `#` Glazed Terracotta | `#` Glazed Terracotta  | White Glazed Terracotta |
+
+> Note
+> `#` represents any color\
+> Shulkers, banners, and bundles are not supported due to NBT limitations
 
 ### Composter+
 
@@ -459,6 +485,14 @@ Any block with a `minecraft:inventory` component can be picked up. Common exampl
 > `**` Copper chests currently have a bug in Minecraft vanilla where the oxidized state of copper affects the behavior of double chests
 
 </details>
+
+### Unwaxed Sign
+
+> [!NOTE]
+> Sorry we didn't have a GIFs to show (yet)
+
+Signs can now be unwaxed using an axe.
+Durability is consumed by default, but this can be configured in the in-game settings panel
 
 ### Offhand
 
@@ -733,6 +767,9 @@ Two of the same slab stacked vertically craft back into their corresponding full
 > **Note** If a block is not listed here, it may already have a vanilla recipe or may not yet be included in this version (26.10).
 
 </details>
+
+> [!NOTE]
+> This list may be `outdated`. You can find the most up-to-date information here: [https://github.com/aitji/QoF/wiki/Recipes](https://github.com/aitji/QoF/wiki/Recipes)
 
 ## Configuration References
 
