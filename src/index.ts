@@ -41,7 +41,7 @@ system.run(() => {
             offhand.offhand_player(player, tick)
 
             // cache update
-            if (tick % 1200) {
+            if (tick % 1200 === 0) {
                 cache.update(
                     "player", player.id,
                     { permissionLevel: player.playerPermissionLevel }

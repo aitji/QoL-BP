@@ -32,7 +32,8 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] add changelog/*.md and github action bot pull file and update it
 - [x] picker is on vacation ; make everything config-able tmr(28 Mar 2026)
 - [x] add more thing for wet concrete powders, e.g. cauldron?
-- [ ] add more config for new modules
+- [x] add more config for new modules
+- [ ] if player have full inventory, container addItem will fail silently
 
 ### request/sugg
   - [rejected, good ux but bad vanilla feel] hit chest to store item -MondayHP
