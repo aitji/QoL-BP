@@ -33,6 +33,8 @@ this file is only for top priority todo, if something like refactor some code or
 - [x] picker is on vacation ; make everything config-able tmr(28 Mar 2026)
 - [x] add more thing for wet concrete powders, e.g. cauldron?
 - [x] add more config for new modules
+  - [ ] should powder concrete dye in cauldron turn into soildconcrete?
+  - [ ] max 16 each time player click cauldron (behave like tripped arrow)
 - [ ] if player have full inventory, container addItem will fail silently
 
 ### request/sugg
