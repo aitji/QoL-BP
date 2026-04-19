@@ -3,16 +3,20 @@ import { RUNTIME } from "../_store" // "cache" got use in "lib" as lazy import, 
 const { DEBUG } = RUNTIME
 
 export type CacheData = 'name' | 'platformType' | 'gameMode'
-export type PlayerData = {
-    name: string
-    platformType: PlatformType
-    gameMode: GameMode
-    permissionLevel: PlayerPermissionLevel
+const PlayerDataShape = {
+    name: '' as string,
+    platformType: '' as PlatformType,
+    gameMode: '' as GameMode,
+    permissionLevel: 0 as PlayerPermissionLevel
+}
+const WorldDataShape = {
+    gamerule: { keepInventory: false as boolean }
 }
 
-type WorldData = {
-    gamerule: { keepInventory: boolean }
-}
+export type PlayerData = typeof PlayerDataShape
+export type WorldData = typeof WorldDataShape
+export const playerDataKeys = Object.keys(PlayerDataShape) as (keyof PlayerData)[]
+export const worldDataKeys = Object.keys(WorldDataShape) as (keyof WorldData)[]
 
 // maps, "core/cache" is [ONLY] for caching globally
 export const playerData = new Map<string, PlayerData>()

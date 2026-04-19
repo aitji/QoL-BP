@@ -132,7 +132,7 @@ export const debug_startup = (event: StartupEvent) => {
             { name: 'player', type: CustomCommandParamType.PlayerSelector },
             { name: 'log', type: CustomCommandParamType.Enum, enumName: `${PREFIX}log` }
         ],
-        permissionLevel: CommandPermissionLevel.Admin
+        permissionLevel: CommandPermissionLevel.GameDirectors
     }, (_, players: Players, log: logType) => {
         let msg = ''
         if (!players) {
@@ -151,9 +151,11 @@ export const debug_startup = (event: StartupEvent) => {
             for (const player of plr) {
                 if (!player) continue
                 index++
-                const { name, platformType, gameMode } = data.get(player.id)!
-                msg += `§8${index}. §7${player.name} §8${player.id}\n`
-                msg += `§8| §7name=§e${name}§7, platformType=§e${platformType}§7, gameMode=§e${gameMode}\n`
+                const pdata = data.get(player.id)!
+
+                msg += `§8| §7`
+                msg += cache.playerDataKeys.map(k => `${k}=§e${pdata[k]}§7`).join(', ')
+                msg += `\n`
             }
         }
 
