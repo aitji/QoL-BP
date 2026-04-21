@@ -2,7 +2,6 @@ import { Dimension, GameMode, PlatformType, Player, PlayerGameModeChangeAfterEve
 import { RUNTIME } from "../_store" // "cache" got use in "lib" as lazy import, use setting from store directly
 const { DEBUG } = RUNTIME
 
-export type CacheData = 'name' | 'platformType' | 'gameMode'
 const PlayerDataShape = {
     name: '' as string,
     platformType: '' as PlatformType,
@@ -15,6 +14,8 @@ const WorldDataShape = {
 
 export type PlayerData = typeof PlayerDataShape
 export type WorldData = typeof WorldDataShape
+export type CacheData = keyof PlayerData
+
 export const playerDataKeys = Object.keys(PlayerDataShape) as (keyof PlayerData)[]
 export const worldDataKeys = Object.keys(WorldDataShape) as (keyof WorldData)[]
 
@@ -87,7 +88,7 @@ export const update = <T extends CacheType>
     return next
 }
 
-export const getPlayer = (player: Player | string, get?: CacheData) => {
+export const getPlayer = (player: Player | string, get?: CacheData | string) => {
     const id = typeof player === 'string' ? player : player.id
     let data = playerData.get(id)
 
@@ -99,7 +100,7 @@ export const getPlayer = (player: Player | string, get?: CacheData) => {
         data = player_init_update(player)
     }
 
-    return get ? data[get] : data
+    return get ? data[get as CacheData] : data
 }
 
 export const getCachedPlayers = (): Player[] => cachedPlayers

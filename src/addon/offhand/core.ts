@@ -2,7 +2,7 @@ import {
     BlockPermutation, Difficulty, EntityComponentTypes,
     GameMode, PlayerInteractWithBlockBeforeEvent, system, world
 } from "@minecraft/server"
-import { getInv, RUNTIME } from "../../lib"
+import { checkPerm, getInv, RUNTIME } from "../../lib"
 import { blockHandle, fireHandle, seedsHandle, torchHandle } from "./handlers"
 import * as cache from "../../core/cache"
 
@@ -32,6 +32,7 @@ export const offhand_playerInteractWithBlock = (data: PlayerInteractWithBlockBef
     }
     delay[player.id] = now + BLOCK_INTERACTION_DELAY
 
+    if (checkPerm(player) === false) return
     const creative = cache.getPlayer(player, 'gameMode') === GameMode.Creative
 
     if (itemStack) {

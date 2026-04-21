@@ -1,4 +1,4 @@
-import { Block, BlockInventoryComponent, Dimension, EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, EquipmentSlot, GameMode, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, system, Vector3, world } from "@minecraft/server"
+import { Block, BlockInventoryComponent, Dimension, EnchantmentType, Entity, EntityComponentTypes, EntityEquippableComponent, EntityInventoryComponent, EquipmentSlot, GameMode, ItemComponentTypes, ItemDurabilityComponent, ItemStack, Player, PlayerPermissionLevel, system, Vector3, world } from "@minecraft/server"
 // lazy import ---
 import { RUNTIME as E } from "./_store"
 import * as H from "./core/helper"
@@ -120,6 +120,17 @@ export const reName = (typeId: string) => typeId
             ?.slice(1)
             ?.toLowerCase()
     )?.join(" ") // minecraft:trapped_chest -> Trapped Chest
+
+export const checkPerm = (player: Player): boolean => {
+    const permLvl = cache.getPlayer(player, "permissionLevel") as PlayerPermissionLevel
+    switch (permLvl) {
+        case PlayerPermissionLevel.Custom:
+        case PlayerPermissionLevel.Visitor:
+            return false
+
+        default: return true
+    }
+}
 
 // lazy helper, for lazy dev
 export const getEqu = (entity: Entity) => entity.getComponent(EntityComponentTypes.Equippable)
