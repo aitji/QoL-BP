@@ -1,5 +1,5 @@
 import { Block, BlockComponentTypes, BlockFluidContainerComponent, BlockPermutation, EntityEquippableComponent, EquipmentSlot, FluidType, ItemStack, Player, PlayerInteractWithBlockBeforeEvent, system, world } from "@minecraft/server"
-import { getEqu, playSound, RUNTIME } from "../../lib"
+import { checkPerm, getEqu, playSound, RUNTIME } from "../../lib"
 const { DEBUG, WATER_CAULDRON: { FIND_NEAR_COLOR } } = RUNTIME
 const RGB_PRECISION = 4 // hardcode, don't make config
 const DYE_COLORS: { name: string; r: number; g: number; b: number }[] = [
@@ -105,6 +105,7 @@ export const cauldron_playerInteractWithBlock = (data: PlayerInteractWithBlockBe
     }
     delay[player.id] = system.currentTick + 8
 
+    if (checkPerm(player) === false) return
     if (!block || block.typeId !== 'minecraft:cauldron') return
 
     const fluid = block.getComponent(BlockComponentTypes.FluidContainer)
