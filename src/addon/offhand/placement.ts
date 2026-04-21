@@ -112,12 +112,13 @@ const SUPPORT_RULES = new Map<string, SupportFn>()
         const hasMoss = (b: Block) => b.typeId === 'minecraft:moss_block'
         const hasSand = (b: Block) => b.hasTag('sand')
         const hasClayOrMoss = (b: Block) => b.typeId === 'minecraft:clay' || hasMoss(b)
+        const hasKelp = (b: Block) => b.isSolid || b.typeId === 'minecraft:kelp'
 
         add([ // saplings + ground-cover flowers/grass
             'minecraft:oak_sapling', 'minecraft:spruce_sapling', 'minecraft:birch_sapling',
             'minecraft:jungle_sapling', 'minecraft:acacia_sapling', 'minecraft:dark_oak_sapling',
             'minecraft:mangrove_propagule', 'minecraft:cherry_sapling',
-            'minecraft:short_grass', 'minecraft:fern',
+            'minecraft:short_grass', 'minecraft:fern', 'minecraft:tall_grass', 'minecraft:large_fern',
             'minecraft:poppy', 'minecraft:dandelion', 'minecraft:blue_orchid',
             'minecraft:allium', 'minecraft:azure_bluet', 'minecraft:cornflower',
             'minecraft:red_tulip', 'minecraft:orange_tulip', 'minecraft:white_tulip',
@@ -127,6 +128,7 @@ const SUPPORT_RULES = new Map<string, SupportFn>()
         ], hasDirt)
         add(['minecraft:azalea', 'minecraft:flowering_azalea'], hasMoss)
         add(['minecraft:big_dripleaf', 'minecraft:small_dripleaf_block'], hasClayOrMoss)
+        add(['minecraft:kelp'], hasKelp)
         add(['minecraft:dead_bush'], b => hasSand(b) || hasDirt(b) || b.typeId === 'minecraft:terracotta')
     })()
 
@@ -265,7 +267,7 @@ export function getSpecialPermutation(
     }
 
     // underwater
-    if (typeId === 'minecraft:kelp' || typeId === 'minecraft:seagrass' ||  typeId === 'minecraft:sea_pickle') {
+    if (typeId === 'minecraft:kelp' || typeId === 'minecraft:seagrass' || typeId === 'minecraft:sea_pickle') {
         if (!target.isLiquid) return undefined
         return BlockPermutation.resolve(typeId)
     }
