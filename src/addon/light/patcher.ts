@@ -1,5 +1,5 @@
 import { world, system, EquipmentSlot, BlockPermutation, GameMode, PlayerInteractWithBlockBeforeEvent, Block, PlayerPlaceBlockBeforeEvent, PlayerBreakBlockBeforeEvent, Entity, ItemStack } from "@minecraft/server"
-import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu, pickupCooldown, cache, playSound } from "../../lib"
+import { applyItemDamage, checkRandom, getEqu, reduceItem, RUNTIME, setEqu, pickupCooldown, cache, playSound, checkPerm } from "../../lib"
 import { suppressLight } from "./core"
 const {
     DEBUG, BLOCKFACE_TO_DIR, BLOCK_INTERACTION_DELAY,
@@ -31,8 +31,9 @@ export const light_playerInteractWithBlock = (data: PlayerInteractWithBlockBefor
         const playerDelay = delay[player.id] || 0
         if (playerDelay > tick) return
     }
-
     delay[player.id] = tick + BLOCK_INTERACTION_DELAY
+    if (checkPerm(player) === false) return
+
     if (!itemStack || !block) return
     const dimension = block.dimension
 
