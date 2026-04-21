@@ -1,5 +1,5 @@
 import { world, system, ItemStack, BlockPermutation, EquipmentSlot, ItemLockMode, Player, InputPermissionCategory, PlayerPlaceBlockAfterEvent, GameMode, EntityDieAfterEvent, Entity, EntityComponentTypes, Container, PlayerInteractWithBlockBeforeEvent, Block, RawText } from "@minecraft/server"
-import { checkRandom, RUNTIME, cache, reName, getInv, getEqu, playSound } from "../lib"
+import { checkRandom, RUNTIME, cache, reName, getInv, getEqu, playSound, checkPerm } from "../lib"
 const {
   DEBUG, SLICE_PREFIX,
   CARRIED_CHEST: {
@@ -202,6 +202,7 @@ const inv2block = (heldInv: Entity, block: Block, neighbourInv: any[]) => {
 
 export const chest_playerInteractWithBlock = (data: PlayerInteractWithBlockBeforeEvent) => {
   const { player, block } = data
+  if (checkPerm(player) === false) return
   const equ = getEqu(player)!
   if (!block || !getInv(block) || equ.getEquipment(EquipmentSlot.Mainhand) || !player.isSneaking || player.hasTag(CARRY_TAG)) return
   data.cancel = true
