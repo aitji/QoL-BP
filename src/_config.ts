@@ -490,6 +490,9 @@ export const SETTINGS = Object.freeze({
             'minecraft:fire': true,
             'minecraft:soul_fire': true,
             'minecraft:sculk_vein': true,
+            'minecraft:leaf_litter': true,
+            'minecraft:wildflowers': true,
+            'minecraft:pink_petals': true,
 
             // 2 block tall need neig check
             'minecraft:tall_grass': false,

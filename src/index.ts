@@ -115,5 +115,5 @@ world.afterEvents.pistonActivate.subscribe(data => {
 
 // core routes
 world.beforeEvents.entityItemPickup.subscribe(data => { lib.helper.helper_entityItemPickup(data) }, { entityFilter: { type: "minecraft:player" } })
-system.beforeEvents.startup.subscribe(event => { if (RUNTIME.DEBUG) debug.debug_startup(event) })
+system.beforeEvents.startup.subscribe(event => { debug.debug_startup(event) })
 system.afterEvents.scriptEventReceive.subscribe((event) => heartbeat.heartbeat_scriptEventReceive((event)), { namespaces: ["aitji-lib"] })
